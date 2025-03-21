@@ -84,7 +84,7 @@ export default function CarRecommendation({ carId, className = "" }: CarRecommen
                   key={car.id} 
                   className="flex bg-neutral-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => {
-                    setLocation(`/cars/${car.id}`);
+                    setLocation(`/car/${car.id}`);
                     setIsOpen(false);
                   }}
                 >
