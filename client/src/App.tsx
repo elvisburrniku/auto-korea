@@ -11,6 +11,8 @@ import AboutPage from "@/pages/about";
 import ContactPage from "@/pages/contact";
 import AdminLoginPage from "@/pages/admin-login";
 import AdminPage from "@/pages/admin";
+import WishlistsPage from "@/pages/wishlists";
+import WishlistDetailPage from "@/pages/wishlist-detail";
 import NotFound from "@/pages/not-found";
 
 import Navbar from "@/components/navbar";
@@ -33,6 +35,9 @@ function Router() {
           <Route path="/compare-cars" component={CompareCarsPage} />
           <Route path="/about" component={AboutPage} />
           <Route path="/contact" component={ContactPage} />
+          <Route path="/wishlists" component={WishlistsPage} />
+          <Route path="/wishlist/share/:id" component={WishlistDetailPage} />
+          <Route path="/wishlist/:id" component={WishlistDetailPage} />
           <Route path="/admin-login" component={AdminLoginPage} />
           <Route path="/admin" component={AdminPage} />
           <Route component={NotFound} />

@@ -1,12 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Car } from "lucide-react";
+import { Menu, X, Car, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Navbar() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ id: string } | null>(null);
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const checkSession = async () => {
+      try {
+        const session = await apiRequest('/api/auth/session');
+        if (session.isAuthenticated) {
+          setIsAuthenticated(true);
+          setUser(session.user);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -47,13 +69,17 @@ export default function Navbar() {
               ))}
             </nav>
           </div>
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center space-x-4">
+            <Link href="/wishlists" className="flex items-center text-primary hover:text-primary-dark">
+              <Heart className="h-5 w-5 mr-1" />
+              <span>Wishlists</span>
+            </Link>
             <Link href="/admin-login">
               <Button variant="ghost" className="px-4 py-2 text-primary">
                 Admin Login
               </Button>
             </Link>
-            <Button className="ml-4">Get Started</Button>
+            <Button>Get Started</Button>
           </div>
           <div className="md:hidden">
             <button
@@ -89,6 +115,14 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-4 pb-3 border-t border-neutral-200">
+            <Link 
+              href="/wishlists"
+              className="flex items-center mb-3 px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-neutral-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Heart className="h-5 w-5 mr-2" />
+              Wishlists
+            </Link>
             <Link href="/admin-login" className="block w-full">
               <Button variant="outline" className="w-full px-4 py-2 text-center">
                 Admin Login
