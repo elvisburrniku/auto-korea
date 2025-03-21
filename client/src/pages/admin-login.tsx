@@ -31,7 +31,10 @@ export default function AdminLoginPage() {
     try {
       const response = await apiRequest('POST', '/api/auth/login', { username, password });
       
-      if (response && response.isAdmin) {
+      // Fetch session to confirm login
+      const session = await apiRequest('GET', '/api/auth/session');
+      
+      if (session?.isAuthenticated && session?.user?.isAdmin) {
         toast({
           title: "Success",
           description: "Logged in successfully",

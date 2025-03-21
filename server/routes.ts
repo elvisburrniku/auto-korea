@@ -51,11 +51,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         username: user.username,
         isAdmin: user.isAdmin
       };
+      
+      await new Promise((resolve) => req.session.save(resolve));
 
       res.json({ 
         id: user.id,
         username: user.username,
-        isAdmin: user.isAdmin 
+        isAdmin: user.isAdmin,
+        isAuthenticated: true
       });
     } catch (error) {
       console.error('Error during login:', error);
