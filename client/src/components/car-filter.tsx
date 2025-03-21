@@ -78,6 +78,11 @@ export default function CarFilterComponent({
     ? Array.from(new Set(allCars.filter(car => car.make === filters.make).map(car => car.model))).sort()
     : [];
 
+  // Get available years from the data
+  const availableYears = allCars
+    ? Array.from(new Set(allCars.map(car => car.year))).sort((a, b) => b - a) // Sort descending
+    : [];
+
   // Unique fuel types and transmissions
   const fuelTypes = allCars 
     ? Array.from(new Set(allCars.map(car => car.fuelType))).sort() 
@@ -257,7 +262,11 @@ export default function CarFilterComponent({
                   onValueChange={(value) => {
                     setFilters({
                       ...filters,
-                      minYear: value === "any" ? undefined : parseInt(value)
+                      minYear: value === "any" ? undefined : parseInt(value),
+                      // If min year is greater than max year, reset max year
+                      ...(filters.maxYear !== undefined && value !== "any" && parseInt(value) > filters.maxYear 
+                          ? { maxYear: undefined } 
+                          : {})
                     });
                   }}
                 >
@@ -266,7 +275,7 @@ export default function CarFilterComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any Min Year</SelectItem>
-                    {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).reverse().map((year) => (
+                    {availableYears.map((year) => (
                       <SelectItem key={`min-${year}`} value={year.toString()}>
                         {year}
                       </SelectItem>
@@ -283,7 +292,11 @@ export default function CarFilterComponent({
                   onValueChange={(value) => {
                     setFilters({
                       ...filters,
-                      maxYear: value === "any" ? undefined : parseInt(value)
+                      maxYear: value === "any" ? undefined : parseInt(value),
+                      // If max year is less than min year, reset min year
+                      ...(filters.minYear !== undefined && value !== "any" && parseInt(value) < filters.minYear 
+                          ? { minYear: undefined } 
+                          : {})
                     });
                   }}
                 >
@@ -292,7 +305,7 @@ export default function CarFilterComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any Max Year</SelectItem>
-                    {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).reverse().map((year) => (
+                    {availableYears.map((year) => (
                       <SelectItem key={`max-${year}`} value={year.toString()}>
                         {year}
                       </SelectItem>

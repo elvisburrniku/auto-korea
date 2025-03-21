@@ -258,41 +258,60 @@ export class MemStorage implements IStorage {
 
   async filterCars(filter: CarFilter): Promise<Car[]> {
     let filtered = Array.from(this.cars.values());
+    console.log('Initial car count:', filtered.length);
+    console.log('All cars years:', filtered.map(car => car.year));
+    console.log('Applied filter:', filter);
     
     if (filter.make) {
       filtered = filtered.filter(car => 
         car.make.toLowerCase().includes(filter.make!.toLowerCase())
       );
+      console.log(`After make filter (${filter.make}):`, filtered.length);
     }
     
     if (filter.model) {
       filtered = filtered.filter(car => 
         car.model.toLowerCase().includes(filter.model!.toLowerCase())
       );
+      console.log(`After model filter (${filter.model}):`, filtered.length);
     }
     
     if (filter.minPrice !== undefined) {
       filtered = filtered.filter(car => car.price >= filter.minPrice!);
+      console.log(`After minPrice filter (${filter.minPrice}):`, filtered.length);
     }
     
     if (filter.maxPrice !== undefined) {
       filtered = filtered.filter(car => car.price <= filter.maxPrice!);
+      console.log(`After maxPrice filter (${filter.maxPrice}):`, filtered.length);
     }
     
     if (filter.minYear !== undefined) {
+      console.log('Cars before minYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
+      
       filtered = filtered.filter(car => car.year >= filter.minYear!);
+      
+      console.log(`After minYear filter (${filter.minYear}):`, filtered.length);
+      console.log('Cars after minYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
     }
     
     if (filter.maxYear !== undefined) {
+      console.log('Cars before maxYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
+      
       filtered = filtered.filter(car => car.year <= filter.maxYear!);
+      
+      console.log(`After maxYear filter (${filter.maxYear}):`, filtered.length);
+      console.log('Cars after maxYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
     }
     
     if (filter.fuelType) {
       filtered = filtered.filter(car => car.fuelType === filter.fuelType);
+      console.log(`After fuelType filter (${filter.fuelType}):`, filtered.length);
     }
     
     if (filter.transmission) {
       filtered = filtered.filter(car => car.transmission === filter.transmission);
+      console.log(`After transmission filter (${filter.transmission}):`, filtered.length);
     }
     
     if (filter.search) {
@@ -305,7 +324,10 @@ export class MemStorage implements IStorage {
         car.fuelType.toLowerCase().includes(searchLower) ||
         (car.features?.some(feature => feature.toLowerCase().includes(searchLower)) ?? false)
       );
+      console.log(`After search filter (${filter.search}):`, filtered.length);
     }
+    
+    console.log('Final filtered cars:', filtered.map(car => ({ id: car.id, year: car.year })));
     
     return filtered.sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
