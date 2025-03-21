@@ -4,7 +4,7 @@ export interface IStorage {
   // User operations
   createUser(user: InsertUser): Promise<User>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  
+
   // Car operations
   getAllCars(): Promise<Car[]>;
   getCarById(id: number): Promise<Car | undefined>;
@@ -14,7 +14,7 @@ export interface IStorage {
   getFeaturedCars(limit?: number): Promise<Car[]>;
   getRecentCars(limit?: number): Promise<Car[]>;
   filterCars(filter: CarFilter): Promise<Car[]>;
-  
+
   // Contact message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
   getContactMessagesForCar(carId: number): Promise<ContactMessage[]>;
@@ -35,21 +35,21 @@ export class MemStorage implements IStorage {
     this.userIdCounter = 1;
     this.carIdCounter = 1;
     this.messageIdCounter = 1;
-    
+
     // Initialize with some demo cars for testing
     this.initDemoCars();
-    
+
     // Initialize with admin user
     this.initAdmin();
   }
-  
+
   private initAdmin() {
     const adminUser: InsertUser = {
       username: "admin",
       password: "admin123", // In a real app, this would be hashed!
       isAdmin: true
     };
-    
+
     this.createUser(adminUser);
   }
 
@@ -224,7 +224,7 @@ export class MemStorage implements IStorage {
         isFeatured: false
       }
     ];
-    
+
     // Add demo cars to storage
     demoCars.forEach(car => {
       const id = this.carIdCounter++;
@@ -267,7 +267,7 @@ export class MemStorage implements IStorage {
   async updateCar(id: number, car: Partial<InsertCar>): Promise<Car | undefined> {
     const existingCar = this.cars.get(id);
     if (!existingCar) return undefined;
-    
+
     const updatedCar = { ...existingCar, ...car };
     this.cars.set(id, updatedCar);
     return updatedCar;
@@ -295,59 +295,59 @@ export class MemStorage implements IStorage {
     console.log('Initial car count:', filtered.length);
     console.log('All cars years:', filtered.map(car => car.year));
     console.log('Applied filter:', filter);
-    
+
     if (filter.make) {
       filtered = filtered.filter(car => 
         car.make.toLowerCase().includes(filter.make!.toLowerCase())
       );
       console.log(`After make filter (${filter.make}):`, filtered.length);
     }
-    
+
     if (filter.model) {
       filtered = filtered.filter(car => 
         car.model.toLowerCase().includes(filter.model!.toLowerCase())
       );
       console.log(`After model filter (${filter.model}):`, filtered.length);
     }
-    
+
     if (filter.minPrice !== undefined) {
       filtered = filtered.filter(car => car.price >= filter.minPrice!);
       console.log(`After minPrice filter (${filter.minPrice}):`, filtered.length);
     }
-    
+
     if (filter.maxPrice !== undefined) {
       filtered = filtered.filter(car => car.price <= filter.maxPrice!);
       console.log(`After maxPrice filter (${filter.maxPrice}):`, filtered.length);
     }
-    
+
     if (filter.minYear !== undefined) {
       console.log('Cars before minYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
-      
+
       filtered = filtered.filter(car => car.year >= filter.minYear!);
-      
+
       console.log(`After minYear filter (${filter.minYear}):`, filtered.length);
       console.log('Cars after minYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
     }
-    
+
     if (filter.maxYear !== undefined) {
       console.log('Cars before maxYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
-      
+
       filtered = filtered.filter(car => car.year <= filter.maxYear!);
-      
+
       console.log(`After maxYear filter (${filter.maxYear}):`, filtered.length);
       console.log('Cars after maxYear filter:', filtered.map(car => ({ id: car.id, year: car.year })));
     }
-    
+
     if (filter.fuelType) {
       filtered = filtered.filter(car => car.fuelType === filter.fuelType);
       console.log(`After fuelType filter (${filter.fuelType}):`, filtered.length);
     }
-    
+
     if (filter.transmission) {
       filtered = filtered.filter(car => car.transmission === filter.transmission);
       console.log(`After transmission filter (${filter.transmission}):`, filtered.length);
     }
-    
+
     if (filter.search) {
       const searchLower = filter.search.toLowerCase();
       filtered = filtered.filter(car => 
@@ -360,9 +360,9 @@ export class MemStorage implements IStorage {
       );
       console.log(`After search filter (${filter.search}):`, filtered.length);
     }
-    
+
     console.log('Final filtered cars:', filtered.map(car => ({ id: car.id, year: car.year })));
-    
+
     return filtered.sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
