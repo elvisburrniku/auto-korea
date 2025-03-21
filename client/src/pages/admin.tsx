@@ -51,9 +51,10 @@ export default function AdminPage() {
   // Delete car mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest(`/api/cars/${id}`, {
-        method: 'DELETE',
-      });
+      await apiRequest(
+        'DELETE',
+        `/api/cars/${id}`
+      );
       return id;
     },
     onSuccess: () => {
@@ -91,7 +92,10 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     try {
-      await apiRequest('/api/auth/logout', { method: 'POST' });
+      await apiRequest(
+        'POST',
+        '/api/auth/logout'
+      );
       navigate("/admin-login");
     } catch (error) {
       console.error("Error logging out:", error);

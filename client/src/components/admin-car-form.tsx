@@ -64,16 +64,18 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
   // Create or update car mutation
   const mutation = useMutation({
     mutationFn: async (data: InsertCar) => {
-      if (isEditMode) {
-        return apiRequest(`/api/cars/${car.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify(data),
-        });
+      if (isEditMode && car) {
+        return apiRequest(
+          'PATCH',
+          `/api/cars/${car.id}`,
+          data
+        );
       } else {
-        return apiRequest('/api/cars', {
-          method: 'POST',
-          body: JSON.stringify(data),
-        });
+        return apiRequest(
+          'POST',
+          '/api/cars',
+          data
+        );
       }
     },
     onSuccess: () => {

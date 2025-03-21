@@ -52,10 +52,11 @@ export default function RegistrationForm() {
       // Remove confirmPassword field from the submission
       const { confirmPassword, ...registrationData } = values;
       
-      const response = await apiRequest('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify(registrationData),
-      });
+      const response = await apiRequest(
+        'POST',
+        '/api/auth/register',
+        registrationData
+      );
       
       toast({
         title: "Registration successful!",
