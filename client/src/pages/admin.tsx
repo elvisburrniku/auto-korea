@@ -51,15 +51,8 @@ export default function AdminPage() {
     }
   }, [session, isSessionLoading, navigate]);
 
-  if (isSessionLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!session?.isAuthenticated || !session?.user?.isAdmin) {
-    return null;
-  }
-
-  // Delete car mutation
+  // Delete car mutation - defined regardless of authentication state
+  // to maintain consistent hook order between renders
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await apiRequest(
@@ -84,6 +77,14 @@ export default function AdminPage() {
       console.error("Error deleting car:", error);
     }
   });
+  
+  if (isSessionLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!session?.isAuthenticated || !session?.user?.isAdmin) {
+    return null;
+  }
 
   const handleEdit = (car: Car) => {
     setSelectedCar(car);
