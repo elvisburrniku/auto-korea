@@ -4,9 +4,92 @@ import { storage } from "./storage";
 import { carFilterSchema, carValidationSchema, insertContactSchema, loginSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  const user = (req.session as any)?.user;
+  if (!user) {
+    return res.status(401).json({ message: 'Unauthorized. Please login to continue.' });
+  }
+  next();
+};
+
+// Middleware to check if the user is an admin
+const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const user = (req.session as any)?.user;
+  if (!user || !user.isAdmin) {
+    return res.status(403).json({ message: 'Forbidden. Admin access required.' });
+  }
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // API prefix
   const apiPrefix = '/api';
+  
+  // Authentication routes
+  
+  // Login route
+  app.post(`${apiPrefix}/auth/login`, async (req: Request, res: Response) => {
+    try {
+      const validationResult = loginSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        const errorMessage = fromZodError(validationResult.error).message;
+        return res.status(400).json({ message: errorMessage });
+      }
+      
+      const { username, password } = validationResult.data;
+      const user = await storage.getUserByUsername(username);
+      
+      if (!user || user.password !== password) {
+        return res.status(401).json({ message: 'Invalid username or password' });
+      }
+      
+      // Store user in session
+      (req.session as any).user = {
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin
+      };
+      
+      res.json({ 
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin 
+      });
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ message: 'Login failed' });
+    }
+  });
+  
+  // Logout route
+  app.post(`${apiPrefix}/auth/logout`, (req: Request, res: Response) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ message: 'Logout failed' });
+      }
+      res.json({ message: 'Logged out successfully' });
+    });
+  });
+  
+  // Check current session
+  app.get(`${apiPrefix}/auth/session`, (req: Request, res: Response) => {
+    const user = (req.session as any)?.user;
+    if (user) {
+      res.json({ 
+        isAuthenticated: true, 
+        user: {
+          id: user.id,
+          username: user.username,
+          isAdmin: user.isAdmin
+        } 
+      });
+    } else {
+      res.json({ isAuthenticated: false });
+    }
+  });
 
   // Get all cars
   app.get(`${apiPrefix}/cars`, async (req: Request, res: Response) => {
@@ -109,8 +192,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create a new car listing
-  app.post(`${apiPrefix}/cars`, async (req: Request, res: Response) => {
+  // Create a new car listing - Admin only
+  app.post(`${apiPrefix}/cars`, isAdmin, async (req: Request, res: Response) => {
     try {
       const validationResult = carValidationSchema.safeParse(req.body);
       
@@ -127,8 +210,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update a car listing
-  app.patch(`${apiPrefix}/cars/:id`, async (req: Request, res: Response) => {
+  // Update a car listing - Admin only
+  app.patch(`${apiPrefix}/cars/:id`, isAdmin, async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -148,8 +231,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete a car listing
-  app.delete(`${apiPrefix}/cars/:id`, async (req: Request, res: Response) => {
+  // Delete a car listing - Admin only
+  app.delete(`${apiPrefix}/cars/:id`, isAdmin, async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {

@@ -6,9 +6,10 @@ import { Toaster } from "@/components/ui/toaster";
 import HomePage from "@/pages/home";
 import BrowseCarsPage from "@/pages/browse-cars";
 import CarDetailPage from "@/pages/car-detail";
-import SellCarPage from "@/pages/sell-car";
 import AboutPage from "@/pages/about";
 import ContactPage from "@/pages/contact";
+import AdminLoginPage from "@/pages/admin-login";
+import AdminPage from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 import Navbar from "@/components/navbar";
@@ -16,24 +17,27 @@ import Footer from "@/components/footer";
 
 function Router() {
   const [location] = useLocation();
+  const isAdminRoute = location.startsWith("/admin");
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      {/* Don't show navbar and footer on admin pages */}
+      {!isAdminRoute && <Navbar />}
       
-      <main className="flex-grow">
+      <main className={`flex-grow ${isAdminRoute ? 'bg-neutral-50' : ''}`}>
         <Switch>
           <Route path="/" component={HomePage} />
           <Route path="/browse-cars" component={BrowseCarsPage} />
           <Route path="/car/:id" component={CarDetailPage} />
-          <Route path="/sell-car" component={SellCarPage} />
           <Route path="/about" component={AboutPage} />
           <Route path="/contact" component={ContactPage} />
+          <Route path="/admin-login" component={AdminLoginPage} />
+          <Route path="/admin" component={AdminPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
       
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 }
