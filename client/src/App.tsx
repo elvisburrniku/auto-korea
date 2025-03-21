@@ -13,6 +13,7 @@ import AdminLoginPage from "@/pages/admin-login";
 import AdminPage from "@/pages/admin";
 import WishlistsPage from "@/pages/wishlists";
 import WishlistDetailPage from "@/pages/wishlist-detail";
+import RegisterPage from "@/pages/register";
 import NotFound from "@/pages/not-found";
 
 import Navbar from "@/components/navbar";
@@ -38,6 +39,7 @@ function Router() {
           <Route path="/wishlists" component={WishlistsPage} />
           <Route path="/wishlist/share/:id" component={WishlistDetailPage} />
           <Route path="/wishlist/:id" component={WishlistDetailPage} />
+          <Route path="/register" component={RegisterPage} />
           <Route path="/admin-login" component={AdminLoginPage} />
           <Route path="/admin" component={AdminPage} />
           <Route component={NotFound} />

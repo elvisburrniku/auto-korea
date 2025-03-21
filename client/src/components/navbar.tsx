@@ -78,7 +78,9 @@ export default function Navbar() {
                 Admin Login
               </Button>
             </Link>
-            <Button>Get Started</Button>
+            <Link href="/register">
+              <Button>Register</Button>
+            </Link>
           </div>
           <div className="md:hidden">
             <button
@@ -127,9 +129,11 @@ export default function Navbar() {
                 Admin Login
               </Button>
             </Link>
-            <Button className="block w-full mt-2 px-4 py-2 text-center">
-              Get Started
-            </Button>
+            <Link href="/register" className="block w-full">
+              <Button className="w-full mt-2 px-4 py-2 text-center">
+                Register
+              </Button>
+            </Link>
           </div>
         </div>
       )}
