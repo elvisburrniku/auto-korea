@@ -32,6 +32,8 @@ const currentYear = new Date().getFullYear();
 export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
   const [imageUrls, setImageUrls] = useState<string[]>(car?.images || []);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const isEditMode = !!car;
   
@@ -161,6 +163,84 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
     setImageUrls(updatedImages);
     // Update the form value for images directly
     form.setValue("images", updatedImages, { shouldValidate: true });
+  };
+  
+  const uploadFile = async (file: File) => {
+    setIsUploading(true);
+    
+    try {
+      // Create a FormData object to send the file
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // Send the file to the server
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+      
+      const data = await response.json();
+      
+      // Add the new image URL to our list
+      const updatedImages = [...imageUrls, data.url];
+      setImageUrls(updatedImages);
+      
+      // Update the form value for images directly
+      form.setValue("images", updatedImages, { shouldValidate: true });
+      
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
+    await uploadFile(event.target.files[0]);
+  };
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (!event.dataTransfer.files || event.dataTransfer.files.length === 0) return;
+    
+    const file = event.dataTransfer.files[0];
+    // Check if the file is an image
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Error",
+        description: "Only image files are allowed",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    await uploadFile(file);
   };
 
   return (
@@ -512,8 +592,13 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
         />
         
         {/* Images */}
-        <div className="space-y-2">
-          <FormLabel>Images</FormLabel>
+        <div className="space-y-4">
+          <div>
+            <FormLabel>Images</FormLabel>
+            <FormDescription>Add images by URL or upload directly from your computer</FormDescription>
+          </div>
+          
+          {/* URL Input */}
           <div className="flex space-x-2">
             <Input
               value={newImageUrl}
@@ -522,28 +607,58 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
               className="flex-1"
             />
             <Button type="button" onClick={addImageUrl}>
-              Add Image
+              Add URL
             </Button>
           </div>
           
+          {/* File Upload */}
+          <div className="flex flex-col space-y-3">
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <UploadCloud className="h-10 w-10 text-gray-400" />
+              <p className="mt-2 text-sm text-gray-500">Click to upload an image or drag and drop</p>
+              <p className="text-xs text-gray-400 mt-1">Supports: JPG, PNG, WEBP</p>
+              <input 
+                type="file" 
+                className="hidden" 
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleFileUpload} 
+              />
+            </div>
+            
+            {isUploading && (
+              <div className="flex items-center justify-center py-2">
+                <Loader2 className="h-5 w-5 animate-spin text-primary mr-2" />
+                <span className="text-sm text-gray-500">Uploading...</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Image Gallery */}
           {imageUrls.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-4">
               {imageUrls.map((url, index) => (
-                <div key={index} className="relative group">
+                <div key={index} className="relative group overflow-hidden rounded-md">
                   <img
                     src={url}
                     alt={`Car image ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-md"
+                    className="w-full h-40 object-cover"
                   />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => removeImageUrl(url)}
-                  >
-                    Remove
-                  </Button>
+                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeImageUrl(url)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
