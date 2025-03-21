@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { carFilterSchema, carValidationSchema, insertContactSchema, insertWishlistSchema, loginSchema } from "@shared/schema";
+import { carFilterSchema, carValidationSchema, insertContactSchema, insertWishlistSchema, loginSchema, insertUserSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 // Middleware to check if the user is authenticated
@@ -27,6 +27,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const apiPrefix = '/api';
 
   // Authentication routes
+
+  // Register route
+  app.post(`${apiPrefix}/auth/register`, async (req: Request, res: Response) => {
+    try {
+      const validationResult = insertUserSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        const errorMessage = fromZodError(validationResult.error).message;
+        return res.status(400).json({ message: errorMessage });
+      }
+      
+      const userData = validationResult.data;
+      
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(userData.username);
+      if (existingUser) {
+        return res.status(409).json({ message: 'Username already exists' });
+      }
+      
+      // Create new user (non-admin by default)
+      const newUser = await storage.createUser(userData);
+      
+      // Store user in session
+      (req.session as any).user = {
+        id: newUser.id,
+        username: newUser.username,
+        isAdmin: newUser.isAdmin
+      };
+      
+      await new Promise((resolve) => req.session.save(resolve));
+      
+      res.status(201).json({ 
+        id: newUser.id,
+        username: newUser.username,
+        isAdmin: newUser.isAdmin,
+        isAuthenticated: true
+      });
+    } catch (error) {
+      console.error('Error during registration:', error);
+      res.status(500).json({ message: 'Registration failed' });
+    }
+  });
 
   // Login route
   app.post(`${apiPrefix}/auth/login`, async (req: Request, res: Response) => {
