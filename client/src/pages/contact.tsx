@@ -81,7 +81,7 @@ export default function ContactPage() {
                 <Mail className="text-primary mt-1 mr-3 h-5 w-5" />
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-neutral-600">contact@carmarketplace.repl.co</p>
+                  <p className="text-neutral-600">order.autokorea@gmail.com</p>
                 </div>
               </div>
 

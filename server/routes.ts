@@ -265,6 +265,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const newMessage = await storage.createContactMessage(validationResult.data);
+      
+      // Forward to specific email
+      const emailContent = `
+New inquiry from: ${validationResult.data.name}
+Email: ${validationResult.data.email}
+Message: ${validationResult.data.message}
+${validationResult.data.carId ? `Car ID: ${validationResult.data.carId}` : ''}
+      `.trim();
+      
+      await storage.sendEmail({
+        to: 'order.autokorea@gmail.com',
+        subject: 'New Car Inquiry',
+        text: emailContent
+      });
+      
       res.status(201).json(newMessage);
     } catch (error) {
       console.error('Error creating contact message:', error);
