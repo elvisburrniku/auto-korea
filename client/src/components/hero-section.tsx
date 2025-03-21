@@ -24,19 +24,19 @@ export default function HeroSection() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const queryParams = new URLSearchParams();
-    
+
     if (searchTerm) {
       queryParams.append("search", searchTerm);
     }
-    
+
     if (filters.make !== "Any Make") {
       queryParams.append("make", filters.make);
     }
-    
+
     if (filters.model !== "Any Model") {
       queryParams.append("model", filters.model);
     }
-    
+
     if (filters.priceRange !== "Any Price") {
       const priceRanges: Record<string, [number, number]> = {
         "Under $10,000": [0, 10000],
@@ -44,12 +44,12 @@ export default function HeroSection() {
         "$30,000 - $50,000": [30000, 50000],
         "Over $50,000": [50000, 1000000]
       };
-      
+
       const [min, max] = priceRanges[filters.priceRange];
       queryParams.append("minPrice", min.toString());
       queryParams.append("maxPrice", max.toString());
     }
-    
+
     if (filters.year !== "Any Year") {
       if (filters.year === "2023") {
         queryParams.append("minYear", "2023");
@@ -66,7 +66,7 @@ export default function HeroSection() {
         queryParams.append("maxYear", "2019");
       }
     }
-    
+
     const queryString = queryParams.toString();
     setLocation(`/browse-cars${queryString ? `?${queryString}` : ''}`);
   };
@@ -126,7 +126,7 @@ const getModelsForMake = (make: string) => {
           <p className="text-lg md:text-xl text-neutral-100 mb-8">
             Browse our extensive collection of premium vehicles and connect directly with sellers.
           </p>
-          
+
           {/* Search Form */}
           <div className="bg-white rounded-lg shadow-lg p-4">
             <form onSubmit={handleSearch}>
@@ -144,7 +144,7 @@ const getModelsForMake = (make: string) => {
                   Search Cars
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                 {/* Make Dropdown */}
                 <DropdownMenu>
@@ -157,7 +157,7 @@ const getModelsForMake = (make: string) => {
                       <ChevronDown className="h-4 w-4 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="start">
+                  <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto" align="start">
                     {carMakes.map(make => (
                       <DropdownMenuItem 
                         key={make}
@@ -168,7 +168,7 @@ const getModelsForMake = (make: string) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                
+
                 {/* Model Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild disabled={!filters.make || filters.make === "Any Make"}>
@@ -180,7 +180,7 @@ const getModelsForMake = (make: string) => {
                       <ChevronDown className="h-4 w-4 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="start">
+                  <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto" align="start">
                     {getModelsForMake(filters.make).map(model => (
                       <DropdownMenuItem 
                         key={model}
@@ -191,7 +191,7 @@ const getModelsForMake = (make: string) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                
+
                 {/* Price Range Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -203,7 +203,7 @@ const getModelsForMake = (make: string) => {
                       <ChevronDown className="h-4 w-4 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="start">
+                  <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto" align="start">
                     {priceRanges.map(range => (
                       <DropdownMenuItem 
                         key={range}
@@ -214,7 +214,7 @@ const getModelsForMake = (make: string) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                
+
                 {/* Year Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -226,7 +226,7 @@ const getModelsForMake = (make: string) => {
                       <ChevronDown className="h-4 w-4 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="start">
+                  <DropdownMenuContent className="w-56 max-h-[300px] overflow-y-auto" align="start">
                     {yearOptions.map(year => (
                       <DropdownMenuItem 
                         key={year}
