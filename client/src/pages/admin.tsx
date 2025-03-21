@@ -20,20 +20,24 @@ export default function AdminPage() {
   const queryClient = useQueryClient();
 
   // Check if user is authenticated and is admin
+  const { data: session, isLoading: isSessionLoading } = useQuery({
+    queryKey: ['session'],
+    queryFn: () => apiRequest('GET', '/api/auth/session'),
+  });
+
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await apiRequest('/api/auth/session');
-        if (!response.isAuthenticated || !response.user.isAdmin) {
-          navigate("/admin-login");
-        }
-      } catch (error) {
-        navigate("/admin-login");
-      }
-    };
-    
-    checkAuth();
-  }, [navigate]);
+    if (!isSessionLoading && (!session?.isAuthenticated || !session?.user?.isAdmin)) {
+      navigate("/admin-login");
+    }
+  }, [session, isSessionLoading, navigate]);
+
+  if (isSessionLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!session?.isAuthenticated || !session?.user?.isAdmin) {
+    return null;
+  }
 
   // Get all cars
   const { data: cars, isLoading } = useQuery({
