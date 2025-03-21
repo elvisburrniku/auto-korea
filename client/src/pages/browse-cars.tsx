@@ -54,11 +54,17 @@ export default function BrowseCarsPage() {
   const { data: cars, isLoading, error } = useQuery<Car[]>({
     queryKey: ['/api/cars/filter', searchParams.toString()],
     queryFn: async () => {
+      // Log the current search parameters for debugging
+      console.log("Current search params:", searchParams.toString());
+      
       const response = await apiRequest('GET', `/api/cars/filter?${searchParams.toString()}`);
       const data = await response.json();
       console.log("Filtered cars data:", data);
       return data;
     },
+    // Important: Refetch whenever the searchParams change
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
   
   // Handle quick search submit
@@ -211,7 +217,11 @@ export default function BrowseCarsPage() {
                       setSearchTerm("");
                       
                       // Update search params to empty to trigger a new query
-                      setSearchParams(new URLSearchParams());
+                      const newParams = new URLSearchParams();
+                      setSearchParams(newParams);
+                      
+                      // Force reload of the current route to reset everything
+                      window.location.href = "/browse-cars";
                     }}
                   >
                     Clear All Filters

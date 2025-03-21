@@ -147,12 +147,18 @@ export default function CarFilterComponent({
     // Update the browser URL without reloading the page
     window.history.pushState({}, '', newUrl);
     
-    // Force a update of the URL parameters to trigger a new query
-    setSearchParams(new URLSearchParams(searchParams.toString()));
+    // Force an update of the URL parameters to trigger a new query
+    const newParams = new URLSearchParams(searchParams.toString());
+    setSearchParams(newParams);
+    
+    // Navigate to browse cars with the filters applied
+    // This is crucial to trigger the proper data fetching
+    setLocation(`/browse-cars?${newParams.toString()}`);
   };
 
   // Reset filters
   const resetFilters = () => {
+    // Reset the filters state
     setFilters({
       make: "",
       model: "",
@@ -164,6 +170,11 @@ export default function CarFilterComponent({
       transmission: "",
       search: "",
     });
+    
+    // Clear URL parameters and navigate to clean browse-cars page
+    window.history.pushState({}, '', '/browse-cars');
+    setSearchParams(new URLSearchParams());
+    setLocation('/browse-cars');
   };
 
   return (
