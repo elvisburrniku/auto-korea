@@ -113,12 +113,18 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
   const addImageUrl = () => {
     if (!newImageUrl) return;
     
-    setImageUrls([...imageUrls, newImageUrl]);
+    const updatedImages = [...imageUrls, newImageUrl];
+    setImageUrls(updatedImages);
+    // Update the form value for images directly
+    form.setValue("images", updatedImages, { shouldValidate: true });
     setNewImageUrl("");
   };
   
   const removeImageUrl = (url: string) => {
-    setImageUrls(imageUrls.filter(imgUrl => imgUrl !== url));
+    const updatedImages = imageUrls.filter(imgUrl => imgUrl !== url);
+    setImageUrls(updatedImages);
+    // Update the form value for images directly
+    form.setValue("images", updatedImages, { shouldValidate: true });
   };
 
   return (
