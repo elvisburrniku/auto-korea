@@ -14,7 +14,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { isARReady } from '@/lib/ar-core';
+import { isARReady, initialize, cleanupARScene } from '@/lib/ar-core';
 
 // Determine car type based on make/model and drivetrain
 const inferCarType = (car: Car): 'suv' | 'sedan' | 'coupe' | 'hatchback' | 'truck' | 'other' => {
@@ -159,7 +159,7 @@ export default function ARSizeComparison() {
   };
 
   // Toggle AR mode
-  const toggleARMode = () => {
+  const toggleARMode = async () => {
     if (!selectedCar) {
       toast({
         title: 'Select a car',
@@ -170,11 +170,23 @@ export default function ARSizeComparison() {
     }
 
     if (!isARMode) {
-      // Check if AR is ready using our centralized helper
-      if (!isARReady()) {
+      // First try to initialize AR components dynamically
+      try {
+        const success = await initialize();
+        
+        if (!success) {
+          toast({
+            title: 'AR Not Ready',
+            description: 'Could not initialize AR components',
+            variant: 'destructive',
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error initializing AR:', error);
         toast({
-          title: 'AR Not Ready',
-          description: 'AR components are not fully initialized',
+          title: 'AR Error',
+          description: 'Failed to initialize AR components',
           variant: 'destructive',
         });
         return;
@@ -189,6 +201,24 @@ export default function ARSizeComparison() {
         });
         return;
       }
+
+      try {
+        // Request camera permission
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Stop the stream as it will be used by the webcam component
+        stream.getTracks().forEach(track => track.stop());
+      } catch (error) {
+        console.error('Camera permission error:', error);
+        toast({
+          title: 'Camera Access Denied',
+          description: 'Please allow camera access to use AR features',
+          variant: 'destructive',
+        });
+        return;
+      }
+    } else {
+      // When exiting AR mode, clean up any AR scene elements
+      cleanupARScene();
     }
 
     setIsARMode(!isARMode);
