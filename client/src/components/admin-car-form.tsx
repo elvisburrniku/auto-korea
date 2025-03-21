@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -33,6 +33,41 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
   const [newImageUrl, setNewImageUrl] = useState("");
   
   const isEditMode = !!car;
+  
+  // Use effect to reset the form and image state when car prop changes
+  useEffect(() => {
+    setImageUrls(car?.images || []);
+    form.reset(
+      car ? {
+        ...car,
+        // Make sure the form doesn't try to control these values
+        id: undefined,
+        createdAt: undefined,
+      } : {
+        make: "",
+        model: "",
+        year: currentYear,
+        price: 0,
+        mileage: 0,
+        fuelType: "Gasoline",
+        transmission: "Automatic",
+        drivetrain: "FWD",
+        exteriorColor: "",
+        interiorColor: "",
+        vin: null,
+        engineDetails: null,
+        mpg: null,
+        features: [],
+        description: null,
+        sellerName: "",
+        sellerPhone: "",
+        sellerEmail: "",
+        sellerSince: null,
+        isFeatured: false,
+        images: [],
+      }
+    );
+  }, [car]);
   
   // Set up the form
   const form = useForm<InsertCar>({
