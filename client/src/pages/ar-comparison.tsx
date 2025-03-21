@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Container } from '@/components/ui/container';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ARSizeComparison from '@/components/ar-size-comparison';
+import ARView from '@/components/ar-view';
+import { Car } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { CarCard } from '@/components/car-card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function ARComparisonPage() {
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [showARView, setShowARView] = useState(false);
+  const { toast } = useToast();
+  
+  const { data: cars, isLoading, error } = useQuery({
+    queryKey: ['/api/cars'],
+    queryFn: () => apiRequest<Car[]>({ 
+      url: '/api/cars',
+      method: 'GET',
+    }),
+  });
+
+  const handleSelectCar = (car: Car) => {
+    setSelectedCar(car);
+  };
+
+  const handleStartAR = () => {
+    if (!selectedCar) {
+      toast({
+        title: 'Select a car',
+        description: 'Please select a car before starting AR mode',
+        variant: 'default',
+      });
+      return;
+    }
+    
+    // Check if browser supports WebXR or AR features
+    const xrSupported = 'xr' in navigator;
+    const arJsSupported = typeof window !== 'undefined' && 'aframe' in window;
+    
+    if (!xrSupported && !arJsSupported) {
+      toast({
+        title: 'AR Not Supported',
+        description: 'Your browser does not support AR features. Try using Chrome or Safari.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    setShowARView(true);
+  };
+
+  const handleCloseAR = () => {
+    setShowARView(false);
+  };
+
+  if (showARView && selectedCar) {
+    return <ARView car={selectedCar} onClose={handleCloseAR} />;
+  }
+
+  return (
+    <Container className="py-8">
+      <h1 className="text-3xl font-bold mb-2">Car AR Experience</h1>
+      <p className="text-muted-foreground mb-6">
+        Visualize cars in augmented reality to better understand their size and appearance
+      </p>
+
+      <Tabs defaultValue="simple" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="simple">Simple Size Comparison</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced AR View</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="simple">
+          <ARSizeComparison />
+        </TabsContent>
+        
+        <TabsContent value="advanced">
+          <div className="space-y-6">
+            <div className="p-4 bg-muted rounded-lg">
+              <h2 className="text-xl font-semibold mb-2">Advanced AR Experience</h2>
+              <p>
+                This feature allows you to place a 3D model of your selected car in your
+                real environment using your camera. Select a car below and click "Start AR" to begin.
+              </p>
+              
+              {selectedCar && (
+                <div className="mt-4 p-4 border-2 border-primary rounded-lg">
+                  <h3 className="font-medium mb-2">Selected Car</h3>
+                  <CarCard car={selectedCar} size="small" />
+                </div>
+              )}
+              
+              <div className="mt-6 flex justify-center">
+                <Button 
+                  size="lg" 
+                  onClick={handleStartAR}
+                  disabled={!selectedCar}
+                >
+                  Start AR Experience
+                </Button>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-4">Select a Car for AR View</h3>
+              
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border">
+                      <Skeleton className="h-48 w-full" />
+                      <div className="p-4">
+                        <Skeleton className="h-6 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : error ? (
+                <div className="p-8 text-center text-destructive">
+                  <p>Failed to load cars. Please try again.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {cars && cars.map(car => (
+                    <div 
+                      key={car.id}
+                      onClick={() => handleSelectCar(car)}
+                      className={`cursor-pointer transition-all border rounded-lg overflow-hidden hover:shadow-md ${
+                        selectedCar?.id === car.id ? 'ring-2 ring-primary' : ''
+                      }`}
+                    >
+                      <CarCard car={car} size="small" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </Container>
+  );
+}
