@@ -178,14 +178,14 @@ export default function CarFilterComponent({
                 <div>
                   <Label htmlFor="make">Make</Label>
                   <Select
-                    value={filters.make || ""}
-                    onValueChange={(value) => setFilters({ ...filters, make: value, model: "" })}
+                    value={filters.make || "any"}
+                    onValueChange={(value) => setFilters({ ...filters, make: value === "any" ? "" : value, model: "" })}
                   >
                     <SelectTrigger id="make" className="mt-1">
                       <SelectValue placeholder="Any Make" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any Make</SelectItem>
+                      <SelectItem value="any">Any Make</SelectItem>
                       {uniqueMakes.map((make) => (
                         <SelectItem key={make} value={make}>
                           {make}
@@ -198,15 +198,15 @@ export default function CarFilterComponent({
                 <div>
                   <Label htmlFor="model">Model</Label>
                   <Select
-                    value={filters.model || ""}
-                    onValueChange={(value) => setFilters({ ...filters, model: value })}
+                    value={filters.model || "any"}
+                    onValueChange={(value) => setFilters({ ...filters, model: value === "any" ? "" : value })}
                     disabled={!filters.make}
                   >
                     <SelectTrigger id="model" className="mt-1">
                       <SelectValue placeholder="Any Model" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any Model</SelectItem>
+                      <SelectItem value="any">Any Model</SelectItem>
                       {availableModels.map((model) => (
                         <SelectItem key={model} value={model}>
                           {model}
@@ -291,14 +291,14 @@ export default function CarFilterComponent({
               <div>
                 <Label htmlFor="fuelType">Fuel Type</Label>
                 <Select
-                  value={filters.fuelType || ""}
-                  onValueChange={(value) => setFilters({ ...filters, fuelType: value })}
+                  value={filters.fuelType || "any"}
+                  onValueChange={(value) => setFilters({ ...filters, fuelType: value === "any" ? "" : value })}
                 >
                   <SelectTrigger id="fuelType" className="mt-1">
                     <SelectValue placeholder="Any Fuel Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Fuel Type</SelectItem>
+                    <SelectItem value="any">Any Fuel Type</SelectItem>
                     {fuelTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
@@ -319,7 +319,7 @@ export default function CarFilterComponent({
                     <SelectValue placeholder="Any Transmission" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Transmission</SelectItem>
+                    <SelectItem value="any">Any Transmission</SelectItem>
                     {transmissions.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
