@@ -8,6 +8,9 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 import InquiryForm from "@/components/inquiry-form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useFavorites } from '../lib/useFavorites'; // Added import for favorites hook
+import { useToast } from '@radix-ui/react-toast'; // Added import for useToast
+
 
 export default function CarDetailPage() {
   // Get car ID from URL params
@@ -33,6 +36,9 @@ export default function CarDetailPage() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const { toggleFavorite, isFavorite } = useFavorites(); // Initialize favorites hook
+  const { toast } = useToast(); // Initialize toast
+
   if (isNaN(carId)) {
     return (
       <Container className="py-12">
@@ -54,7 +60,7 @@ export default function CarDetailPage() {
           <div className="mb-6">
             <div className="h-8 w-32 bg-gray-200 rounded"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-3">
               <div className="bg-gray-200 rounded-lg h-96 mb-4"></div>
@@ -63,10 +69,10 @@ export default function CarDetailPage() {
                   <div key={i} className="h-20 bg-gray-200 rounded"></div>
                 ))}
               </div>
-              
+
               <div className="mt-8">
                 <div className="h-8 w-48 bg-gray-200 rounded mb-4"></div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-gray-100 p-4 rounded-lg">
                     <div className="h-5 w-32 bg-gray-200 rounded mb-2"></div>
@@ -79,7 +85,7 @@ export default function CarDetailPage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="bg-gray-100 p-4 rounded-lg">
                     <div className="h-5 w-32 bg-gray-200 rounded mb-2"></div>
                     <div className="space-y-2">
@@ -94,12 +100,12 @@ export default function CarDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="lg:col-span-2">
               <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-sm">
                 <div className="h-8 w-48 bg-gray-200 rounded mb-2"></div>
                 <div className="h-5 w-32 bg-gray-200 rounded mb-4"></div>
-                
+
                 <div className="border-t border-b border-neutral-200 py-4 my-4">
                   <div className="h-5 w-32 bg-gray-200 rounded mb-2"></div>
                   <div className="flex items-center">
@@ -110,13 +116,13 @@ export default function CarDetailPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   {Array(3).fill(0).map((_, i) => (
                     <div key={i} className="h-12 bg-gray-200 rounded-md"></div>
                   ))}
                 </div>
-                
+
                 <div className="mt-6 pt-6 border-t border-neutral-200">
                   <div className="h-5 w-32 bg-gray-200 rounded mb-4"></div>
                   <div className="space-y-4">
@@ -160,7 +166,7 @@ export default function CarDetailPage() {
           Back to Listings
         </Link>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3">
           {/* Image Gallery */}
@@ -168,11 +174,11 @@ export default function CarDetailPage() {
             images={car.images} 
             alt={`${car.make} ${car.model}`}
           />
-          
+
           {/* Specifications */}
           <div className="mt-8">
             <h3 className="text-xl font-bold text-neutral-800 mb-4">Vehicle Specifications</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-neutral-50 p-4 rounded-lg">
                 <h4 className="font-medium text-neutral-500 mb-1">Basic Information</h4>
@@ -209,7 +215,7 @@ export default function CarDetailPage() {
                   </li>
                 </ul>
               </div>
-              
+
               <div className="bg-neutral-50 p-4 rounded-lg">
                 <h4 className="font-medium text-neutral-500 mb-1">Performance</h4>
                 <ul className="space-y-2">
@@ -240,7 +246,7 @@ export default function CarDetailPage() {
                 </ul>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               {car.features && car.features.length > 0 && (
                 <div className="bg-neutral-50 p-4 rounded-lg">
@@ -255,7 +261,7 @@ export default function CarDetailPage() {
                   </ul>
                 </div>
               )}
-              
+
               {car.description && (
                 <div className="bg-neutral-50 p-4 rounded-lg">
                   <h4 className="font-medium text-neutral-500 mb-1">Description</h4>
@@ -265,7 +271,7 @@ export default function CarDetailPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="lg:col-span-2">
           <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-sm sticky top-4">
             <div className="flex justify-between items-start mb-4">
@@ -275,7 +281,7 @@ export default function CarDetailPage() {
               </div>
               <span className="text-2xl font-bold text-primary">{formatPrice(car.price)}</span>
             </div>
-            
+
             <div className="border-t border-b border-neutral-200 py-4 my-4">
               <h4 className="font-medium text-neutral-800 mb-2">Seller Information</h4>
               <div className="flex items-center">
@@ -290,7 +296,7 @@ export default function CarDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <WhatsAppButton 
                 phoneNumber={car.sellerPhone} 
@@ -298,7 +304,7 @@ export default function CarDetailPage() {
                 size="large" 
                 className="w-full" 
               />
-              
+
               <a 
                 href={`tel:${car.sellerPhone}`} 
                 className="block w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-md font-medium text-center flex justify-center items-center"
@@ -306,10 +312,19 @@ export default function CarDetailPage() {
                 <Phone className="text-xl mr-2 h-5 w-5" />
                 Call Seller
               </a>
-              
+
               <Button 
                 variant="outline" 
-                className="w-full"
+                className="flex items-center"
+                onClick={() => {
+                  toggleFavorite(car.id);
+                  toast({
+                    title: isFavorite(car.id) ? "Removed from favorites" : "Added to favorites",
+                    description: isFavorite(car.id) 
+                      ? `${car.year} ${car.make} ${car.model} removed from favorites`
+                      : `${car.year} ${car.make} ${car.model} added to favorites`
+                  });
+                }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -317,7 +332,7 @@ export default function CarDetailPage() {
                 Save to Favorites
               </Button>
             </div>
-            
+
             {/* Inquiry Form */}
             <div className="mt-6 pt-6 border-t border-neutral-200">
               <h4 className="font-medium text-neutral-800 mb-4">Send a Message</h4>
