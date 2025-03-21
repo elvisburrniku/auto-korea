@@ -28,7 +28,7 @@ export default function CarComparison() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Get all cars for selection
-  const { data: allCars = [], isLoading } = useQuery({
+  const { data: allCars = [], isLoading } = useQuery<Car[]>({
     queryKey: ['/api/cars'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
   });
