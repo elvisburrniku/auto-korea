@@ -4,7 +4,14 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -16,7 +23,7 @@ export default function AdminLoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!username || !password) {
       toast({
         title: "Error",
@@ -25,15 +32,18 @@ export default function AdminLoginPage() {
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
-      const response = await apiRequest('POST', '/api/auth/login', { username, password });
-      
+      const response = await apiRequest("POST", "/api/auth/login", {
+        username,
+        password,
+      });
+
       // Fetch session to confirm login
-      const session = await apiRequest('GET', '/api/auth/session');
-      
+      const session = await apiRequest("GET", "/api/auth/session");
+      console.log(session);
       if (session?.isAuthenticated && session?.user?.isAdmin) {
         toast({
           title: "Success",
@@ -64,7 +74,9 @@ export default function AdminLoginPage() {
         <div className="max-w-md mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
+              <CardTitle className="text-2xl text-center">
+                Admin Login
+              </CardTitle>
               <CardDescription className="text-center">
                 Please login to access the admin panel
               </CardDescription>
@@ -95,11 +107,7 @@ export default function AdminLoginPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isLoading}
-                >
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </CardFooter>
