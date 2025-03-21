@@ -22,11 +22,17 @@ export default function AdminPage() {
   // Check if user is authenticated and is admin
   const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ['session'],
-    queryFn: () => apiRequest('GET', '/api/auth/session'),
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/auth/session');
+      const data = await response.json();
+      console.log("Admin session check:", data);
+      return data;
+    }
   });
 
   useEffect(() => {
     if (!isSessionLoading && (!session?.isAuthenticated || !session?.user?.isAdmin)) {
+      console.log("Not authenticated or not admin, redirecting to login");
       navigate("/admin-login");
     }
   }, [session, isSessionLoading, navigate]);
@@ -43,7 +49,9 @@ export default function AdminPage() {
   const { data: cars, isLoading } = useQuery({
     queryKey: ['/api/cars'],
     queryFn: async () => {
-      const data = await apiRequest('GET', '/api/cars');
+      const response = await apiRequest('GET', '/api/cars');
+      const data = await response.json();
+      console.log("Cars data:", data);
       return data;
     }
   });

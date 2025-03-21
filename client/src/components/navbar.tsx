@@ -16,10 +16,13 @@ export default function Navbar() {
     const checkSession = async () => {
       try {
         const response = await apiRequest('GET', '/api/auth/session');
-        setIsAuthenticated(response.isAuthenticated);
+        const sessionData = await response.json();
+        console.log("Session check:", sessionData);
         
-        if (response.isAuthenticated && response.user) {
-          setUser({ id: response.user.id });
+        setIsAuthenticated(sessionData.isAuthenticated);
+        
+        if (sessionData.isAuthenticated && sessionData.user) {
+          setUser({ id: sessionData.user.id });
         } else {
           setUser({ id: 'guest-user' });
         }

@@ -36,18 +36,25 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await apiRequest("POST", "/api/auth/login", {
+      // First make the login request
+      const loginResponse = await apiRequest("POST", "/api/auth/login", {
         username,
         password,
       });
+      
+      // Parse the JSON response
+      const loginData = await loginResponse.json();
+      console.log("Login response:", loginData);
 
       // Fetch session to confirm login
-      const session = await apiRequest("GET", "/api/auth/session");
-      console.log(session);
-      if (session?.isAuthenticated && session?.user?.isAdmin) {
+      const sessionResponse = await apiRequest("GET", "/api/auth/session");
+      const sessionData = await sessionResponse.json();
+      console.log("Session data:", sessionData);
+      
+      if (sessionData.isAuthenticated && sessionData.user && sessionData.user.isAdmin) {
         toast({
           title: "Success",
-          description: "Logged in successfully",
+          description: "Logged in successfully as admin",
         });
         navigate("/admin");
       } else {
@@ -58,6 +65,7 @@ export default function AdminLoginPage() {
         });
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast({
         title: "Error",
         description: "Invalid username or password",
