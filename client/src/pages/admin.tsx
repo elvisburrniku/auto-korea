@@ -5,13 +5,15 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Trash2, Plus, LogOut } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Pencil, Trash2, Plus, LogOut, ExternalLink, Mail, Phone } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import AdminCarForm from "@/components/admin-car-form";
-import type { Car } from "@shared/schema";
+import type { Car, ContactMessage } from "@shared/schema";
 
 export default function AdminPage() {
   const [, navigate] = useLocation();
@@ -38,6 +40,19 @@ export default function AdminPage() {
       const response = await apiRequest('GET', '/api/cars');
       const data = await response.json();
       console.log("Cars data:", data);
+      return data;
+    },
+    // Only fetch if we're authenticated and admin
+    enabled: !!(session?.isAuthenticated && session?.user?.isAdmin)
+  });
+
+  // Get all contact messages
+  const { data: contactMessages, isLoading: isLoadingMessages } = useQuery({
+    queryKey: ['/api/contact'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/contact');
+      const data = await response.json();
+      console.log("Contact messages data:", data);
       return data;
     },
     // Only fetch if we're authenticated and admin
@@ -259,7 +274,81 @@ export default function AdminPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Inquiry management feature coming soon...</p>
+                {isLoadingMessages ? (
+                  <p>Loading inquiries...</p>
+                ) : contactMessages && contactMessages.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Car</TableHead>
+                          <TableHead>Subject</TableHead>
+                          <TableHead>Contact</TableHead>
+                          <TableHead>Message</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {contactMessages.map((message: ContactMessage) => {
+                          // Find corresponding car
+                          const car = cars?.find(c => c.id === message.carId);
+                          return (
+                            <TableRow key={message.id}>
+                              <TableCell className="whitespace-nowrap">
+                                {new Date(message.createdAt).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell>{message.name}</TableCell>
+                              <TableCell>
+                                {car ? (
+                                  <span className="whitespace-nowrap">
+                                    {car.make} {car.model} ({car.year})
+                                    <a href={`/car-detail/${car.id}`} target="_blank" className="ml-1 inline-block">
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </span>
+                                ) : (
+                                  <Badge variant="outline">Car #{message.carId}</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>{message.subject || 'N/A'}</TableCell>
+                              <TableCell>
+                                <div className="flex flex-col space-y-1">
+                                  <a 
+                                    href={`mailto:${message.email}`} 
+                                    className="flex items-center hover:underline"
+                                  >
+                                    <Mail className="h-3 w-3 mr-1" />
+                                    {message.email}
+                                  </a>
+                                  {message.phone && (
+                                    <a 
+                                      href={`tel:${message.phone}`} 
+                                      className="flex items-center hover:underline"
+                                    >
+                                      <Phone className="h-3 w-3 mr-1" />
+                                      {message.phone}
+                                    </a>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="max-w-xs truncate">
+                                  {message.message}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-muted-foreground">No inquiries found</p>
+                    <p className="text-sm mt-2">Customer inquiries will appear here when they contact you about a car</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

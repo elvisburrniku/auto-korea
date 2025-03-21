@@ -398,6 +398,13 @@ export class MemStorage implements IStorage {
       );
   }
 
+  async getAllContactMessages(): Promise<ContactMessage[]> {
+    return Array.from(this.contactMessages.values())
+      .sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
   async sendEmail(options: { to: string, subject: string, text: string }): Promise<void> {
     try {
       const SibApiV3Sdk = require('sib-api-v3-sdk');

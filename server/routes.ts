@@ -446,6 +446,17 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
     }
   });
 
+  // Get all contact messages - Admin only
+  app.get(`${apiPrefix}/contact`, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const messages = await storage.getAllContactMessages();
+      res.json(messages);
+    } catch (error) {
+      console.error('Error fetching all contact messages:', error);
+      res.status(500).json({ message: 'Failed to fetch contact messages' });
+    }
+  });
+
   // Wishlist routes
   app.post(`${apiPrefix}/wishlists`, async (req: Request, res: Response) => {
     try {
