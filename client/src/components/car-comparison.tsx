@@ -76,7 +76,7 @@ export default function CarComparison() {
       if (advancedFilter.transmission) params.append('transmission', advancedFilter.transmission);
       if (advancedFilter.fuelType) params.append('fuelType', advancedFilter.fuelType);
       
-      return fetch(`/api/cars/filter?${params.toString()}`).then(r => r.json());
+      return apiRequest('GET', `/api/cars/filter?${params.toString()}`);
     },
     // Only run the query if at least one filter is applied
     enabled: Object.values(advancedFilter).some(v => !!v),
