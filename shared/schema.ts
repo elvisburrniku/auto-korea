@@ -89,6 +89,24 @@ export type Car = typeof cars.$inferSelect;
 export type InsertCar = z.infer<typeof insertCarSchema>;
 export type CarFilter = z.infer<typeof carFilterSchema>;
 
+// Wishlist Schema
+export const wishlists = pgTable("wishlists", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id"),
+  shareId: text("share_id").notNull().unique(),
+  name: text("name").notNull(),
+  cars: text("cars").array(),
+  createdAt: timestamp("created_at", { mode: 'date' }).defaultNow()
+});
+
+export const insertWishlistSchema = createInsertSchema(wishlists).omit({
+  id: true,
+  createdAt: true
+});
+
+export type Wishlist = typeof wishlists.$inferSelect;
+export type InsertWishlist = z.infer<typeof insertWishlistSchema>;
+
 // Contact messages for inquiries
 export const contactMessages = pgTable("contact_messages", {
   id: serial("id").primaryKey(),

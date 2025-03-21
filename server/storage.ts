@@ -1,4 +1,4 @@
-import { Car, InsertCar, CarFilter, ContactMessage, InsertContactMessage, User, InsertUser } from "@shared/schema";
+import { Car, InsertCar, CarFilter, ContactMessage, InsertContactMessage, User, InsertUser, Wishlist, InsertWishlist } from "@shared/schema";
 
 export interface IStorage {
   // User operations
@@ -18,23 +18,35 @@ export interface IStorage {
   // Contact message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
   getContactMessagesForCar(carId: number): Promise<ContactMessage[]>;
+  
+  // Wishlist operations
+  createWishlist(wishlist: InsertWishlist): Promise<Wishlist>;
+  getWishlistById(id: number): Promise<Wishlist | undefined>;
+  getWishlistByShareId(shareId: string): Promise<Wishlist | undefined>;
+  getUserWishlists(userId: string): Promise<Wishlist[]>;
+  updateWishlist(id: number, wishlist: Partial<InsertWishlist>): Promise<Wishlist | undefined>;
+  deleteWishlist(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private cars: Map<number, Car>;
   private contactMessages: Map<number, ContactMessage>;
+  private wishlists: Map<number, Wishlist>;
   private userIdCounter: number;
   private carIdCounter: number;
   private messageIdCounter: number;
+  private wishlistIdCounter: number;
 
   constructor() {
     this.users = new Map();
     this.cars = new Map();
     this.contactMessages = new Map();
+    this.wishlists = new Map();
     this.userIdCounter = 1;
     this.carIdCounter = 1;
     this.messageIdCounter = 1;
+    this.wishlistIdCounter = 1;
 
     // Initialize with some demo cars for testing
     this.initDemoCars();
@@ -387,6 +399,54 @@ export class MemStorage implements IStorage {
   async sendEmail(options: { to: string, subject: string, text: string }): Promise<void> {
     // For now, just log the email content since we don't have an email service
     console.log('Email would be sent:', options);
+  }
+
+  // Wishlist methods
+  async createWishlist(wishlist: InsertWishlist): Promise<Wishlist> {
+    const id = this.wishlistIdCounter++;
+    const timestamp = new Date();
+    
+    // Ensure required fields have default values if not provided
+    const cars = wishlist.cars ?? null;
+    const userId = wishlist.userId ?? null;
+    
+    const newWishlist: Wishlist = { 
+      ...wishlist,
+      id, 
+      createdAt: timestamp,
+      cars,
+      userId
+    };
+    
+    this.wishlists.set(id, newWishlist);
+    return newWishlist;
+  }
+
+  async getWishlistById(id: number): Promise<Wishlist | undefined> {
+    return this.wishlists.get(id);
+  }
+
+  async getWishlistByShareId(shareId: string): Promise<Wishlist | undefined> {
+    return Array.from(this.wishlists.values()).find(wishlist => wishlist.shareId === shareId);
+  }
+
+  async getUserWishlists(userId: string): Promise<Wishlist[]> {
+    return Array.from(this.wishlists.values())
+      .filter(wishlist => wishlist.userId === userId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async updateWishlist(id: number, wishlist: Partial<InsertWishlist>): Promise<Wishlist | undefined> {
+    const existingWishlist = this.wishlists.get(id);
+    if (!existingWishlist) return undefined;
+
+    const updatedWishlist = { ...existingWishlist, ...wishlist };
+    this.wishlists.set(id, updatedWishlist);
+    return updatedWishlist;
+  }
+
+  async deleteWishlist(id: number): Promise<boolean> {
+    return this.wishlists.delete(id);
   }
 }
 

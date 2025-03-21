@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { carFilterSchema, carValidationSchema, insertContactSchema, loginSchema } from "@shared/schema";
+import { carFilterSchema, carValidationSchema, insertContactSchema, insertWishlistSchema, loginSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 // Middleware to check if the user is authenticated
@@ -303,12 +303,132 @@ ${validationResult.data.carId ? `Car ID: ${validationResult.data.carId}` : ''}
     }
   });
 
+  // Wishlist routes
+  app.post(`${apiPrefix}/wishlists`, async (req: Request, res: Response) => {
+    try {
+      const wishlistData = req.body;
+      
+      // Create a unique share ID if not provided
+      if (!wishlistData.shareId) {
+        wishlistData.shareId = `share_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+      
+      // Validate data using Zod
+      const validationResult = insertWishlistSchema.safeParse(wishlistData);
+      
+      if (!validationResult.success) {
+        const errorMessage = fromZodError(validationResult.error).message;
+        return res.status(400).json({ message: errorMessage });
+      }
+      
+      // Create wishlist in storage
+      const newWishlist = await storage.createWishlist(validationResult.data);
+      
+      // Return the created wishlist
+      res.status(201).json(newWishlist);
+    } catch (error) {
+      console.error('Error creating wishlist:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get(`${apiPrefix}/wishlists/user/:userId`, async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.userId;
+      const wishlists = await storage.getUserWishlists(userId);
+      res.status(200).json(wishlists);
+    } catch (error) {
+      console.error('Error fetching user wishlists:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get(`${apiPrefix}/wishlists/:id`, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid wishlist ID' });
+      }
+      
+      const wishlist = await storage.getWishlistById(id);
+      
+      if (wishlist) {
+        res.status(200).json(wishlist);
+      } else {
+        res.status(404).json({ message: "Wishlist not found" });
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get(`${apiPrefix}/wishlists/share/:shareId`, async (req: Request, res: Response) => {
+    try {
+      const shareId = req.params.shareId;
+      const wishlist = await storage.getWishlistByShareId(shareId);
+      
+      if (wishlist) {
+        res.status(200).json(wishlist);
+      } else {
+        res.status(404).json({ message: "Shared wishlist not found" });
+      }
+    } catch (error) {
+      console.error('Error fetching shared wishlist:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.patch(`${apiPrefix}/wishlists/:id`, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid wishlist ID' });
+      }
+      
+      const updateData = req.body;
+      
+      // Update wishlist in storage
+      const updatedWishlist = await storage.updateWishlist(id, updateData);
+      
+      if (updatedWishlist) {
+        res.status(200).json(updatedWishlist);
+      } else {
+        res.status(404).json({ message: "Wishlist not found" });
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete(`${apiPrefix}/wishlists/:id`, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid wishlist ID' });
+      }
+      
+      const success = await storage.deleteWishlist(id);
+      
+      if (success) {
+        res.status(200).json({ message: "Wishlist deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Wishlist not found" });
+      }
+    } catch (error) {
+      console.error('Error deleting wishlist:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Debug endpoint to view database state (admin only)
   app.get("/api/debug/db", isAdmin, (req, res) => {
     const dbState = {
       users: Array.from(storage.users.values()),
       cars: Array.from(storage.cars.values()),
-      contactMessages: Array.from(storage.contactMessages.values())
+      contactMessages: Array.from(storage.contactMessages.values()),
+      wishlists: Array.from(storage.wishlists.values())
     };
     res.json(dbState);
   });
