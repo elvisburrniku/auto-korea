@@ -36,14 +36,24 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await apiRequest("POST", "/api/auth/login", {
-        username,
-        password,
+      // Use the correct apiRequest format
+      await apiRequest({
+        url: '/api/auth/login',
+        method: 'POST',
+        data: {
+          username,
+          password,
+        }
       });
 
       // Fetch session to confirm login
-      const session = await apiRequest("GET", "/api/auth/session");
+      const session = await apiRequest({
+        url: '/api/auth/session',
+        method: 'GET'
+      });
+      
       console.log(session);
+      
       if (session?.isAuthenticated && session?.user?.isAdmin) {
         toast({
           title: "Success",
@@ -58,6 +68,7 @@ export default function AdminLoginPage() {
         });
       }
     } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: "Error",
         description: "Invalid username or password",
