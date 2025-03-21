@@ -8,6 +8,7 @@ import CarFilterComponent from "@/components/car-filter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function BrowseCarsPage() {
   const [location] = useLocation();
@@ -53,11 +54,7 @@ export default function BrowseCarsPage() {
   const { data: cars, isLoading, error } = useQuery<Car[]>({
     queryKey: ['/api/cars/filter', searchParams.toString()],
     queryFn: async () => {
-      const response = await fetch(`/api/cars/filter?${searchParams.toString()}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
+      return apiRequest('GET', `/api/cars/filter?${searchParams.toString()}`);
     },
   });
   
