@@ -398,8 +398,39 @@ export class MemStorage implements IStorage {
   }
 
   async sendEmail(options: { to: string, subject: string, text: string }): Promise<void> {
-    // For now, just log the email content since we don't have an email service
-    console.log('Email would be sent:', options);
+    try {
+      const SibApiV3Sdk = require('sib-api-v3-sdk');
+      const defaultClient = SibApiV3Sdk.ApiClient.instance;
+      
+      // Configure API key authorization
+      const apiKey = defaultClient.authentications['api-key'];
+      apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+      
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sender = {
+        email: "notification@automarket.com",
+        name: "AutoMarket Notifications",
+      };
+      
+      const receivers = [
+        {
+          email: options.to,
+        },
+      ];
+      
+      const sendSmtpEmail = {
+        sender,
+        to: receivers,
+        subject: options.subject,
+        textContent: options.text,
+      };
+      
+      const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log('Email sent successfully:', result);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
   }
 
   // Wishlist methods
