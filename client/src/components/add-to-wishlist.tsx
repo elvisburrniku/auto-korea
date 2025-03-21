@@ -25,7 +25,9 @@ export default function AddToWishlist({ car, userId, variant = "default", classN
       const checkSession = async () => {
         try {
           const response = await apiRequest('GET', '/api/auth/session');
-          setIsLoggedIn(response.isAuthenticated);
+          const data = await response.json();
+          console.log("Session data:", data);
+          setIsLoggedIn(data.isAuthenticated);
         } catch (error) {
           console.error("Error checking session:", error);
         }
