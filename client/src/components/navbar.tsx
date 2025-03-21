@@ -15,14 +15,18 @@ export default function Navbar() {
     // Check if the user is authenticated
     const checkSession = async () => {
       try {
-        // We'll implement proper authentication later if needed
-        // For now, let's just use a temporary ID for wishlists
-        setIsAuthenticated(true);
-        setUser({ id: 'guest-user' });
+        const response = await apiRequest('GET', '/api/auth/session');
+        setIsAuthenticated(response.isAuthenticated);
+        
+        if (response.isAuthenticated && response.user) {
+          setUser({ id: response.user.id });
+        } else {
+          setUser({ id: 'guest-user' });
+        }
       } catch (error) {
         console.error("Error checking session:", error);
         setIsAuthenticated(false);
-        setUser(null);
+        setUser({ id: 'guest-user' });
       }
     };
 
@@ -73,14 +77,36 @@ export default function Navbar() {
               <Heart className="h-5 w-5 mr-1" />
               <span>Wishlists</span>
             </Link>
-            <Link href="/admin-login">
-              <Button variant="ghost" className="px-4 py-2 text-primary">
-                Admin Login
+            
+            {isAuthenticated ? (
+              <Button 
+                variant="ghost" 
+                className="px-4 py-2 text-primary"
+                onClick={async () => {
+                  try {
+                    await apiRequest('POST', '/api/auth/logout');
+                    setIsAuthenticated(false);
+                    setUser({ id: 'guest-user' });
+                    window.location.href = '/';
+                  } catch (error) {
+                    console.error("Error logging out:", error);
+                  }
+                }}
+              >
+                Logout
               </Button>
-            </Link>
-            <Link href="/register">
-              <Button>Register</Button>
-            </Link>
+            ) : (
+              <>
+                <Link href="/admin-login">
+                  <Button variant="ghost" className="px-4 py-2 text-primary">
+                    Admin Login
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Register</Button>
+                </Link>
+              </>
+            )}
           </div>
           <div className="md:hidden">
             <button
@@ -124,16 +150,38 @@ export default function Navbar() {
               <Heart className="h-5 w-5 mr-2" />
               Wishlists
             </Link>
-            <Link href="/admin-login" className="block w-full">
-              <Button variant="outline" className="w-full px-4 py-2 text-center">
-                Admin Login
+            {isAuthenticated ? (
+              <Button 
+                variant="outline" 
+                className="w-full px-4 py-2 text-center"
+                onClick={async () => {
+                  try {
+                    await apiRequest('POST', '/api/auth/logout');
+                    setIsAuthenticated(false);
+                    setUser({ id: 'guest-user' });
+                    setMobileMenuOpen(false);
+                    window.location.href = '/';
+                  } catch (error) {
+                    console.error("Error logging out:", error);
+                  }
+                }}
+              >
+                Logout
               </Button>
-            </Link>
-            <Link href="/register" className="block w-full">
-              <Button className="w-full mt-2 px-4 py-2 text-center">
-                Register
-              </Button>
-            </Link>
+            ) : (
+              <>
+                <Link href="/admin-login" className="block w-full">
+                  <Button variant="outline" className="w-full px-4 py-2 text-center">
+                    Admin Login
+                  </Button>
+                </Link>
+                <Link href="/register" className="block w-full">
+                  <Button className="w-full mt-2 px-4 py-2 text-center">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
