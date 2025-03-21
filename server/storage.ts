@@ -383,6 +383,11 @@ export class MemStorage implements IStorage {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
   }
+
+  async sendEmail(options: { to: string, subject: string, text: string }): Promise<void> {
+    // For now, just log the email content since we don't have an email service
+    console.log('Email would be sent:', options);
+  }
 }
 
 export const storage = new MemStorage();
