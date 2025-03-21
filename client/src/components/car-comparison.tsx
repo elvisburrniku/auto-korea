@@ -27,23 +27,107 @@ export default function CarComparison() {
   const [selectedCars, setSelectedCars] = useState<Car[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // State for advanced filters
+  const [advancedFilter, setAdvancedFilter] = useState<{
+    make: string;
+    minYear: string;
+    maxYear: string;
+    minPrice: string;
+    maxPrice: string;
+    transmission: string;
+    fuelType: string;
+  }>({
+    make: '',
+    minYear: '',
+    maxYear: '',
+    minPrice: '',
+    maxPrice: '',
+    transmission: '',
+    fuelType: '',
+  });
+  
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  
   // Get all cars for selection
   const { data: allCars = [], isLoading } = useQuery<Car[]>({
     queryKey: ['/api/cars'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
   });
 
+  // Get filtered cars when advanced filters are applied
+  const { data: filteredApiCars = [], isLoading: isFilterLoading } = useQuery<Car[]>({
+    queryKey: ['/api/cars/filter', 
+      advancedFilter.make,
+      advancedFilter.minYear,
+      advancedFilter.maxYear,
+      advancedFilter.minPrice,
+      advancedFilter.maxPrice,
+      advancedFilter.transmission,
+      advancedFilter.fuelType
+    ],
+    queryFn: () => {
+      // Build filter query parameters
+      const params = new URLSearchParams();
+      if (advancedFilter.make) params.append('make', advancedFilter.make);
+      if (advancedFilter.minYear) params.append('minYear', advancedFilter.minYear);
+      if (advancedFilter.maxYear) params.append('maxYear', advancedFilter.maxYear);
+      if (advancedFilter.minPrice) params.append('minPrice', advancedFilter.minPrice);
+      if (advancedFilter.maxPrice) params.append('maxPrice', advancedFilter.maxPrice);
+      if (advancedFilter.transmission) params.append('transmission', advancedFilter.transmission);
+      if (advancedFilter.fuelType) params.append('fuelType', advancedFilter.fuelType);
+      
+      return fetch(`/api/cars/filter?${params.toString()}`).then(r => r.json());
+    },
+    // Only run the query if at least one filter is applied
+    enabled: Object.values(advancedFilter).some(v => !!v),
+  });
+
   // Get favorites from local storage
   const { favorites, toggleFavorite } = useFavorites();
 
+  // Base cars to filter (either all cars or filtered cars from API)
+  const carsToFilter = Object.values(advancedFilter).some(v => !!v)
+    ? filteredApiCars
+    : allCars;
+
   // Filter cars by search term
   const filteredCars = searchTerm
-    ? allCars.filter((car: Car) =>
+    ? carsToFilter.filter((car: Car) =>
         `${car.make} ${car.model} ${car.year}`
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
       )
-    : allCars;
+    : carsToFilter;
+  
+  // Get unique makes for filter dropdown
+  const makesSet = new Set<string>();
+  allCars.forEach(car => makesSet.add(car.make));
+  const uniqueMakes = Array.from(makesSet).sort();
+  
+  // Get min/max years for filter dropdowns
+  const years = allCars.map(car => car.year).sort((a, b) => a - b);
+  const minYear = years.length > 0 ? Math.min(...years) : new Date().getFullYear() - 10;
+  const maxYear = years.length > 0 ? Math.max(...years) : new Date().getFullYear();
+  
+  // Available years for dropdown
+  const yearOptions = Array.from(
+    { length: maxYear - minYear + 1 },
+    (_, i) => minYear + i
+  ).reverse();
+  
+  // Reset all filters
+  const resetFilters = () => {
+    setAdvancedFilter({
+      make: '',
+      minYear: '',
+      maxYear: '',
+      minPrice: '',
+      maxPrice: '',
+      transmission: '',
+      fuelType: '',
+    });
+    setSearchTerm('');
+  };
 
   // Add a car to comparison
   const addToComparison = (car: Car) => {
@@ -260,13 +344,142 @@ export default function CarComparison() {
       <h3 className="text-lg font-semibold mb-2">Choose Cars to Compare</h3>
       
       <div className="relative mb-4">
-        <input
-          type="text"
-          placeholder="Search by make, model, or year..."
-          className="w-full p-2 border rounded-lg"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="flex items-center mb-2">
+          <input
+            type="text"
+            placeholder="Search by make, model, or year..."
+            className="w-full p-2 border rounded-lg"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Button 
+            className="ml-2" 
+            variant="outline" 
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+          >
+            {showAdvancedFilters ? 'Hide Filters' : 'Advanced Filters'}
+          </Button>
+        </div>
+        
+        {showAdvancedFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-muted p-4 rounded-lg mb-4">
+            {/* Make filter */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Make</label>
+              <select 
+                className="w-full p-2 border rounded-lg" 
+                value={advancedFilter.make}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, make: e.target.value})}
+              >
+                <option value="">Any Make</option>
+                {uniqueMakes.map(make => (
+                  <option key={make} value={make}>{make}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Year Range */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Min Year</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.minYear}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, minYear: e.target.value})}
+              >
+                <option value="">Any Year</option>
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Max Year</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.maxYear}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, maxYear: e.target.value})}
+              >
+                <option value="">Any Year</option>
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Price Range */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Min Price</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.minPrice}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, minPrice: e.target.value})}
+              >
+                <option value="">Any Price</option>
+                <option value="10000">$10,000</option>
+                <option value="20000">$20,000</option>
+                <option value="30000">$30,000</option>
+                <option value="40000">$40,000</option>
+                <option value="50000">$50,000</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Max Price</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.maxPrice}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, maxPrice: e.target.value})}
+              >
+                <option value="">Any Price</option>
+                <option value="20000">$20,000</option>
+                <option value="30000">$30,000</option>
+                <option value="40000">$40,000</option>
+                <option value="50000">$50,000</option>
+                <option value="75000">$75,000</option>
+                <option value="100000">$100,000+</option>
+              </select>
+            </div>
+            
+            {/* Transmission */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Transmission</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.transmission}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, transmission: e.target.value})}
+              >
+                <option value="">Any Transmission</option>
+                <option value="Automatic">Automatic</option>
+                <option value="Manual">Manual</option>
+                <option value="CVT">CVT</option>
+              </select>
+            </div>
+            
+            {/* Fuel Type */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Fuel Type</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={advancedFilter.fuelType}
+                onChange={(e) => setAdvancedFilter({...advancedFilter, fuelType: e.target.value})}
+              >
+                <option value="">Any Fuel Type</option>
+                <option value="Gasoline">Gasoline</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Electric">Electric</option>
+              </select>
+            </div>
+            
+            {/* Reset button */}
+            <div className="md:col-span-3 flex justify-end mt-2">
+              <Button variant="outline" className="mr-2" onClick={resetFilters}>
+                Reset Filters
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
