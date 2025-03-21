@@ -57,7 +57,7 @@ export default function CarFilterComponent({
 
   const [, setLocation] = useLocation();
   const [searchParams, setSearchParams] = useState(new URLSearchParams(window.location.search));
-  
+
   const [filters, setFilters] = useState<CarFilter>({
     make: initialFilters?.make || "",
     model: initialFilters?.model || "",
@@ -72,7 +72,7 @@ export default function CarFilterComponent({
 
   // Extract unique makes and models from data
   const uniqueMakes = allCars ? Array.from(new Set(allCars.map(car => car.make))).sort() : [];
-  
+
   // Get models for the selected make
   const availableModels = allCars && filters.make
     ? Array.from(new Set(allCars.filter(car => car.make === filters.make).map(car => car.model))).sort()
@@ -87,7 +87,7 @@ export default function CarFilterComponent({
   const fuelTypes = allCars 
     ? Array.from(new Set(allCars.map(car => car.fuelType))).sort() 
     : ["Gasoline", "Diesel", "Electric", "Hybrid"];
-  
+
   const transmissions = allCars 
     ? Array.from(new Set(allCars.map(car => car.transmission))).sort() 
     : ["Automatic", "Manual"];
@@ -123,9 +123,9 @@ export default function CarFilterComponent({
     if (onFilterChange) {
       onFilterChange(filters);
     }
-    
+
     const params = new URLSearchParams();
-    
+
     if (filters.make) params.set('make', filters.make);
     if (filters.model) params.set('model', filters.model);
     if (filters.minPrice !== undefined) params.set('minPrice', filters.minPrice.toString());
@@ -135,7 +135,7 @@ export default function CarFilterComponent({
     if (filters.fuelType) params.set('fuelType', filters.fuelType);
     if (filters.transmission) params.set('transmission', filters.transmission);
     if (filters.search) params.set('search', filters.search);
-    
+
     setSearchParams(params);
   }, [filters, onFilterChange]);
 
@@ -177,7 +177,7 @@ export default function CarFilterComponent({
                   className="mt-1"
                 />
               </div>
-              
+
               {/* Make and Model */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -199,7 +199,7 @@ export default function CarFilterComponent({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="model">Model</Label>
                   <Select
@@ -208,7 +208,7 @@ export default function CarFilterComponent({
                     disabled={!filters.make}
                   >
                     <SelectTrigger id="model" className="mt-1">
-                      <SelectValue placeholder="Any Model" />
+                      <SelectValue placeholder={filters.make ? "Select Model" : "Select Make First"} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="any">Any Model</SelectItem>
@@ -221,7 +221,7 @@ export default function CarFilterComponent({
                   </Select>
                 </div>
               </div>
-              
+
               {/* Price Range */}
               <div>
                 <Label>Price Range: {selectedPriceRange}</Label>
@@ -253,7 +253,7 @@ export default function CarFilterComponent({
                   </Select>
                 </div>
               </div>
-              
+
               {/* Min Year */}
               <div>
                 <Label htmlFor="minYear">Min Year</Label>
@@ -283,7 +283,7 @@ export default function CarFilterComponent({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Max Year */}
               <div>
                 <Label htmlFor="maxYear">Max Year</Label>
@@ -313,7 +313,7 @@ export default function CarFilterComponent({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Fuel Type */}
               <div>
                 <Label htmlFor="fuelType">Fuel Type</Label>
@@ -334,7 +334,7 @@ export default function CarFilterComponent({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Transmission */}
               <div>
                 <Label htmlFor="transmission">Transmission</Label>
@@ -355,7 +355,7 @@ export default function CarFilterComponent({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Filter Buttons */}
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button onClick={applyFilters} className="flex-1">
