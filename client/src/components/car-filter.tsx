@@ -141,7 +141,14 @@ export default function CarFilterComponent({
 
   // Apply filters
   const applyFilters = () => {
-    setLocation(`/browse-cars?${searchParams.toString()}`);
+    // Create new URL with the current filters
+    const newUrl = `/browse-cars?${searchParams.toString()}`;
+    
+    // Update the browser URL without reloading the page
+    window.history.pushState({}, '', newUrl);
+    
+    // Force a update of the URL parameters to trigger a new query
+    setSearchParams(new URLSearchParams(searchParams.toString()));
   };
 
   // Reset filters

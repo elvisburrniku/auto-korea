@@ -51,7 +51,14 @@ export default function BrowseCarsPage() {
   
   // Fetch filtered cars
   const { data: cars, isLoading, error } = useQuery<Car[]>({
-    queryKey: [`/api/cars/filter?${buildQueryString(initialFilters as CarFilter)}`],
+    queryKey: ['/api/cars/filter', searchParams.toString()],
+    queryFn: async () => {
+      const response = await fetch(`/api/cars/filter?${searchParams.toString()}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
   });
   
   // Handle quick search submit
@@ -65,14 +72,15 @@ export default function BrowseCarsPage() {
       currentParams.delete("search");
     }
     
+    // Update URL without page reload
     window.history.pushState(
       {},
       "",
       `${window.location.pathname}?${currentParams.toString()}`
     );
     
-    // Refresh the page to trigger a new query
-    window.location.reload();
+    // Update state to trigger query refresh
+    setSearchParams(currentParams);
   };
   
   const getFilterSummary = () => {
@@ -196,8 +204,14 @@ export default function BrowseCarsPage() {
                   <Button
                     variant="outline"
                     onClick={() => {
+                      // Update URL without the parameters
                       window.history.pushState({}, "", "/browse-cars");
-                      window.location.reload();
+                      
+                      // Reset search term
+                      setSearchTerm("");
+                      
+                      // Update search params to empty to trigger a new query
+                      setSearchParams(new URLSearchParams());
                     }}
                   >
                     Clear All Filters
