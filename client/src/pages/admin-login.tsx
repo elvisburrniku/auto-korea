@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
     try {
       const response = await apiRequest('POST', '/api/auth/login', { username, password });
       
-      if (response.isAdmin) {
+      if (response && response.isAdmin) {
         toast({
           title: "Success",
           description: "Logged in successfully",
