@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import CarGallery from "@/components/car-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import InquiryForm from "@/components/inquiry-form";
+import AddToWishlist from "@/components/add-to-wishlist";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useFavorites } from '../lib/useFavorites';
@@ -325,6 +326,8 @@ export default function CarDetailPage() {
                 </svg>
                 Save to Favorites
               </Button>
+              
+              <AddToWishlist car={car} />
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-200">
