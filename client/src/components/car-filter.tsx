@@ -312,8 +312,8 @@ export default function CarFilterComponent({
               <div>
                 <Label htmlFor="transmission">Transmission</Label>
                 <Select
-                  value={filters.transmission || ""}
-                  onValueChange={(value) => setFilters({ ...filters, transmission: value })}
+                  value={filters.transmission || "any"}
+                  onValueChange={(value) => setFilters({ ...filters, transmission: value === "any" ? "" : value })}
                 >
                   <SelectTrigger id="transmission" className="mt-1">
                     <SelectValue placeholder="Any Transmission" />
