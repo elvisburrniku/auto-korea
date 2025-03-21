@@ -71,8 +71,40 @@ export default function HeroSection() {
     setLocation(`/browse-cars${queryString ? `?${queryString}` : ''}`);
   };
 
-  const carMakes = ["Any Make", "Toyota", "Honda", "Ford", "BMW", "Mercedes"];
-  const carModels = ["Any Model", "Camry", "Civic", "Mustang", "3 Series", "C-Class"];
+  const carMakes = [
+  "Any Make",
+  "Audi",
+  "BMW",
+  "Ford",
+  "Honda",
+  "Hyundai",
+  "Kia",
+  "Lexus",
+  "Mazda",
+  "Mercedes-Benz",
+  "Nissan",
+  "Toyota",
+  "Volkswagen"
+];
+
+const modelsByMake: { [key: string]: string[] } = {
+  "BMW": ["1 Series", "2 Series", "3 Series", "4 Series", "5 Series", "6 Series", "7 Series", "X1", "X3", "X5", "M3", "M4", "M5"],
+  "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "4Runner", "Tacoma", "Tundra", "Prius", "Sienna"],
+  "Honda": ["Civic", "Accord", "CR-V", "Pilot", "HR-V", "Odyssey", "Ridgeline"],
+  "Ford": ["Mustang", "F-150", "Escape", "Explorer", "Edge", "Bronco", "Ranger"],
+  "Mercedes-Benz": ["A-Class", "C-Class", "E-Class", "S-Class", "GLA", "GLC", "GLE", "G-Class"],
+  "Audi": ["A3", "A4", "A5", "A6", "Q3", "Q5", "Q7", "RS", "TT"],
+  "Volkswagen": ["Golf", "Jetta", "Passat", "Tiguan", "Atlas", "ID.4", "Taos"],
+  "Lexus": ["IS", "ES", "LS", "NX", "RX", "GX", "LX"],
+  "Mazda": ["Mazda3", "Mazda6", "CX-3", "CX-5", "CX-9", "MX-5"],
+  "Hyundai": ["Elantra", "Sonata", "Tucson", "Santa Fe", "Kona", "Palisade"],
+  "Kia": ["Forte", "K5", "Sportage", "Sorento", "Telluride", "Soul"],
+  "Nissan": ["Altima", "Maxima", "Sentra", "Rogue", "Murano", "Pathfinder"]
+};
+
+const getModelsForMake = (make: string) => {
+  return make && make !== "Any Make" ? ["Any Model", ...modelsByMake[make]] : ["Any Model"];
+};
   const priceRanges = ["Any Price", "Under $10,000", "$10,000 - $30,000", "$30,000 - $50,000", "Over $50,000"];
   const yearOptions = ["Any Year", "2023", "2022", "2021", "2020", "2019 or older"];
 
@@ -139,7 +171,7 @@ export default function HeroSection() {
                 
                 {/* Model Dropdown */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger asChild disabled={!filters.make || filters.make === "Any Make"}>
                     <Button 
                       variant="outline" 
                       className="w-full px-3 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-md text-left flex justify-between items-center"
@@ -149,7 +181,7 @@ export default function HeroSection() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="start">
-                    {carModels.map(model => (
+                    {getModelsForMake(filters.make).map(model => (
                       <DropdownMenuItem 
                         key={model}
                         onClick={() => setFilters({...filters, model})}
