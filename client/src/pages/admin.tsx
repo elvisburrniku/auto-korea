@@ -21,6 +21,26 @@ export default function AdminPage() {
   const [isAddingCar, setIsAddingCar] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  
+  // Helper function to safely format dates
+  const formatDate = (dateValue: any): string => {
+    if (!dateValue) return 'N/A';
+    try {
+      return new Date(dateValue).toLocaleDateString();
+    } catch (e) {
+      return 'Invalid date';
+    }
+  };
+  
+  // Helper function to safely format time
+  const formatTime = (dateValue: any): string => {
+    if (!dateValue) return '';
+    try {
+      return new Date(dateValue).toLocaleTimeString();
+    } catch (e) {
+      return '';
+    }
+  };
   const queryClient = useQueryClient();
 
   // Check if user is authenticated and is admin
@@ -298,9 +318,7 @@ export default function AdminPage() {
                           return (
                             <TableRow key={message.id}>
                               <TableCell className="whitespace-nowrap">
-                                {message.createdAt && typeof message.createdAt !== 'undefined' && 
-                                  new Date(message.createdAt as string).toLocaleDateString()
-                                }
+                                {formatDate(message.createdAt)}
                               </TableCell>
                               <TableCell>{message.name}</TableCell>
                               <TableCell>
@@ -381,10 +399,10 @@ export default function AdminPage() {
                 <div className="flex flex-col gap-1 mt-2 text-sm">
                   <div className="flex justify-between text-muted-foreground">
                     <span>
-                      {selectedMessage.createdAt && typeof selectedMessage.createdAt !== 'undefined' && (
+                      {formatDate(selectedMessage.createdAt) !== 'N/A' && (
                         <>
-                          {new Date(selectedMessage.createdAt as string).toLocaleDateString()} at {' '}
-                          {new Date(selectedMessage.createdAt as string).toLocaleTimeString()}
+                          {formatDate(selectedMessage.createdAt)} at {' '}
+                          {formatTime(selectedMessage.createdAt)}
                         </>
                       )}
                     </span>
