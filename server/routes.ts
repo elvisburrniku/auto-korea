@@ -244,6 +244,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to fetch car' });
     }
   });
+  
+  // Get similar cars
+  app.get(`${apiPrefix}/cars/:id/similar`, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: 'Invalid car ID' });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 3;
+      const similarCars = await storage.getSimilarCars(id, limit);
+      
+      res.json(similarCars);
+    } catch (error) {
+      console.error('Error fetching similar cars:', error);
+      res.status(500).json({ message: 'Failed to fetch similar cars' });
+    }
+  });
 
   // Create a new car listing - Admin only
   app.post(`${apiPrefix}/cars`, isAdmin, async (req: Request, res: Response) => {

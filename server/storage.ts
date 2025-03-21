@@ -14,6 +14,7 @@ export interface IStorage {
   getFeaturedCars(limit?: number): Promise<Car[]>;
   getRecentCars(limit?: number): Promise<Car[]>;
   filterCars(filter: CarFilter): Promise<Car[]>;
+  getSimilarCars(carId: number, limit?: number): Promise<Car[]>;
 
   // Contact message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
@@ -447,6 +448,68 @@ export class MemStorage implements IStorage {
 
   async deleteWishlist(id: number): Promise<boolean> {
     return this.wishlists.delete(id);
+  }
+
+  async getSimilarCars(carId: number, limit: number = 3): Promise<Car[]> {
+    const car = this.cars.get(carId);
+    if (!car) return [];
+
+    // Define similarity criteria based on the car's attributes
+    const similarCars = Array.from(this.cars.values())
+      .filter(otherCar => otherCar.id !== carId) // Exclude the current car
+      .map(otherCar => {
+        // Calculate a similarity score based on various attributes
+        let score = 0;
+
+        // Same make gets high score
+        if (otherCar.make === car.make) {
+          score += 30;
+        }
+
+        // Same model gets high score
+        if (otherCar.model === car.model) {
+          score += 20;
+        }
+
+        // Similar price range (within 20% of the car's price)
+        const priceDiffPercentage = Math.abs(otherCar.price - car.price) / car.price;
+        if (priceDiffPercentage <= 0.2) {
+          score += 15;
+        }
+
+        // Similar year (within 3 years)
+        const yearDiff = Math.abs(otherCar.year - car.year);
+        if (yearDiff <= 3) {
+          score += 10;
+        }
+
+        // Same fuel type
+        if (otherCar.fuelType === car.fuelType) {
+          score += 10;
+        }
+
+        // Same transmission
+        if (otherCar.transmission === car.transmission) {
+          score += 5;
+        }
+
+        // Same drivetrain
+        if (otherCar.drivetrain === car.drivetrain) {
+          score += 5;
+        }
+
+        // Same body type/segment (if we had this attribute)
+        
+        return {
+          car: otherCar,
+          similarityScore: score
+        };
+      })
+      .sort((a, b) => b.similarityScore - a.similarityScore) // Sort by similarity score (highest first)
+      .slice(0, limit) // Limit the number of similar cars
+      .map(result => result.car); // Extract the car objects
+
+    return similarCars;
   }
 }
 
