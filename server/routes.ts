@@ -25,33 +25,33 @@ const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // API prefix
   const apiPrefix = '/api';
-  
+
   // Authentication routes
-  
+
   // Login route
   app.post(`${apiPrefix}/auth/login`, async (req: Request, res: Response) => {
     try {
       const validationResult = loginSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
         return res.status(400).json({ message: errorMessage });
       }
-      
+
       const { username, password } = validationResult.data;
       const user = await storage.getUserByUsername(username);
-      
+
       if (!user || user.password !== password) {
         return res.status(401).json({ message: 'Invalid username or password' });
       }
-      
+
       // Store user in session
       (req.session as any).user = {
         id: user.id,
         username: user.username,
         isAdmin: user.isAdmin
       };
-      
+
       res.json({ 
         id: user.id,
         username: user.username,
@@ -62,7 +62,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Login failed' });
     }
   });
-  
+
   // Logout route
   app.post(`${apiPrefix}/auth/logout`, (req: Request, res: Response) => {
     req.session.destroy((err) => {
@@ -73,7 +73,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: 'Logged out successfully' });
     });
   });
-  
+
   // Check current session
   app.get(`${apiPrefix}/auth/session`, (req: Request, res: Response) => {
     const user = (req.session as any)?.user;
@@ -101,13 +101,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to fetch cars' });
     }
   });
-  
+
   // Filter cars - Moving this route before the :id route is crucial
   app.get(`${apiPrefix}/cars/filter`, async (req: Request, res: Response) => {
     try {
       // Convert query params to the right types
       const filter: Record<string, any> = {};
-      
+
       if (req.query.make) filter.make = req.query.make as string;
       if (req.query.model) filter.model = req.query.model as string;
       if (req.query.minPrice) filter.minPrice = parseInt(req.query.minPrice as string);
@@ -123,12 +123,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.query.fuelType) filter.fuelType = req.query.fuelType as string;
       if (req.query.transmission) filter.transmission = req.query.transmission as string;
       if (req.query.search) filter.search = req.query.search as string;
-      
+
       console.log('Filter query parameters:', req.query);
       console.log('Constructed filter object:', filter);
-      
+
       const validationResult = carFilterSchema.safeParse(filter);
-      
+
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
         console.error('Filter validation failed:', errorMessage);
@@ -137,17 +137,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const allCars = await storage.getAllCars();
       console.log('Total cars before filtering:', allCars.length);
-      
+
       const filteredCars = await storage.filterCars(validationResult.data);
       console.log('Filtered cars count:', filteredCars.length);
-      
+
       res.json(filteredCars);
     } catch (error) {
       console.error('Error filtering cars:', error);
       res.status(500).json({ message: 'Failed to filter cars' });
     }
   });
-  
+
   // Get featured cars - Moving this route before the :id route as well
   app.get(`${apiPrefix}/cars/featured/list`, async (req: Request, res: Response) => {
     try {
@@ -196,7 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post(`${apiPrefix}/cars`, isAdmin, async (req: Request, res: Response) => {
     try {
       const validationResult = carValidationSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
         return res.status(400).json({ message: errorMessage });
@@ -255,7 +255,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post(`${apiPrefix}/contact`, async (req: Request, res: Response) => {
     try {
       const validationResult = insertContactSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
         return res.status(400).json({ message: errorMessage });
@@ -283,6 +283,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error fetching contact messages:', error);
       res.status(500).json({ message: 'Failed to fetch contact messages' });
     }
+  });
+
+  // Debug endpoint to view database state
+  app.get("/api/debug/db", (req, res) => {
+    const dbState = {
+      users: Array.from(storage.users.values()),
+      cars: Array.from(storage.cars.values()),
+      contactMessages: Array.from(storage.contactMessages.values())
+    };
+    res.json(dbState);
   });
 
   const httpServer = createServer(app);
