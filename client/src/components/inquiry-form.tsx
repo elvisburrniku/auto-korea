@@ -51,6 +51,8 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
         carId,
         name: "",
         email: "",
+        phone: "",
+        subject: `Inquiry about ${carName}`,
         message: `I'm interested in the ${carName}. Please provide more information.`
       });
       queryClient.invalidateQueries({ queryKey: [`/api/contact/${carId}`] });
@@ -93,6 +95,34 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
               <FormLabel>Your Email</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="john@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number (optional)</FormLabel>
+              <FormControl>
+                <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subject</FormLabel>
+              <FormControl>
+                <Input placeholder="Inquiry about vehicle" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
