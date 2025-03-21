@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import path from "path";
 
 // Create memory store
 const MemoryStoreSession = MemoryStore(session);

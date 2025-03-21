@@ -3,6 +3,10 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { carFilterSchema, carValidationSchema, insertContactSchema, insertWishlistSchema, loginSchema, insertUserSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { randomUUID } from "crypto";
 
 // Middleware to check if the user is authenticated
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
@@ -25,6 +29,39 @@ const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // API prefix
   const apiPrefix = '/api';
+  
+  // Configure multer for file uploads
+  const uploadDir = path.join(process.cwd(), 'public/uploads');
+  
+  // Ensure upload directory exists
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  
+  const storage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, uploadDir);
+    },
+    filename: (_req, file, cb) => {
+      const uniqueSuffix = `${Date.now()}-${randomUUID()}`;
+      const extension = path.extname(file.originalname);
+      cb(null, `${uniqueSuffix}${extension}`);
+    }
+  });
+  
+  const upload = multer({ 
+    storage,
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB max file size
+    },
+    fileFilter: (_req, file, cb) => {
+      // Accept images only
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+      }
+      cb(null, true);
+    }
+  });
 
   // Authentication routes
 
