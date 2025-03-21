@@ -153,7 +153,9 @@ export default function CarDetailPage() {
     );
   }
 
-  const whatsappMessage = encodeURIComponent(`I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}`);
+  // Get the current URL to include in the WhatsApp message
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const whatsappMessage = `I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}. ${currentUrl}`;
 
   return (
     <Container className="py-12">

@@ -17,7 +17,7 @@ export function WhatsAppButton({
   // Format the phone number by removing non-numeric characters except +
   const formattedPhone = phoneNumber.replace(/[^\d+]/g, "");
   
-  // Build the WhatsApp URL
+  // Build the WhatsApp URL - properly encode the message to avoid %20 issues
   const whatsappUrl = `https://wa.me/${formattedPhone}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
   
   // Size-specific styles
