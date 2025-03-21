@@ -44,11 +44,7 @@ export default function Footer() {
                   Browse Cars
                 </Link>
               </li>
-              <li>
-                <Link href="/sell-car" className="text-neutral-300 hover:text-white transition-colors">
-                  Sell Your Car
-                </Link>
-              </li>
+
               <li>
                 <Link href="/about" className="text-neutral-300 hover:text-white transition-colors">
                   About Us

@@ -20,8 +20,14 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
 function Router() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const isAdminRoute = location.startsWith("/admin");
+
+  // Redirect /sell-car to homepage
+  if (location === "/sell-car") {
+    setLocation("/");
+    return null;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
