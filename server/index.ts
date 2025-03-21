@@ -1,10 +1,31 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import session from "express-session";
+import MemoryStore from "memorystore";
+
+// Create memory store
+const MemoryStoreSession = MemoryStore(session);
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Session configuration
+app.use(
+  session({
+    secret: "auto-market-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStoreSession({
+      checkPeriod: 86400000 // 24 hours
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+      secure: process.env.NODE_ENV === "production"
+    }
+  })
+);
 
 app.use((req, res, next) => {
   const start = Date.now();
