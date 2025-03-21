@@ -4,9 +4,8 @@ import { Car } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
-// Import necessary A-Frame components
-import 'aframe';
-import '@ar-js-org/ar.js';
+// Import from centralized AR core module
+import { HTMLAFrameSceneElement, cleanupARScene, isARReady, initialize } from '@/lib/ar-core';
 
 interface ARViewProps {
   car: Car;
@@ -21,10 +20,23 @@ export default function ARView({ car, onClose }: ARViewProps) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for camera permission
-    async function checkPermission() {
+    let mounted = true;
+    
+    // Initialize AR and check camera permissions
+    async function setupAR() {
       try {
         setIsLoading(true);
+        
+        // Dynamically initialize AR libraries
+        const success = await initialize();
+        
+        if (!mounted) return;
+        
+        if (!success) {
+          setError('Failed to initialize AR components');
+          console.error('AR initialization failed');
+          return;
+        }
         
         // Check if camera is available
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -34,43 +46,136 @@ export default function ARView({ car, onClose }: ARViewProps) {
         
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         
-        if (stream) {
+        if (stream && mounted) {
           setHasPermission(true);
           // Stop the stream since A-Frame will request it separately
           stream.getTracks().forEach(track => track.stop());
         }
         
       } catch (err) {
-        console.error('Camera permission error:', err);
-        setError('Camera permission denied');
-        toast({
-          title: 'Camera Access Denied',
-          description: 'Please grant camera permission to use AR features',
-          variant: 'destructive',
-        });
+        console.error('AR setup error:', err);
+        if (mounted) {
+          setError('Camera permission denied');
+          toast({
+            title: 'Camera Access Denied',
+            description: 'Please grant camera permission to use AR features',
+            variant: 'destructive',
+          });
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    checkPermission();
+    setupAR();
 
     // Clean up
     return () => {
-      // Clean up A-Frame when component unmounts
-      if (document.querySelector('a-scene')) {
-        document.querySelector('a-scene')?.remove();
-      }
+      mounted = false;
+      // Use our centralized cleanup function
+      cleanupARScene();
     };
   }, [toast]);
 
-  // Generate a car model based on car type
+  // Determine car type based on make/model and drivetrain
+  const inferCarType = (car: Car): 'suv' | 'sedan' | 'coupe' | 'hatchback' | 'truck' | 'other' => {
+    const makeModel = `${car.make} ${car.model}`.toLowerCase();
+    
+    // Check for SUVs (based on common keywords or drivetrain)
+    if (
+      makeModel.includes('suv') || 
+      makeModel.includes('crossover') ||
+      makeModel.includes('navigator') ||
+      makeModel.includes('expedition') ||
+      makeModel.includes('escalade') ||
+      makeModel.includes('suburban') ||
+      makeModel.includes('tahoe') ||
+      makeModel.includes('highlander') ||
+      makeModel.includes('4runner') ||
+      makeModel.includes('land cruiser') ||
+      makeModel.includes('range rover') ||
+      makeModel.includes('discovery') ||
+      makeModel.includes('cherokee') ||
+      makeModel.includes('explorer') ||
+      makeModel.includes('blazer') ||
+      makeModel.includes('pilot') ||
+      makeModel.includes('pathfinder') ||
+      makeModel.includes('armada') ||
+      (car.drivetrain === 'AWD' || car.drivetrain === '4WD')
+    ) {
+      return 'suv';
+    }
+    
+    // Check for trucks
+    if (
+      makeModel.includes('truck') ||
+      makeModel.includes('pickup') ||
+      makeModel.includes('f-150') ||
+      makeModel.includes('silverado') ||
+      makeModel.includes('sierra') ||
+      makeModel.includes('ram') ||
+      makeModel.includes('tundra') ||
+      makeModel.includes('tacoma') ||
+      makeModel.includes('frontier') ||
+      makeModel.includes('ridgeline') ||
+      makeModel.includes('colorado') ||
+      makeModel.includes('canyon')
+    ) {
+      return 'truck';
+    }
+    
+    // Check for coupes
+    if (
+      makeModel.includes('coupe') ||
+      makeModel.includes('convertible') ||
+      makeModel.includes('mustang') ||
+      makeModel.includes('camaro') ||
+      makeModel.includes('challenger') ||
+      makeModel.includes('corvette') ||
+      makeModel.includes('86') ||
+      makeModel.includes('brz') ||
+      makeModel.includes('miata') ||
+      makeModel.includes('mx-5') ||
+      makeModel.includes('z4') ||
+      makeModel.includes('cayman') ||
+      makeModel.includes('boxster')
+    ) {
+      return 'coupe';
+    }
+    
+    // Check for hatchbacks
+    if (
+      makeModel.includes('hatchback') ||
+      makeModel.includes('hatch') ||
+      makeModel.includes('golf') ||
+      makeModel.includes('fit') ||
+      makeModel.includes('yaris') ||
+      makeModel.includes('veloster') ||
+      makeModel.includes('civic hatch') ||
+      makeModel.includes('mazda3') ||
+      makeModel.includes('impreza') ||
+      makeModel.includes('soul') ||
+      makeModel.includes('prius')
+    ) {
+      return 'hatchback';
+    }
+    
+    // Default to sedan
+    return 'sedan';
+  };
+
+  // Generate a car model based on inferred car type
   const getCarModel = () => {
     let scale = '1 1 1';
-    let color = car.color?.toLowerCase() || 'gray';
+    // Use exterior color for the model, default to gray
+    let color = car.exteriorColor?.toLowerCase() || 'gray';
     
-    // Set scale based on car type
-    switch (car.type?.toLowerCase()) {
+    // Set scale based on inferred car type
+    const carType = inferCarType(car);
+    
+    switch (carType) {
       case 'suv': 
         scale = '1.5 1.2 3';
         break;

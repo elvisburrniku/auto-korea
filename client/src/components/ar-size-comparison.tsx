@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import Webcam from 'react-webcam';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -9,16 +9,105 @@ import {
   CarFilter
 } from '@shared/schema';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CarCard } from '@/components/car-card';
+import CarCard from '@/components/car-card';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { isARReady } from '@/lib/ar-core';
 
-// Simulate car dimensions as a scale factor (will be replaced with actual dimensions)
+// Determine car type based on make/model and drivetrain
+const inferCarType = (car: Car): 'suv' | 'sedan' | 'coupe' | 'hatchback' | 'truck' | 'other' => {
+  const makeModel = `${car.make} ${car.model}`.toLowerCase();
+  
+  // Check for SUVs (based on common keywords or drivetrain)
+  if (
+    makeModel.includes('suv') || 
+    makeModel.includes('crossover') ||
+    makeModel.includes('navigator') ||
+    makeModel.includes('expedition') ||
+    makeModel.includes('escalade') ||
+    makeModel.includes('suburban') ||
+    makeModel.includes('tahoe') ||
+    makeModel.includes('highlander') ||
+    makeModel.includes('4runner') ||
+    makeModel.includes('land cruiser') ||
+    makeModel.includes('range rover') ||
+    makeModel.includes('discovery') ||
+    makeModel.includes('cherokee') ||
+    makeModel.includes('explorer') ||
+    makeModel.includes('blazer') ||
+    makeModel.includes('pilot') ||
+    makeModel.includes('pathfinder') ||
+    makeModel.includes('armada') ||
+    (car.drivetrain === 'AWD' || car.drivetrain === '4WD')
+  ) {
+    return 'suv';
+  }
+  
+  // Check for trucks
+  if (
+    makeModel.includes('truck') ||
+    makeModel.includes('pickup') ||
+    makeModel.includes('f-150') ||
+    makeModel.includes('silverado') ||
+    makeModel.includes('sierra') ||
+    makeModel.includes('ram') ||
+    makeModel.includes('tundra') ||
+    makeModel.includes('tacoma') ||
+    makeModel.includes('frontier') ||
+    makeModel.includes('ridgeline') ||
+    makeModel.includes('colorado') ||
+    makeModel.includes('canyon')
+  ) {
+    return 'truck';
+  }
+  
+  // Check for coupes
+  if (
+    makeModel.includes('coupe') ||
+    makeModel.includes('convertible') ||
+    makeModel.includes('mustang') ||
+    makeModel.includes('camaro') ||
+    makeModel.includes('challenger') ||
+    makeModel.includes('corvette') ||
+    makeModel.includes('86') ||
+    makeModel.includes('brz') ||
+    makeModel.includes('miata') ||
+    makeModel.includes('mx-5') ||
+    makeModel.includes('z4') ||
+    makeModel.includes('cayman') ||
+    makeModel.includes('boxster')
+  ) {
+    return 'coupe';
+  }
+  
+  // Check for hatchbacks
+  if (
+    makeModel.includes('hatchback') ||
+    makeModel.includes('hatch') ||
+    makeModel.includes('golf') ||
+    makeModel.includes('fit') ||
+    makeModel.includes('yaris') ||
+    makeModel.includes('veloster') ||
+    makeModel.includes('civic hatch') ||
+    makeModel.includes('mazda3') ||
+    makeModel.includes('impreza') ||
+    makeModel.includes('soul') ||
+    makeModel.includes('prius')
+  ) {
+    return 'hatchback';
+  }
+  
+  // Default to sedan
+  return 'sedan';
+};
+
+// Get scale factor based on inferred car type
 const getCarScale = (car: Car) => {
-  // Base scale on car type/class
-  switch(car.type?.toLowerCase()) {
+  const carType = inferCarType(car);
+  
+  switch(carType) {
     case 'suv': return 1.5;
     case 'sedan': return 1.0;
     case 'coupe': return 0.9;
@@ -36,7 +125,7 @@ export default function ARSizeComparison() {
   const webcamRef = useRef<Webcam>(null);
   const arContainerRef = useRef<HTMLDivElement>(null);
   const carOutlineRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const [_, navigate] = useLocation();
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
@@ -81,6 +170,16 @@ export default function ARSizeComparison() {
     }
 
     if (!isARMode) {
+      // Check if AR is ready using our centralized helper
+      if (!isARReady()) {
+        toast({
+          title: 'AR Not Ready',
+          description: 'AR components are not fully initialized',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
       // Check if browser supports getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         toast({
@@ -102,9 +201,11 @@ export default function ARSizeComparison() {
       const baseWidth = 150;
       const width = baseWidth * carScale;
       
-      // Aspect ratio estimates based on car type
+      // Aspect ratio estimates based on inferred car type
+      const carType = inferCarType(selectedCar);
       let aspectRatio;
-      switch(selectedCar.type?.toLowerCase()) {
+      
+      switch(carType) {
         case 'suv': aspectRatio = 0.6; break; // taller
         case 'sedan': aspectRatio = 0.45; break;
         case 'coupe': aspectRatio = 0.4; break;
@@ -234,15 +335,23 @@ export default function ARSizeComparison() {
               {isMobile && (
                 <Button
                   onClick={() => {
-                    if (webcamRef.current) {
-                      const facingMode = webcamRef.current.video?.srcObject
-                        ? (webcamRef.current.video.srcObject as MediaStream).getVideoTracks()[0].getSettings().facingMode
-                        : "user";
+                    if (webcamRef.current && webcamRef.current.video) {
+                      // Stop all tracks before switching camera
+                      if (webcamRef.current.video.srcObject) {
+                        const stream = webcamRef.current.video.srcObject as MediaStream;
+                        if (stream) {
+                          stream.getTracks().forEach(track => track.stop());
+                        }
+                      }
                       
-                      webcamRef.current.video!.srcObject = null;
-                      webcamRef.current.video!.srcObject = null;
+                      // Clear the current video stream
+                      webcamRef.current.video.srcObject = null;
                       
-                      webcamRef.current.video!.srcObject = null;
+                      // Force a remount of the Webcam component by toggling a flag
+                      setIsARMode(false);
+                      setTimeout(() => {
+                        setIsARMode(true);
+                      }, 100);
                     }
                   }}
                   variant="outline"

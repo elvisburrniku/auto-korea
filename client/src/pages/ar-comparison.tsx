@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Container } from '@/components/ui/container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,13 +7,15 @@ import ARView from '@/components/ar-view';
 import { Car } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { CarCard } from '@/components/car-card';
+import CarCard from '@/components/car-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { isARReady } from '@/lib/ar-core';
 
 export default function ARComparisonPage() {
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [showARView, setShowARView] = useState(false);
+  const [defaultTab, setDefaultTab] = useState("simple");
   const { toast } = useToast();
   
   const { data: cars, isLoading, error } = useQuery({
@@ -23,6 +25,20 @@ export default function ARComparisonPage() {
       method: 'GET',
     }),
   });
+  
+  // Check URL parameters for car ID to pre-select
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const carId = searchParams.get('carId');
+    
+    if (carId && cars) {
+      const car = cars.find(c => c.id === parseInt(carId));
+      if (car) {
+        setSelectedCar(car);
+        setDefaultTab("advanced");
+      }
+    }
+  }, [cars]);
 
   const handleSelectCar = (car: Car) => {
     setSelectedCar(car);
@@ -38,9 +54,9 @@ export default function ARComparisonPage() {
       return;
     }
     
-    // Check if browser supports WebXR or AR features
+    // Check if browser supports WebXR or AR features using our centralized module
     const xrSupported = 'xr' in navigator;
-    const arJsSupported = typeof window !== 'undefined' && 'aframe' in window;
+    const arJsSupported = isARReady();
     
     if (!xrSupported && !arJsSupported) {
       toast({
@@ -69,7 +85,7 @@ export default function ARComparisonPage() {
         Visualize cars in augmented reality to better understand their size and appearance
       </p>
 
-      <Tabs defaultValue="simple" className="w-full">
+      <Tabs defaultValue={defaultTab} value={defaultTab} onValueChange={setDefaultTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="simple">Simple Size Comparison</TabsTrigger>
           <TabsTrigger value="advanced">Advanced AR View</TabsTrigger>

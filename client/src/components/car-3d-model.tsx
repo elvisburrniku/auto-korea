@@ -2,21 +2,109 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Box, useTexture, useGLTF, OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import { Car } from '@shared/schema';
+import { isARReady } from '@/lib/ar-core';
 
 interface CarModelProps {
   car: Car;
   rotation?: boolean;
 }
 
+// Determine car type based on make/model and drivetrain
+const inferCarType = (car: Car): 'suv' | 'sedan' | 'coupe' | 'hatchback' | 'truck' | 'other' => {
+  const makeModel = `${car.make} ${car.model}`.toLowerCase();
+  
+  // Check for SUVs (based on common keywords or drivetrain)
+  if (
+    makeModel.includes('suv') || 
+    makeModel.includes('crossover') ||
+    makeModel.includes('navigator') ||
+    makeModel.includes('expedition') ||
+    makeModel.includes('escalade') ||
+    makeModel.includes('suburban') ||
+    makeModel.includes('tahoe') ||
+    makeModel.includes('highlander') ||
+    makeModel.includes('4runner') ||
+    makeModel.includes('land cruiser') ||
+    makeModel.includes('range rover') ||
+    makeModel.includes('discovery') ||
+    makeModel.includes('cherokee') ||
+    makeModel.includes('explorer') ||
+    makeModel.includes('blazer') ||
+    makeModel.includes('pilot') ||
+    makeModel.includes('pathfinder') ||
+    makeModel.includes('armada') ||
+    (car.drivetrain === 'AWD' || car.drivetrain === '4WD')
+  ) {
+    return 'suv';
+  }
+  
+  // Check for trucks
+  if (
+    makeModel.includes('truck') ||
+    makeModel.includes('pickup') ||
+    makeModel.includes('f-150') ||
+    makeModel.includes('silverado') ||
+    makeModel.includes('sierra') ||
+    makeModel.includes('ram') ||
+    makeModel.includes('tundra') ||
+    makeModel.includes('tacoma') ||
+    makeModel.includes('frontier') ||
+    makeModel.includes('ridgeline') ||
+    makeModel.includes('colorado') ||
+    makeModel.includes('canyon')
+  ) {
+    return 'truck';
+  }
+  
+  // Check for coupes
+  if (
+    makeModel.includes('coupe') ||
+    makeModel.includes('convertible') ||
+    makeModel.includes('mustang') ||
+    makeModel.includes('camaro') ||
+    makeModel.includes('challenger') ||
+    makeModel.includes('corvette') ||
+    makeModel.includes('86') ||
+    makeModel.includes('brz') ||
+    makeModel.includes('miata') ||
+    makeModel.includes('mx-5') ||
+    makeModel.includes('z4') ||
+    makeModel.includes('cayman') ||
+    makeModel.includes('boxster')
+  ) {
+    return 'coupe';
+  }
+  
+  // Check for hatchbacks
+  if (
+    makeModel.includes('hatchback') ||
+    makeModel.includes('hatch') ||
+    makeModel.includes('golf') ||
+    makeModel.includes('fit') ||
+    makeModel.includes('yaris') ||
+    makeModel.includes('veloster') ||
+    makeModel.includes('civic hatch') ||
+    makeModel.includes('mazda3') ||
+    makeModel.includes('impreza') ||
+    makeModel.includes('soul') ||
+    makeModel.includes('prius')
+  ) {
+    return 'hatchback';
+  }
+  
+  // Default to sedan
+  return 'sedan';
+};
+
 // Simple box-based car model
 function SimpleCarModel({ car, rotation = true }: CarModelProps) {
-  const group = useRef<THREE.Group>(null);
+  const group = useRef(null);
   
-  // Use car type and other properties to determine dimensions
+  // Use inferred car type to determine dimensions
   const getDimensions = () => {
-    const type = car.type?.toLowerCase() || 'sedan';
+    const carType = inferCarType(car);
     
-    switch (type) {
+    switch (carType) {
       case 'suv':
         return { width: 1.8, height: 1.7, length: 4.5 };
       case 'sedan':
@@ -34,7 +122,7 @@ function SimpleCarModel({ car, rotation = true }: CarModelProps) {
   
   const { width, height, length } = getDimensions();
   
-  // Car color based on the car's color property
+  // Car color based on the car's exteriorColor property
   const getCarColor = () => {
     const colorMap: Record<string, string> = {
       'red': '#e53935',
@@ -49,7 +137,7 @@ function SimpleCarModel({ car, rotation = true }: CarModelProps) {
       'purple': '#8e24aa'
     };
     
-    const carColor = car.color?.toLowerCase() || 'silver';
+    const carColor = car.exteriorColor?.toLowerCase() || 'silver';
     return colorMap[carColor] || colorMap.silver;
   };
   
@@ -126,6 +214,16 @@ export default function Car3DModel({
   controls = true,
   autoRotate = true
 }: Car3DModelProps) {
+  // Check if AR is ready using our centralized helper
+  useEffect(() => {
+    // Make sure AR is initialized - this doesn't actually do anything
+    // if already initialized, but ensures consistency
+    const arReady = isARReady();
+    if (!arReady) {
+      console.warn('AR may not be fully initialized for 3D model rendering');
+    }
+  }, []);
+
   return (
     <div style={{ height, width: '100%' }} className={className}>
       <Canvas>
