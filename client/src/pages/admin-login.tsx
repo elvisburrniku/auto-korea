@@ -37,22 +37,20 @@ export default function AdminLoginPage() {
 
     try {
       // Use the correct apiRequest format
-      await apiRequest({
-        url: '/api/auth/login',
-        method: 'POST',
-        data: {
+      await apiRequest(
+        'POST',
+        '/api/auth/login',
+        {
           username,
           password,
         }
-      });
+      );
 
       // Fetch session to confirm login
-      const session = await apiRequest({
-        url: '/api/auth/session',
-        method: 'GET'
-      });
+      const sessionRes = await apiRequest('GET', '/api/auth/session');
+      const session = await sessionRes.json();
       
-      console.log(session);
+      console.log('Session data:', session);
       
       if (session?.isAuthenticated && session?.user?.isAdmin) {
         toast({
