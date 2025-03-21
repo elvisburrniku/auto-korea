@@ -9,7 +9,7 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">About AutoMarket</h1>
             <p className="text-xl opacity-90">
-              Your trusted platform for buying and selling quality vehicles with hassle-free communication.
+              Your trusted platform for discovering quality vehicles with hassle-free dealer communication.
             </p>
           </div>
         </Container>
@@ -21,19 +21,18 @@ export default function AboutPage() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-neutral-600 mb-4">
-              Founded in 2023, AutoMarket was created with a simple mission: to make buying and selling cars easier, 
+              Founded in 2023, AutoMarket was created with a simple mission: to make finding your perfect car easier, 
               more transparent, and more connected. We noticed that while there were many car marketplaces, 
-              few offered seamless communication between buyers and sellers.
+              few offered seamless communication between buyers and dealerships.
             </p>
             <p className="text-neutral-600 mb-4">
               That's why we built AutoMarket with integrated WhatsApp communication - allowing instant connection 
-              between interested parties. No more waiting for email responses or playing phone tag. Just direct, 
+              with our network of verified dealers. No more waiting for email responses or playing phone tag. Just direct, 
               immediate communication when it matters most.
             </p>
             <p className="text-neutral-600">
-              Our platform continues to grow, connecting car enthusiasts, everyday drivers, and dealers in a 
-              transparent marketplace where finding your next vehicle or selling your current one is simple, 
-              straightforward, and even enjoyable.
+              Our platform continues to grow, connecting car enthusiasts and everyday drivers with quality vehicles
+              in a transparent marketplace where finding your next vehicle is simple, straightforward, and even enjoyable.
             </p>
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
@@ -71,7 +70,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Efficiency</h3>
               <p className="text-neutral-600">
-                We strive for efficiency in every aspect, from listing creation to buyer-seller communication.
+                We strive for efficiency in every aspect, from browsing experience to dealer-customer communication.
               </p>
             </div>
             
@@ -83,7 +82,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Communication</h3>
               <p className="text-neutral-600">
-                We prioritize direct, immediate communication between buyers and sellers through WhatsApp integration.
+                We prioritize direct, immediate communication between customers and dealers through WhatsApp integration.
               </p>
             </div>
           </div>
@@ -150,14 +149,11 @@ export default function AboutPage() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-neutral-600 max-w-2xl mx-auto mb-8">
-              Join thousands of satisfied users who have found their perfect car or sold their vehicle quickly through AutoMarket.
+              Join thousands of satisfied users who have found their perfect car through AutoMarket's curated selection.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex justify-center">
               <a href="/browse-cars" className="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-md font-medium text-center">
                 Browse Cars
-              </a>
-              <a href="/sell-car" className="px-6 py-3 bg-white border border-primary text-primary hover:bg-neutral-100 rounded-md font-medium text-center">
-                Sell Your Car
               </a>
             </div>
           </div>
