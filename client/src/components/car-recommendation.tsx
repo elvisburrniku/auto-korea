@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { X, ArrowRight } from "lucide-react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatPrice, formatNumberWithCommas } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Car } from "@shared/schema";
 
@@ -14,7 +14,7 @@ interface CarRecommendationProps {
 
 export default function CarRecommendation({ carId, className = "" }: CarRecommendationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const [_, setLocation] = useLocation();
   
   // Fetch similar cars
   const { data: similarCars, isLoading } = useQuery({
@@ -41,11 +41,25 @@ export default function CarRecommendation({ carId, className = "" }: CarRecommen
     return null;
   }
 
+  // Format price to display as currency
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  // Format number to include commas for thousands
+  const formatNumberWithCommas = (num: number) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className={`fixed bottom-5 right-5 max-w-sm bg-white rounded-lg shadow-lg border border-gray-200 z-50 ${className}`}
+          className={cn("fixed bottom-5 right-5 max-w-sm bg-white rounded-lg shadow-lg border border-gray-200 z-50", className)}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
@@ -70,7 +84,7 @@ export default function CarRecommendation({ carId, className = "" }: CarRecommen
                   key={car.id} 
                   className="flex bg-neutral-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => {
-                    navigate(`/cars/${car.id}`);
+                    setLocation(`/cars/${car.id}`);
                     setIsOpen(false);
                   }}
                 >
@@ -97,7 +111,7 @@ export default function CarRecommendation({ carId, className = "" }: CarRecommen
               variant="link" 
               className="mt-2 w-full text-primary"
               onClick={() => {
-                navigate('/browse-cars');
+                setLocation('/browse-cars');
                 setIsOpen(false);
               }}
             >

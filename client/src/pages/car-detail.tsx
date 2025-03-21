@@ -7,6 +7,7 @@ import CarGallery from "@/components/car-gallery";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import InquiryForm from "@/components/inquiry-form";
 import AddToWishlist from "@/components/add-to-wishlist";
+import CarRecommendation from "@/components/car-recommendation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useFavorites } from '../lib/useFavorites';
@@ -339,6 +340,8 @@ export default function CarDetailPage() {
           </div>
         </div>
       </div>
+      {/* Add the car recommendation component */}
+      <CarRecommendation carId={carId} />
     </Container>
   );
 }
