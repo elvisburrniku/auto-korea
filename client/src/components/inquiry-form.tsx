@@ -31,6 +31,8 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
       carId,
       name: "",
       email: "",
+      phone: "",
+      subject: `Inquiry about ${carName}`,
       message: `I'm interested in the ${carName}. Please provide more information.`
     }
   });

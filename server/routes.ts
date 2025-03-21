@@ -371,19 +371,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const newMessage = await storage.createContactMessage(validationResult.data);
       
-      // Forward to specific email
-      const emailContent = `
-New inquiry from: ${validationResult.data.name}
-Email: ${validationResult.data.email}
-Message: ${validationResult.data.message}
-${validationResult.data.carId ? `Car ID: ${validationResult.data.carId}` : ''}
-      `.trim();
+      // Get car details if this inquiry is about a specific car
+      let carDetails = "";
+      if (validationResult.data.carId) {
+        try {
+          const car = await storage.getCarById(validationResult.data.carId);
+          if (car) {
+            carDetails = `
+Car Details:
+Make: ${car.make}
+Model: ${car.model}
+Year: ${car.year}
+Price: $${car.price.toLocaleString()}
+VIN: ${car.vin || 'Not specified'}
+`;
+          }
+        } catch (carError) {
+          console.error('Error getting car details for email:', carError);
+        }
+      }
       
-      await storage.sendEmail({
-        to: 'order.autokorea@gmail.com',
-        subject: 'New Car Inquiry',
-        text: emailContent
-      });
+      // Create detailed email content
+      const emailContent = `
+NEW INQUIRY FROM AUTOMARKET WEBSITE
+
+Customer Information:
+Name: ${validationResult.data.name}
+Email: ${validationResult.data.email}
+Phone: ${validationResult.data.phone || 'Not provided'}
+
+Subject: ${validationResult.data.subject || 'Car Inquiry'}
+
+Message:
+${validationResult.data.message}
+
+${carDetails}
+
+This message was sent from the AutoMarket website contact form at ${new Date().toLocaleString()}.
+`.trim();
+      
+      try {
+        // Send email using Sendinblue/Brevo
+        await storage.sendEmail({
+          to: 'order.autokorea@gmail.com', // Replace with your desired recipient email
+          subject: `AutoMarket Inquiry: ${validationResult.data.subject || (validationResult.data.carId ? 'Car #' + validationResult.data.carId : 'General Inquiry')}`,
+          text: emailContent
+        });
+        console.log('Contact form email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send contact form email:', emailError);
+        // Continue with response even if email fails
+      }
       
       res.status(201).json(newMessage);
     } catch (error) {
@@ -528,14 +566,19 @@ ${validationResult.data.carId ? `Car ID: ${validationResult.data.carId}` : ''}
   });
 
   // Debug endpoint to view database state (admin only)
-  app.get("/api/debug/db", isAdmin, (req, res) => {
-    const dbState = {
-      users: Array.from(storage.users.values()),
-      cars: Array.from(storage.cars.values()),
-      contactMessages: Array.from(storage.contactMessages.values()),
-      wishlists: Array.from(storage.wishlists.values())
-    };
-    res.json(dbState);
+  app.get("/api/debug/db", isAdmin, async (req, res) => {
+    try {
+      // Use public methods instead of accessing private properties
+      const dbState = {
+        cars: await storage.getAllCars(),
+        // Add other data that might be useful for debugging
+        // We don't expose users or contact messages for privacy reasons
+      };
+      res.json(dbState);
+    } catch (error) {
+      console.error('Error in debug endpoint:', error);
+      res.status(500).json({ message: 'Error retrieving debug data' });
+    }
   });
   
   // File upload endpoint
