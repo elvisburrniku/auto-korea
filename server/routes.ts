@@ -73,17 +73,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Login route
   app.post(`${apiPrefix}/auth/login`, async (req: Request, res: Response) => {
     try {
+      console.log("Login attempt:", req.body);
       const validationResult = loginSchema.safeParse(req.body);
 
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
+        console.log("Validation error:", errorMessage);
         return res.status(400).json({ message: errorMessage });
       }
 
       const { username, password } = validationResult.data;
+      console.log(`Attempting to log in user: ${username}`);
+      
       const user = await storage.getUserByUsername(username);
+      console.log("User found:", user ? "Yes" : "No", user ? `Admin: ${user.isAdmin}` : "");
 
       if (!user || user.password !== password) {
+        console.log("Authentication failed: Invalid credentials");
         return res.status(401).json({ message: 'Invalid username or password' });
       }
 
@@ -94,7 +100,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isAdmin: user.isAdmin
       };
       
+      console.log("Session before save:", req.session);
       await new Promise((resolve) => req.session.save(resolve));
+      console.log("Session after save:", req.session);
 
       res.json({ 
         id: user.id,
