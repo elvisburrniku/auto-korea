@@ -285,8 +285,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Debug endpoint to view database state
-  app.get("/api/debug/db", (req, res) => {
+  // Debug endpoint to view database state (admin only)
+  app.get("/api/debug/db", isAdmin, (req, res) => {
     const dbState = {
       users: Array.from(storage.users.values()),
       cars: Array.from(storage.cars.values()),
