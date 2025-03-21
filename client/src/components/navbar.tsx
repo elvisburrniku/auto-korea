@@ -15,11 +15,10 @@ export default function Navbar() {
     // Check if the user is authenticated
     const checkSession = async () => {
       try {
-        const session = await apiRequest('/api/auth/session');
-        if (session.isAuthenticated) {
-          setIsAuthenticated(true);
-          setUser(session.user);
-        }
+        // We'll implement proper authentication later if needed
+        // For now, let's just use a temporary ID for wishlists
+        setIsAuthenticated(true);
+        setUser({ id: 'guest-user' });
       } catch (error) {
         console.error("Error checking session:", error);
         setIsAuthenticated(false);
