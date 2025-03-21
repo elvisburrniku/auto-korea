@@ -19,6 +19,8 @@ export default function AdminPage() {
   const [, navigate] = useLocation();
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [isAddingCar, setIsAddingCar] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // Check if user is authenticated and is admin
@@ -292,11 +294,13 @@ export default function AdminPage() {
                       <TableBody>
                         {contactMessages.map((message: ContactMessage) => {
                           // Find corresponding car
-                          const car = cars?.find(c => c.id === message.carId);
+                          const car = cars?.find((c: Car) => c.id === message.carId);
                           return (
                             <TableRow key={message.id}>
                               <TableCell className="whitespace-nowrap">
-                                {new Date(message.createdAt).toLocaleDateString()}
+                                {message.createdAt && typeof message.createdAt !== 'undefined' && 
+                                  new Date(message.createdAt as string).toLocaleDateString()
+                                }
                               </TableCell>
                               <TableCell>{message.name}</TableCell>
                               <TableCell>
@@ -333,9 +337,18 @@ export default function AdminPage() {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <div className="max-w-xs truncate">
-                                  {message.message}
-                                </div>
+                                <Button 
+                                  variant="ghost" 
+                                  className="p-0 h-auto hover:bg-transparent"
+                                  onClick={() => {
+                                    setSelectedMessage(message);
+                                    setMessageDialogOpen(true);
+                                  }}
+                                >
+                                  <div className="max-w-xs truncate text-left">
+                                    {message.message}
+                                  </div>
+                                </Button>
                               </TableCell>
                             </TableRow>
                           );
@@ -354,6 +367,88 @@ export default function AdminPage() {
           </TabsContent>
         </Tabs>
       </Container>
+      
+      {/* Message Detail Dialog */}
+      <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              Inquiry from {selectedMessage?.name}
+              {selectedMessage?.subject && <span className="text-muted-foreground"> - {selectedMessage.subject}</span>}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedMessage && (
+                <div className="flex flex-col gap-1 mt-2 text-sm">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>
+                      {selectedMessage.createdAt && typeof selectedMessage.createdAt !== 'undefined' && (
+                        <>
+                          {new Date(selectedMessage.createdAt as string).toLocaleDateString()} at {' '}
+                          {new Date(selectedMessage.createdAt as string).toLocaleTimeString()}
+                        </>
+                      )}
+                    </span>
+                    {cars && selectedMessage && (
+                      <span>
+                        {(() => {
+                          const car = cars.find((c: Car) => c.id === selectedMessage.carId);
+                          return car 
+                            ? `${car.make} ${car.model} (${car.year})`
+                            : `Car #${selectedMessage.carId}`;
+                        })()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex gap-3 mt-1">
+                    <a 
+                      href={`mailto:${selectedMessage.email}`}
+                      className="flex items-center text-primary hover:underline"
+                    >
+                      <Mail className="h-3 w-3 mr-1" />
+                      {selectedMessage.email}
+                    </a>
+                    {selectedMessage.phone && (
+                      <a 
+                        href={`tel:${selectedMessage.phone}`}
+                        className="flex items-center text-primary hover:underline"
+                      >
+                        <Phone className="h-3 w-3 mr-1" />
+                        {selectedMessage.phone}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedMessage && (
+            <div className="mt-4 p-4 bg-muted rounded-md whitespace-pre-wrap">
+              {selectedMessage.message}
+            </div>
+          )}
+          
+          <div className="flex justify-between mt-6">
+            <Button 
+              variant="secondary" 
+              onClick={() => setMessageDialogOpen(false)}
+            >
+              Close
+            </Button>
+            {selectedMessage && (
+              <Button 
+                variant="default"
+                onClick={() => {
+                  window.location.href = `mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject || 'Your inquiry'}&body=Hello ${selectedMessage.name},%0D%0A%0D%0AThank you for your interest in our vehicle.%0D%0A%0D%0A`;
+                }}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Reply via Email
+              </Button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
