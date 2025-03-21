@@ -19,6 +19,7 @@ export interface IStorage {
   // Contact message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
   getContactMessagesForCar(carId: number): Promise<ContactMessage[]>;
+  getAllContactMessages(): Promise<ContactMessage[]>;
   
   // Wishlist operations
   createWishlist(wishlist: InsertWishlist): Promise<Wishlist>;
