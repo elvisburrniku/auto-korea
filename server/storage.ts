@@ -1,6 +1,10 @@
-import { Car, InsertCar, CarFilter, ContactMessage, InsertContactMessage } from "@shared/schema";
+import { Car, InsertCar, CarFilter, ContactMessage, InsertContactMessage, User, InsertUser } from "@shared/schema";
 
 export interface IStorage {
+  // User operations
+  createUser(user: InsertUser): Promise<User>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  
   // Car operations
   getAllCars(): Promise<Car[]>;
   getCarById(id: number): Promise<Car | undefined>;
@@ -17,19 +21,36 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
+  private users: Map<number, User>;
   private cars: Map<number, Car>;
   private contactMessages: Map<number, ContactMessage>;
+  private userIdCounter: number;
   private carIdCounter: number;
   private messageIdCounter: number;
 
   constructor() {
+    this.users = new Map();
     this.cars = new Map();
     this.contactMessages = new Map();
+    this.userIdCounter = 1;
     this.carIdCounter = 1;
     this.messageIdCounter = 1;
     
     // Initialize with some demo cars for testing
     this.initDemoCars();
+    
+    // Initialize with admin user
+    this.initAdmin();
+  }
+  
+  private initAdmin() {
+    const adminUser: InsertUser = {
+      username: "admin",
+      password: "admin123", // In a real app, this would be hashed!
+      isAdmin: true
+    };
+    
+    this.createUser(adminUser);
   }
 
   private initDemoCars() {
@@ -210,6 +231,19 @@ export class MemStorage implements IStorage {
       const timestamp = new Date();
       this.cars.set(id, { ...car, id, createdAt: timestamp });
     });
+  }
+
+  // User methods
+  async createUser(user: InsertUser): Promise<User> {
+    const id = this.userIdCounter++;
+    const timestamp = new Date();
+    const newUser: User = { ...user, id, createdAt: timestamp };
+    this.users.set(id, newUser);
+    return newUser;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(user => user.username === username);
   }
 
   async getAllCars(): Promise<Car[]> {
