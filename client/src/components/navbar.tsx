@@ -17,7 +17,6 @@ export default function Navbar() {
     { name: "Browse Cars", href: "/browse-cars" },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
-    { name: "Admin", href: "/admin-login" },
   ];
 
   return (
@@ -48,9 +47,11 @@ export default function Navbar() {
             </nav>
           </div>
           <div className="hidden md:flex items-center">
-            <Button variant="ghost" className="px-4 py-2 text-primary">
-              Sign In
-            </Button>
+            <Link href="/admin-login">
+              <Button variant="ghost" className="px-4 py-2 text-primary">
+                Admin Login
+              </Button>
+            </Link>
             <Button className="ml-4">Get Started</Button>
           </div>
           <div className="md:hidden">
@@ -87,9 +88,11 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-4 pb-3 border-t border-neutral-200">
-            <Button variant="outline" className="block w-full px-4 py-2 text-center">
-              Sign In
-            </Button>
+            <Link href="/admin-login" className="block w-full">
+              <Button variant="outline" className="w-full px-4 py-2 text-center">
+                Admin Login
+              </Button>
+            </Link>
             <Button className="block w-full mt-2 px-4 py-2 text-center">
               Get Started
             </Button>
