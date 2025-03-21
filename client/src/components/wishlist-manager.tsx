@@ -38,7 +38,7 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
       const fetchWishlists = async () => {
         setIsLoading(true);
         try {
-          const response = await apiRequest(`/api/wishlists/user/${userId}`);
+          const response = await apiRequest('GET', `/api/wishlists/user/${userId}`);
           setWishlists(response);
         } catch (error) {
           console.error("Error fetching wishlists:", error);
@@ -78,10 +78,11 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         cars: carIds,
       };
 
-      const response = await apiRequest("/api/wishlists", {
-        method: "POST",
-        body: JSON.stringify(newWishlist)
-      });
+      const response = await apiRequest(
+        "POST",
+        "/api/wishlists",
+        JSON.stringify(newWishlist)
+      );
 
       // Add the new wishlist to the state
       setWishlists([...wishlists, response]);
@@ -136,10 +137,11 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
       const updatedCarIds = Array.from(new Set([...existingCarIds, ...selectedCarIds]));
       
       // Update the wishlist
-      const updatedWishlist = await apiRequest(`/api/wishlists/${wishlistId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ cars: updatedCarIds })
-      });
+      const updatedWishlist = await apiRequest(
+        "PATCH",
+        `/api/wishlists/${wishlistId}`,
+        JSON.stringify({ cars: updatedCarIds })
+      );
 
       // Update the state
       setWishlists(wishlists.map(w => w.id === wishlistId ? updatedWishlist : w));
@@ -174,9 +176,10 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
 
     setIsLoading(true);
     try {
-      await apiRequest(`/api/wishlists/${wishlistId}`, {
-        method: "DELETE"
-      });
+      await apiRequest(
+        "DELETE",
+        `/api/wishlists/${wishlistId}`
+      );
 
       // Remove the deleted wishlist from state
       setWishlists(wishlists.filter(w => w.id !== wishlistId));

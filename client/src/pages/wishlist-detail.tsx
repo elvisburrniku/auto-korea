@@ -33,16 +33,16 @@ export default function WishlistDetailPage() {
         
         let wishlistData;
         if (isSharedWishlist) {
-          wishlistData = await apiRequest(`/api/wishlists/share/${id}`);
+          wishlistData = await apiRequest('GET', `/api/wishlists/share/${id}`);
         } else {
-          wishlistData = await apiRequest(`/api/wishlists/${id}`);
+          wishlistData = await apiRequest('GET', `/api/wishlists/${id}`);
         }
         
         setWishlist(wishlistData);
 
         // Now fetch all cars and filter to those in the wishlist
         if (wishlistData.cars && wishlistData.cars.length > 0) {
-          const allCars = await apiRequest('/api/cars');
+          const allCars = await apiRequest('GET', '/api/cars');
           const wishlistCars = allCars.filter((car: Car) => 
             wishlistData.cars.includes(car.id.toString())
           );

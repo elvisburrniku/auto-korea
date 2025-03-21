@@ -43,7 +43,7 @@ export default function AdminPage() {
   const { data: cars, isLoading } = useQuery({
     queryKey: ['/api/cars'],
     queryFn: async () => {
-      const data = await apiRequest('/api/cars');
+      const data = await apiRequest('GET', '/api/cars');
       return data;
     }
   });
