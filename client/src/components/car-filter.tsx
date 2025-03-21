@@ -249,42 +249,56 @@ export default function CarFilterComponent({
                 </div>
               </div>
               
-              {/* Year Range */}
+              {/* Min Year */}
               <div>
-                <Label>Year Range: {selectedYearRange}</Label>
-                <div className="mt-1">
-                  <Select
-                    value={selectedYearRange}
-                    onValueChange={(value) => {
-                      const range = YEAR_RANGES.find(r => r.label === value);
-                      if (range) {
-                        setFilters({ 
-                          ...filters, 
-                          minYear: range.min !== null ? range.min : undefined,
-                          maxYear: range.max !== null ? range.max : undefined
-                        });
-                      } else if (value === "Any Year") {
-                        setFilters({
-                          ...filters,
-                          minYear: undefined,
-                          maxYear: undefined
-                        });
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Any Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Any Year">Any Year</SelectItem>
-                      {YEAR_RANGES.map((range) => (
-                        <SelectItem key={range.label} value={range.label}>
-                          {range.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Label htmlFor="minYear">Min Year</Label>
+                <Select
+                  value={filters.minYear?.toString() || "any"}
+                  onValueChange={(value) => {
+                    setFilters({
+                      ...filters,
+                      minYear: value === "any" ? undefined : parseInt(value)
+                    });
+                  }}
+                >
+                  <SelectTrigger id="minYear" className="mt-1">
+                    <SelectValue placeholder="Any Min Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Min Year</SelectItem>
+                    {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).reverse().map((year) => (
+                      <SelectItem key={`min-${year}`} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Max Year */}
+              <div>
+                <Label htmlFor="maxYear">Max Year</Label>
+                <Select
+                  value={filters.maxYear?.toString() || "any"}
+                  onValueChange={(value) => {
+                    setFilters({
+                      ...filters,
+                      maxYear: value === "any" ? undefined : parseInt(value)
+                    });
+                  }}
+                >
+                  <SelectTrigger id="maxYear" className="mt-1">
+                    <SelectValue placeholder="Any Max Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Max Year</SelectItem>
+                    {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).reverse().map((year) => (
+                      <SelectItem key={`max-${year}`} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
               {/* Fuel Type */}

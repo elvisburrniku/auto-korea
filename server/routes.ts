@@ -29,20 +29,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.query.model) filter.model = req.query.model as string;
       if (req.query.minPrice) filter.minPrice = parseInt(req.query.minPrice as string);
       if (req.query.maxPrice) filter.maxPrice = parseInt(req.query.maxPrice as string);
-      if (req.query.minYear) filter.minYear = parseInt(req.query.minYear as string);
-      if (req.query.maxYear) filter.maxYear = parseInt(req.query.maxYear as string);
+      if (req.query.minYear) {
+        filter.minYear = parseInt(req.query.minYear as string);
+        console.log(`Setting minYear filter to: ${filter.minYear}`);
+      }
+      if (req.query.maxYear) {
+        filter.maxYear = parseInt(req.query.maxYear as string);
+        console.log(`Setting maxYear filter to: ${filter.maxYear}`);
+      }
       if (req.query.fuelType) filter.fuelType = req.query.fuelType as string;
       if (req.query.transmission) filter.transmission = req.query.transmission as string;
       if (req.query.search) filter.search = req.query.search as string;
+      
+      console.log('Filter query parameters:', req.query);
+      console.log('Constructed filter object:', filter);
       
       const validationResult = carFilterSchema.safeParse(filter);
       
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
+        console.error('Filter validation failed:', errorMessage);
         return res.status(400).json({ message: errorMessage });
       }
 
+      const allCars = await storage.getAllCars();
+      console.log('Total cars before filtering:', allCars.length);
+      
       const filteredCars = await storage.filterCars(validationResult.data);
+      console.log('Filtered cars count:', filteredCars.length);
+      
       res.json(filteredCars);
     } catch (error) {
       console.error('Error filtering cars:', error);
