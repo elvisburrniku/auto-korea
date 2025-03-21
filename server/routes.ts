@@ -537,6 +537,27 @@ ${validationResult.data.carId ? `Car ID: ${validationResult.data.carId}` : ''}
     };
     res.json(dbState);
   });
+  
+  // File upload endpoint
+  app.post(`${apiPrefix}/upload`, upload.single('image'), (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      
+      // Return the path to the uploaded file
+      const filePath = `/uploads/${req.file.filename}`;
+      res.json({ 
+        url: filePath,
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        size: req.file.size
+      });
+    } catch (error) {
+      console.error('File upload error:', error);
+      res.status(500).json({ message: 'File upload failed' });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

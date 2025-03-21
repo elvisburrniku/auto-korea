@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -19,6 +19,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { InsertCar, Car, carValidationSchema } from "@shared/schema";
+import { UploadCloud, Loader2 } from "lucide-react";
 
 interface AdminCarFormProps {
   car?: Car | null;
