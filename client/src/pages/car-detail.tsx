@@ -8,22 +8,19 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 import InquiryForm from "@/components/inquiry-form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useFavorites } from '../lib/useFavorites'; // Added import for favorites hook
-import { useToast } from '@radix-ui/react-toast'; // Added import for useToast
+import { useFavorites } from '../lib/useFavorites';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function CarDetailPage() {
-  // Get car ID from URL params
   const { id } = useParams<{ id: string }>();
   const carId = parseInt(id);
 
-  // Fetch car details
   const { data: car, isLoading, error } = useQuery<Car>({
     queryKey: [`/api/cars/${carId}`],
     enabled: !isNaN(carId),
   });
 
-  // Format functions
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -36,8 +33,8 @@ export default function CarDetailPage() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const { toggleFavorite, isFavorite } = useFavorites(); // Initialize favorites hook
-  const { toast } = useToast(); // Initialize toast
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { toast } = useToast();
 
   if (isNaN(carId)) {
     return (
@@ -155,7 +152,6 @@ export default function CarDetailPage() {
     );
   }
 
-  // Prepare WhatsApp message
   const whatsappMessage = encodeURIComponent(`I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}`);
 
   return (
@@ -169,13 +165,11 @@ export default function CarDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3">
-          {/* Image Gallery */}
           <CarGallery 
             images={car.images} 
             alt={`${car.make} ${car.model}`}
           />
 
-          {/* Specifications */}
           <div className="mt-8">
             <h3 className="text-xl font-bold text-neutral-800 mb-4">Vehicle Specifications</h3>
 
@@ -333,7 +327,6 @@ export default function CarDetailPage() {
               </Button>
             </div>
 
-            {/* Inquiry Form */}
             <div className="mt-6 pt-6 border-t border-neutral-200">
               <h4 className="font-medium text-neutral-800 mb-4">Send a Message</h4>
               <InquiryForm carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
