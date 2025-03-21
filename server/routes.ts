@@ -18,8 +18,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to fetch cars' });
     }
   });
+  
+  // Filter cars - Moving this route before the :id route is crucial
+  app.get(`${apiPrefix}/cars/filter`, async (req: Request, res: Response) => {
+    try {
+      // Convert query params to the right types
+      const filter: Record<string, any> = {};
+      
+      if (req.query.make) filter.make = req.query.make as string;
+      if (req.query.model) filter.model = req.query.model as string;
+      if (req.query.minPrice) filter.minPrice = parseInt(req.query.minPrice as string);
+      if (req.query.maxPrice) filter.maxPrice = parseInt(req.query.maxPrice as string);
+      if (req.query.minYear) filter.minYear = parseInt(req.query.minYear as string);
+      if (req.query.maxYear) filter.maxYear = parseInt(req.query.maxYear as string);
+      if (req.query.fuelType) filter.fuelType = req.query.fuelType as string;
+      if (req.query.transmission) filter.transmission = req.query.transmission as string;
+      if (req.query.search) filter.search = req.query.search as string;
+      
+      const validationResult = carFilterSchema.safeParse(filter);
+      
+      if (!validationResult.success) {
+        const errorMessage = fromZodError(validationResult.error).message;
+        return res.status(400).json({ message: errorMessage });
+      }
 
-  // Get a specific car by ID
+      const filteredCars = await storage.filterCars(validationResult.data);
+      res.json(filteredCars);
+    } catch (error) {
+      console.error('Error filtering cars:', error);
+      res.status(500).json({ message: 'Failed to filter cars' });
+    }
+  });
+  
+  // Get featured cars - Moving this route before the :id route as well
+  app.get(`${apiPrefix}/cars/featured/list`, async (req: Request, res: Response) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 3;
+      const featuredCars = await storage.getFeaturedCars(limit);
+      res.json(featuredCars);
+    } catch (error) {
+      console.error('Error fetching featured cars:', error);
+      res.status(500).json({ message: 'Failed to fetch featured cars' });
+    }
+  });
+
+  // Get recent cars - Moving this route before the :id route as well
+  app.get(`${apiPrefix}/cars/recent/list`, async (req: Request, res: Response) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 4;
+      const recentCars = await storage.getRecentCars(limit);
+      res.json(recentCars);
+    } catch (error) {
+      console.error('Error fetching recent cars:', error);
+      res.status(500).json({ message: 'Failed to fetch recent cars' });
+    }
+  });
+
+  // Get a specific car by ID - This should come after all specific /cars/* routes
   app.get(`${apiPrefix}/cars/:id`, async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
@@ -95,61 +150,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error deleting car:', error);
       res.status(500).json({ message: 'Failed to delete car listing' });
-    }
-  });
-
-  // Get featured cars
-  app.get(`${apiPrefix}/cars/featured/list`, async (req: Request, res: Response) => {
-    try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 3;
-      const featuredCars = await storage.getFeaturedCars(limit);
-      res.json(featuredCars);
-    } catch (error) {
-      console.error('Error fetching featured cars:', error);
-      res.status(500).json({ message: 'Failed to fetch featured cars' });
-    }
-  });
-
-  // Get recent cars
-  app.get(`${apiPrefix}/cars/recent/list`, async (req: Request, res: Response) => {
-    try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 4;
-      const recentCars = await storage.getRecentCars(limit);
-      res.json(recentCars);
-    } catch (error) {
-      console.error('Error fetching recent cars:', error);
-      res.status(500).json({ message: 'Failed to fetch recent cars' });
-    }
-  });
-
-  // Filter cars
-  app.get(`${apiPrefix}/cars/filter`, async (req: Request, res: Response) => {
-    try {
-      // Convert query params to the right types
-      const filter: Record<string, any> = {};
-      
-      if (req.query.make) filter.make = req.query.make as string;
-      if (req.query.model) filter.model = req.query.model as string;
-      if (req.query.minPrice) filter.minPrice = parseInt(req.query.minPrice as string);
-      if (req.query.maxPrice) filter.maxPrice = parseInt(req.query.maxPrice as string);
-      if (req.query.minYear) filter.minYear = parseInt(req.query.minYear as string);
-      if (req.query.maxYear) filter.maxYear = parseInt(req.query.maxYear as string);
-      if (req.query.fuelType) filter.fuelType = req.query.fuelType as string;
-      if (req.query.transmission) filter.transmission = req.query.transmission as string;
-      if (req.query.search) filter.search = req.query.search as string;
-      
-      const validationResult = carFilterSchema.safeParse(filter);
-      
-      if (!validationResult.success) {
-        const errorMessage = fromZodError(validationResult.error).message;
-        return res.status(400).json({ message: errorMessage });
-      }
-
-      const filteredCars = await storage.filterCars(validationResult.data);
-      res.json(filteredCars);
-    } catch (error) {
-      console.error('Error filtering cars:', error);
-      res.status(500).json({ message: 'Failed to filter cars' });
     }
   });
 
