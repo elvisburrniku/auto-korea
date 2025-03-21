@@ -141,25 +141,16 @@ export default function CarFilterComponent({
 
   // Apply filters
   const applyFilters = () => {
-    // Create new URL with the current filters
-    const newUrl = `/browse-cars?${searchParams.toString()}`;
-    
-    // Update the browser URL without reloading the page
-    window.history.pushState({}, '', newUrl);
-    
-    // Force an update of the URL parameters to trigger a new query
-    const newParams = new URLSearchParams(searchParams.toString());
-    setSearchParams(newParams);
-    
-    // Navigate to browse cars with the filters applied
-    // This is crucial to trigger the proper data fetching
-    setLocation(`/browse-cars?${newParams.toString()}`);
+    // Call the onFilterChange callback with the current filters
+    if (onFilterChange) {
+      onFilterChange(filters);
+    }
   };
 
   // Reset filters
   const resetFilters = () => {
     // Reset the filters state
-    setFilters({
+    const emptyFilters = {
       make: "",
       model: "",
       minPrice: undefined,
@@ -169,12 +160,18 @@ export default function CarFilterComponent({
       fuelType: "",
       transmission: "",
       search: "",
-    });
+    };
     
-    // Clear URL parameters and navigate to clean browse-cars page
-    window.history.pushState({}, '', '/browse-cars');
-    setSearchParams(new URLSearchParams());
-    setLocation('/browse-cars');
+    // Set the filters to empty
+    setFilters(emptyFilters);
+    
+    // Notify parent component through callback
+    if (onFilterChange) {
+      onFilterChange(emptyFilters);
+    }
+    
+    // For safety, also clear the URL parameters and navigate
+    window.location.href = '/browse-cars';
   };
 
   return (

@@ -16,6 +16,12 @@ export default function BrowseCarsPage() {
     new URLSearchParams(window.location.search)
   );
   
+  // Add useEffect to update searchParams when URL changes
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setSearchParams(urlParams);
+  }, [window.location.search]);
+  
   const [searchTerm, setSearchTerm] = useState<string>(
     searchParams.get("search") || ""
   );
@@ -146,7 +152,26 @@ export default function BrowseCarsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
-            <CarFilterComponent initialFilters={initialFilters} />
+            <CarFilterComponent 
+              initialFilters={initialFilters} 
+              onFilterChange={(newFilters) => {
+                // Create URL params from the filter
+                const params = new URLSearchParams();
+                
+                if (newFilters.make) params.set("make", newFilters.make);
+                if (newFilters.model) params.set("model", newFilters.model);
+                if (newFilters.minPrice !== undefined) params.set("minPrice", newFilters.minPrice.toString());
+                if (newFilters.maxPrice !== undefined) params.set("maxPrice", newFilters.maxPrice.toString());
+                if (newFilters.minYear !== undefined) params.set("minYear", newFilters.minYear.toString());
+                if (newFilters.maxYear !== undefined) params.set("maxYear", newFilters.maxYear.toString());
+                if (newFilters.fuelType) params.set("fuelType", newFilters.fuelType);
+                if (newFilters.transmission) params.set("transmission", newFilters.transmission);
+                if (searchTerm) params.set("search", searchTerm);
+                
+                // Update the search params
+                setSearchParams(params);
+              }}
+            />
           </div>
           
           {/* Car Listings */}
