@@ -65,7 +65,7 @@ export default function CarComparison() {
       advancedFilter.transmission,
       advancedFilter.fuelType
     ],
-    queryFn: () => {
+    queryFn: async () => {
       // Build filter query parameters
       const params = new URLSearchParams();
       if (advancedFilter.make) params.append('make', advancedFilter.make);
@@ -76,7 +76,10 @@ export default function CarComparison() {
       if (advancedFilter.transmission) params.append('transmission', advancedFilter.transmission);
       if (advancedFilter.fuelType) params.append('fuelType', advancedFilter.fuelType);
       
-      return apiRequest('GET', `/api/cars/filter?${params.toString()}`);
+      const response = await apiRequest('GET', `/api/cars/filter?${params.toString()}`);
+      const data = await response.json();
+      console.log("Car filter data:", data);
+      return data;
     },
     // Only run the query if at least one filter is applied
     enabled: Object.values(advancedFilter).some(v => !!v),

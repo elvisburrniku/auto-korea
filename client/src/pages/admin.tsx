@@ -30,6 +30,20 @@ export default function AdminPage() {
     }
   });
 
+  // Get all cars - declare query even if we're not authenticated yet
+  // We'll only use the data if we're authenticated
+  const { data: cars, isLoading } = useQuery({
+    queryKey: ['/api/cars'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/cars');
+      const data = await response.json();
+      console.log("Cars data:", data);
+      return data;
+    },
+    // Only fetch if we're authenticated and admin
+    enabled: !!(session?.isAuthenticated && session?.user?.isAdmin)
+  });
+
   useEffect(() => {
     if (!isSessionLoading && (!session?.isAuthenticated || !session?.user?.isAdmin)) {
       console.log("Not authenticated or not admin, redirecting to login");
@@ -44,17 +58,6 @@ export default function AdminPage() {
   if (!session?.isAuthenticated || !session?.user?.isAdmin) {
     return null;
   }
-
-  // Get all cars
-  const { data: cars, isLoading } = useQuery({
-    queryKey: ['/api/cars'],
-    queryFn: async () => {
-      const response = await apiRequest('GET', '/api/cars');
-      const data = await response.json();
-      console.log("Cars data:", data);
-      return data;
-    }
-  });
 
   // Delete car mutation
   const deleteMutation = useMutation({

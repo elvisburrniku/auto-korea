@@ -39,7 +39,9 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         setIsLoading(true);
         try {
           const response = await apiRequest('GET', `/api/wishlists/user/${userId}`);
-          setWishlists(response);
+          const data = await response.json();
+          console.log("User wishlists:", data);
+          setWishlists(data);
         } catch (error) {
           console.error("Error fetching wishlists:", error);
           toast({
@@ -83,9 +85,12 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         "/api/wishlists",
         JSON.stringify(newWishlist)
       );
+      
+      const data = await response.json();
+      console.log("Created wishlist:", data);
 
       // Add the new wishlist to the state
-      setWishlists([...wishlists, response]);
+      setWishlists([...wishlists, data]);
       
       // Reset form and close dialog
       setNewWishlistName("");
@@ -137,11 +142,14 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
       const updatedCarIds = Array.from(new Set([...existingCarIds, ...selectedCarIds]));
       
       // Update the wishlist
-      const updatedWishlist = await apiRequest(
+      const response = await apiRequest(
         "PATCH",
         `/api/wishlists/${wishlistId}`,
         JSON.stringify({ cars: updatedCarIds })
       );
+      
+      const updatedWishlist = await response.json();
+      console.log("Updated wishlist:", updatedWishlist);
 
       // Update the state
       setWishlists(wishlists.map(w => w.id === wishlistId ? updatedWishlist : w));

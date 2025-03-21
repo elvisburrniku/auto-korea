@@ -54,7 +54,10 @@ export default function BrowseCarsPage() {
   const { data: cars, isLoading, error } = useQuery<Car[]>({
     queryKey: ['/api/cars/filter', searchParams.toString()],
     queryFn: async () => {
-      return apiRequest('GET', `/api/cars/filter?${searchParams.toString()}`);
+      const response = await apiRequest('GET', `/api/cars/filter?${searchParams.toString()}`);
+      const data = await response.json();
+      console.log("Filtered cars data:", data);
+      return data;
     },
   });
   
