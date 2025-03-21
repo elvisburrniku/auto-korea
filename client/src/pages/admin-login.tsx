@@ -29,13 +29,7 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await apiRequest('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiRequest('POST', '/api/auth/login', { username, password });
       
       if (response.isAdmin) {
         toast({
