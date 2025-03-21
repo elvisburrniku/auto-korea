@@ -295,7 +295,7 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
 
       {isLoading && <p className="text-center">Loading wishlists...</p>}
 
-      {!isLoading && wishlists.length === 0 && (
+      {!isLoading && Array.isArray(wishlists) && wishlists.length === 0 && (
         <div className="text-center py-8">
           <p className="text-lg text-muted-foreground">You don't have any wishlists yet.</p>
           <Button 
@@ -307,64 +307,66 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {wishlists.map((wishlist) => (
-          <Card key={wishlist.id} className="overflow-hidden">
-            <CardHeader>
-              <CardTitle>{wishlist.name}</CardTitle>
-              <CardDescription>
-                {wishlist.cars?.length || 0} cars • Created {new Date(wishlist.createdAt).toLocaleDateString()}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {selectedCars.length > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={() => handleAddToWishlist(wishlist.id)}
-                  className="w-full mb-4"
-                >
-                  <FaPlus className="mr-2" /> Add Selected Cars
-                </Button>
-              )}
-              <ScrollArea className="h-[150px] w-full">
-                {wishlist.cars && wishlist.cars.length > 0 ? (
-                  wishlist.cars.map((carId, index) => (
-                    <div key={`${carId}-${index}`} className="py-2">
-                      <div className="font-medium">Car ID: {carId}</div>
-                      <Separator className="my-2" />
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center py-4 text-muted-foreground">
-                    No cars in this wishlist yet
-                  </p>
+      {!isLoading && Array.isArray(wishlists) && wishlists.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {wishlists.map((wishlist) => (
+            <Card key={wishlist.id} className="overflow-hidden">
+              <CardHeader>
+                <CardTitle>{wishlist.name}</CardTitle>
+                <CardDescription>
+                  {wishlist.cars?.length || 0} cars • Created {new Date(wishlist.createdAt).toLocaleDateString()}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {selectedCars.length > 0 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleAddToWishlist(wishlist.id)}
+                    className="w-full mb-4"
+                  >
+                    <FaPlus className="mr-2" /> Add Selected Cars
+                  </Button>
                 )}
-              </ScrollArea>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={() => handleViewWishlist(wishlist.id)}>
-                View
-              </Button>
-              <div className="space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleShareWishlist(wishlist)}
-                >
-                  <FaShare />
+                <ScrollArea className="h-[150px] w-full">
+                  {wishlist.cars && wishlist.cars.length > 0 ? (
+                    wishlist.cars.map((carId, index) => (
+                      <div key={`${carId}-${index}`} className="py-2">
+                        <div className="font-medium">Car ID: {carId}</div>
+                        <Separator className="my-2" />
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center py-4 text-muted-foreground">
+                      No cars in this wishlist yet
+                    </p>
+                  )}
+                </ScrollArea>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button variant="outline" onClick={() => handleViewWishlist(wishlist.id)}>
+                  View
                 </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleDeleteWishlist(wishlist.id)}
-                >
-                  <FaTrash />
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                <div className="space-x-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleShareWishlist(wishlist)}
+                  >
+                    <FaShare />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleDeleteWishlist(wishlist.id)}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Share Dialog */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
