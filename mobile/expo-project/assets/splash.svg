@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1242" height="2436" viewBox="0 0 1242 2436" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1242" height="2436" fill="#3b82f6"/>
+    <circle cx="621" cy="1218" r="500" fill="white" opacity="0.9"/>
+    <path d="M421,1058 L821,1058 L821,1118 L421,1118 Z" fill="#3b82f6"/>
+    <path d="M421,1168 L821,1168 L821,1228 L421,1228 Z" fill="#3b82f6"/>
+    <path d="M421,1278 L821,1278 L821,1338 L421,1338 Z" fill="#3b82f6"/>
+    <path d="M421,1388 L621,1388 L621,1448 L421,1448 Z" fill="#3b82f6"/>
+    <circle cx="721" cy="1418" r="60" fill="#3b82f6"/>
+    <circle cx="621" cy="1418" r="60" fill="#3b82f6"/>
+    
+    <text x="621" y="1800" font-family="Arial" font-size="72" text-anchor="middle" fill="white">AutoMarket</text>
+</svg>
