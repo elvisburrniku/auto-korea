@@ -169,9 +169,13 @@ export default function CarComparison() {
   // Generate a WhatsApp message with comparison details
   const generateWhatsAppMessage = () => {
     const compareUrl = window.location.href;
-    const carNames = selectedCars.map(car => `${car.year} ${car.make} ${car.model}`).join(', ');
+    const carDetails = selectedCars.map(car => {
+      const kmMileage = Math.round(milesToKm(car.mileage)).toLocaleString();
+      const eurPrice = formatEurPrice(car.price);
+      return `${car.year} ${car.make} ${car.model} (${eurPrice}, ${kmMileage} km)`;
+    }).join(', ');
     
-    return `I'm interested in comparing these vehicles: ${carNames}. Please provide more information.`;
+    return `I'm interested in comparing these vehicles: ${carDetails}. Please provide more information.`;
   };
 
   // Card view for mobile
@@ -303,10 +307,17 @@ export default function CarComparison() {
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">MPG</TableCell>
-            {selectedCars.map((car) => (
-              <TableCell key={car.id}>{car.mpg || 'N/A'}</TableCell>
-            ))}
+            <TableCell className="font-medium">Fuel Efficiency (l/100km)</TableCell>
+            {selectedCars.map((car) => {
+              let liters100km = null;
+              if (car.mpg && typeof car.mpg === 'number') {
+                // Convert MPG to l/100km (235.214583 is the conversion factor)
+                liters100km = (235.214583 / car.mpg).toFixed(1);
+              }
+              return (
+                <TableCell key={car.id}>{liters100km || 'N/A'}</TableCell>
+              );
+            })}
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">Engine</TableCell>
@@ -319,7 +330,14 @@ export default function CarComparison() {
             {selectedCars.map((car) => (
               <TableCell key={car.id}>
                 <Button
-                  onClick={() => window.open(`https://wa.me/${car.sellerPhone}?text=${encodeURIComponent(`I'm interested in the ${car.year} ${car.make} ${car.model}`)}`, '_blank')}
+                  onClick={() => {
+                    const kmMileage = Math.round(milesToKm(car.mileage)).toLocaleString();
+                    const eurPrice = formatEurPrice(car.price);
+                    window.open(
+                      `https://wa.me/${car.sellerPhone}?text=${encodeURIComponent(`I'm interested in the ${car.year} ${car.make} ${car.model} (${eurPrice}, ${kmMileage} km)`)}`, 
+                      '_blank'
+                    )
+                  }}
                   size="sm"
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white"
                 >
@@ -420,11 +438,11 @@ export default function CarComparison() {
                 onChange={(e) => setAdvancedFilter({...advancedFilter, minPrice: e.target.value})}
               >
                 <option value="">Any Price</option>
-                <option value="10000">$10,000</option>
-                <option value="20000">$20,000</option>
-                <option value="30000">$30,000</option>
-                <option value="40000">$40,000</option>
-                <option value="50000">$50,000</option>
+                <option value="10000">€9,000</option>
+                <option value="20000">€18,000</option>
+                <option value="30000">€27,000</option>
+                <option value="40000">€36,000</option>
+                <option value="50000">€45,000</option>
               </select>
             </div>
             
@@ -436,12 +454,12 @@ export default function CarComparison() {
                 onChange={(e) => setAdvancedFilter({...advancedFilter, maxPrice: e.target.value})}
               >
                 <option value="">Any Price</option>
-                <option value="20000">$20,000</option>
-                <option value="30000">$30,000</option>
-                <option value="40000">$40,000</option>
-                <option value="50000">$50,000</option>
-                <option value="75000">$75,000</option>
-                <option value="100000">$100,000+</option>
+                <option value="20000">€18,000</option>
+                <option value="30000">€27,000</option>
+                <option value="40000">€36,000</option>
+                <option value="50000">€45,000</option>
+                <option value="75000">€67,500</option>
+                <option value="100000">€90,000+</option>
               </select>
             </div>
             
