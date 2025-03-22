@@ -213,6 +213,12 @@ export default function CarComparison() {
               <span className="text-muted-foreground">Fuel Type:</span>
               <span>{car.fuelType}</span>
             </div>
+            {car.fuelType?.toLowerCase() !== 'electric' && car.mpg && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Fuel Efficiency:</span>
+                <span>{(235.214583 / car.mpg).toFixed(1)} l/100km</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Transmission:</span>
               <span>{car.transmission}</span>
@@ -309,6 +315,11 @@ export default function CarComparison() {
           <TableRow>
             <TableCell className="font-medium">Fuel Efficiency (l/100km)</TableCell>
             {selectedCars.map((car) => {
+              // For electric cars, show 'Electric' instead of fuel efficiency
+              if (car.fuelType?.toLowerCase() === 'electric') {
+                return <TableCell key={car.id}>Electric</TableCell>;
+              }
+              
               let liters100km = null;
               if (car.mpg && typeof car.mpg === 'number') {
                 // Convert MPG to l/100km (235.214583 is the conversion factor)
