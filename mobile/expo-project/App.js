@@ -1,55 +1,32 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.header}>
-          <Text style={styles.title}>AutoMarket</Text>
-          <Text style={styles.subtitle}>Find your perfect car</Text>
-        </View>
-        
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Explore Cars</Text>
-          <Text style={styles.cardText}>
-            Browse our selection of high-quality vehicles
-          </Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Browse Cars</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Size Visualization</Text>
-          <Text style={styles.cardText}>
-            Compare car sizes in your environment
-          </Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Try Visualization</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Create Wishlists</Text>
-          <Text style={styles.cardText}>
-            Save your favorite cars and share with others
-          </Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Start Wishlist</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            AutoMarket Mobile App - Demo Version
-          </Text>
-          <Text style={styles.footerSubtext}>
-            Created with Expo
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>AutoMarket</Text>
+        <Text style={styles.subtitle}>Car Sales Mobile App</Text>
+      </View>
+      
+      <View style={styles.content}>
+        <Text style={styles.paragraph}>
+          This is a minimal version of the AutoMarket app designed for Expo Go.
+        </Text>
+        <Text style={styles.paragraph}>
+          Features available in the full app:
+        </Text>
+        <Text style={styles.feature}>• Browse Cars</Text>
+        <Text style={styles.feature}>• Car Size Visualization</Text>
+        <Text style={styles.feature}>• Wishlists</Text>
+        <Text style={styles.feature}>• Contact Sellers</Text>
+        <Text style={styles.feature}>• Compare Features</Text>
+      </View>
+      
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>AutoMarket © 2025</Text>
+      </View>
+    </View>
   );
 }
 
@@ -62,67 +39,42 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#3b82f6',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    height: 150,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.8)',
+    marginTop: 5,
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
+  content: {
     padding: 20,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    flex: 1,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  cardText: {
+  paragraph: {
     fontSize: 16,
-    color: '#666',
     marginBottom: 15,
+    color: '#333',
     lineHeight: 22,
   },
-  button: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+  feature: {
     fontSize: 16,
+    marginLeft: 10,
+    marginBottom: 8,
+    color: '#555',
   },
   footer: {
-    marginTop: 20,
-    marginBottom: 40,
+    padding: 20,
+    backgroundColor: '#333',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
   footerText: {
+    color: 'white',
     fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
-  },
-  footerSubtext: {
-    fontSize: 12,
-    color: '#999',
-  },
+  }
 });
