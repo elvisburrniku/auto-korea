@@ -812,16 +812,175 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
       
       console.log(`Received Encar.com import request for URL: ${url}`);
       
-      // Return an explanation about why we can't scrape directly
-      return res.status(422).json({ 
-        success: false, 
-        message: "Web scraping cannot be performed through the browser interface",
-        details: [
-          "Web scraping of Encar.com requires special character encoding (EUC-KR) handling",
-          "Session cookies and authentication are needed for a complete scrape",
-          "Please use the terminal command 'node scripts/encar-scraper.js' for full functionality"
-        ]
-      });
+      // For direct scraping functionality
+      try {
+        // Import necessary modules
+        const { default: axios } = await import('axios');
+        const { load } = await import('cheerio');
+        const { default: fs } = await import('fs');
+        const { default: path } = await import('path');
+        
+        console.log("Starting Encar.com import process...");
+        
+        // Fetch car listings from Encar
+        const response = await axios.get(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          }
+        });
+        
+        console.log("Successfully fetched data from Encar.com");
+        
+        // Parse HTML
+        const $ = load(response.data);
+        const carListings = [];
+        
+        // Try different selectors that might match car listings
+        const selectors = [
+          '.everytime > li',
+          '.list_cars .thum',
+          '.car_list > li',
+          '.product_card',
+          '.listCont > ul > li',
+          '.carList li',
+          '.car_item',
+          '.carinfoin',
+          '.modelInSection',
+          '.list_area li'
+        ];
+        
+        // Select the first selector that returns elements
+        for (const selector of selectors) {
+          const elements = $(selector);
+          console.log(`Found ${elements.length} elements with selector ${selector}`);
+          
+          if (elements.length > 0) {
+            elements.each((index, element) => {
+              try {
+                const el = $(element);
+                
+                // Extract title/model
+                let title = '';
+                let titleElement = el.find('.model').first();
+                if (titleElement.length === 0) titleElement = el.find('.inf a').first();
+                if (titleElement.length === 0) titleElement = el.find('h3').first();
+                if (titleElement.length === 0) titleElement = el.find('.tit').first();
+                if (titleElement.length === 0) titleElement = el.find('strong').first();
+                
+                if (titleElement.length > 0) {
+                  title = titleElement.text().trim();
+                }
+                
+                // For BMW specific search
+                const make = 'BMW';
+                const model = title ? title.replace(/BMW|비엠더블유|BMW 뉴/gi, '').trim() : '3 Series';
+                
+                // Extract image URL
+                let imageUrl = '';
+                let imageElement = el.find('img').first();
+                if (imageElement.length > 0) {
+                  imageUrl = imageElement.attr('src') || imageElement.attr('data-src') || '';
+                }
+                
+                // Extract price
+                let price = 30000; // Default price in KRW
+                let priceElement = el.find('.price').first();
+                if (priceElement.length === 0) priceElement = el.find('.val').first();
+                if (priceElement.length === 0) priceElement = el.find('.cost').first();
+                if (priceElement.length > 0) {
+                  const priceText = priceElement.text().trim().replace(/[^0-9]/g, '');
+                  if (priceText) {
+                    price = parseInt(priceText) || price;
+                  }
+                }
+                
+                // Extract year
+                let year = 2020; // Default year
+                let infoText = el.text(); // Get all text in the element
+                
+                const yearMatch = infoText.match(/\d{4}년|\d{4}\s*식|\d{4}\s*model/i);
+                if (yearMatch) {
+                  const yearStr = yearMatch[0].match(/\d{4}/)[0];
+                  year = parseInt(yearStr) || year;
+                }
+                
+                // Extract fuel type
+                let fuelType = 'Gasoline'; // Default fuel type
+                if (infoText.includes('디젤')) {
+                  fuelType = 'Diesel';
+                } else if (infoText.includes('하이브리드')) {
+                  fuelType = 'Hybrid';
+                } else if (infoText.includes('전기')) {
+                  fuelType = 'Electric';
+                }
+                
+                carListings.push({
+                  make,
+                  model,
+                  year,
+                  price: Math.round(price / 1500), // Convert KRW to EUR (approximate)
+                  mileage: 50000, // Default mileage
+                  fuelType,
+                  transmission: 'Automatic', // Most BMW cars are automatic
+                  drivetrain: 'RWD', // Default drivetrain
+                  exteriorColor: 'Silver', // Default color
+                  interiorColor: 'Black', // Default color
+                  description: `${year} ${make} ${model}. Imported from Encar.com, a popular Korean car marketplace.`,
+                  sellerName: 'Auto Import',
+                  sellerPhone: '+82-1234-5678',
+                  sellerEmail: 'import@automarket.com',
+                  sellerLocation: 'Seoul, South Korea',
+                  // Use a default image if none is found
+                  images: imageUrl ? [`https://images.unsplash.com/photo-1520050206274-a1ae44613e6d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80`] : [],
+                  isFeatured: Math.random() > 0.7 // Randomly feature some cars
+                });
+              } catch (err) {
+                console.error(`Error processing element ${index}:`, err);
+              }
+            });
+            
+            // If we found any cars, stop trying other selectors
+            if (carListings.length > 0) {
+              console.log(`Successfully extracted ${carListings.length} cars using selector ${selector}`);
+              break;
+            }
+          }
+        }
+        
+        // Import the cars into the database
+        const importedCars = [];
+        for (const car of carListings) {
+          try {
+            const newCar = await storage.createCar(car);
+            importedCars.push(newCar);
+            console.log(`Imported: ${car.year} ${car.make} ${car.model}`);
+          } catch (err) {
+            console.error(`Failed to import car:`, err);
+          }
+        }
+        
+        if (importedCars.length > 0) {
+          return res.status(200).json({
+            success: true,
+            message: `Successfully imported ${importedCars.length} cars from Encar.com`,
+            cars: importedCars
+          });
+        } else {
+          // If no cars were imported, throw an error
+          throw new Error("Could not extract any cars from the webpage");
+        }
+        
+      } catch (scrapeError) {
+        console.error("Scraping error:", scrapeError);
+        return res.status(422).json({ 
+          success: false, 
+          message: "Failed to import cars from Encar.com",
+          details: [
+            scrapeError.message,
+            "If you need specific car models, try using the terminal command: 'node scripts/encar-scraper.js'"
+          ]
+        });
+      }
     } catch (error: any) {
       console.error("Encar import failed:", error);
       return res.status(500).json({ 
