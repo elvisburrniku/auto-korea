@@ -1,104 +1,134 @@
-// Centralized import for A-Frame and AR.js
-// This ensures that these libraries are only imported once in the entire application
-// and prevents registration conflicts with custom elements
+// AR core module with direct script loading approach
+// This approach loads the library scripts directly from CDN
+// instead of relying on bundled npm packages
 
-// Flag to track if initialization was done
+// Add global Window interface extension for A-Frame
+declare global {
+  interface Window {
+    AFRAME?: any;
+  }
+}
+
+// Track initialization state
 let initialized = false;
-let initializing = false;
+let initPromise: Promise<boolean> | null = null;
 
-// Function to initialize AR components if not already done
+/**
+ * Initializes AR libraries (A-Frame and AR.js)
+ * Uses a singleton promise pattern to ensure initialization happens only once
+ */
 export const initialize = async (): Promise<boolean> => {
-  // Return immediately if already initialized or in progress
+  // If already initialized, return immediately
   if (initialized) {
-    console.log('AR already initialized - ready to use');
+    console.log('AR Core: Already initialized');
     return true;
   }
-  
-  if (initializing) {
-    console.log('AR initialization in progress - please wait');
-    return false;
+
+  // If initialization is in progress, return the existing promise
+  if (initPromise) {
+    console.log('AR Core: Initialization already in progress, waiting for result');
+    return initPromise;
   }
+
+  // Start initialization with a new promise
+  console.log('AR Core: Starting initialization process');
   
-  console.log('Starting AR initialization...');
-  initializing = true;
-  
-  try {
-    // Use dynamic imports to lazy-load A-Frame and AR.js
-    // This ensures they are only loaded when needed
-    if (typeof window !== 'undefined') {
-      // Only attempt to import in browser environment
-      try {
-        console.log('Importing A-Frame...');
-        // Dynamically import A-Frame first
-        const aframeModule = await import('aframe');
-        console.log('A-Frame imported successfully');
-        
-        // Wait a moment to ensure A-Frame is properly registered
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        console.log('Importing AR.js...');
-        // Then import AR.js which depends on A-Frame
-        const arjsModule = await import('@ar-js-org/ar.js');
-        console.log('AR.js imported successfully');
-        
-        // Wait again to ensure AR.js registers properly
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Set initialization flag
-        initialized = true;
-        initializing = false;
-        
-        console.log('AR initialization complete');
-        return true;
-      } catch (error) {
-        console.error('Error importing AR modules:', error);
-        initializing = false;
-        return false;
+  initPromise = new Promise<boolean>(async (resolve) => {
+    try {
+      // First check if we're in a browser environment
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
+        console.error('AR Core: Not in browser environment');
+        resolve(false);
+        return;
       }
-    } else {
-      console.error('Window object not available - not in browser environment');
-      initializing = false;
-      return false;
+
+      // Load A-Frame script if not already loaded
+      if (!window.AFRAME) {
+        console.log('AR Core: Loading A-Frame script');
+        await loadScript('https://aframe.io/releases/1.4.0/aframe.min.js');
+        console.log('AR Core: A-Frame loaded successfully');
+      } else {
+        console.log('AR Core: A-Frame already loaded');
+      }
+
+      // Allow time for A-Frame to initialize
+      await new Promise(r => setTimeout(r, 200));
+
+      // Load AR.js after A-Frame is loaded
+      console.log('AR Core: Loading AR.js script');
+      await loadScript('https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js');
+      console.log('AR Core: AR.js loaded successfully');
+
+      // Allow time for AR.js to initialize
+      await new Promise(r => setTimeout(r, 200));
+
+      // Set initialized state
+      initialized = true;
+      console.log('AR Core: Initialization complete');
+      resolve(true);
+    } catch (error) {
+      console.error('AR Core: Initialization failed', error);
+      // Reset promise so we can try again
+      initPromise = null;
+      resolve(false);
     }
-  } catch (error) {
-    console.error('Error in AR initialization:', error);
-    initializing = false;
-    return false;
-  }
+  });
+
+  return initPromise;
 };
 
-// Do NOT initialize on module load - wait for explicit initialization
-// This prevents automatic loading when the module is imported
+/**
+ * Helper function to load a script dynamically
+ */
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = (err) => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+  });
+}
 
-// Export any utility functions for AR functionality
-export function cleanupARScene() {
-  // Safely remove A-Frame scene if it exists
+/**
+ * Checks if AR is ready to use
+ */
+export const isARReady = (): boolean => {
+  return initialized && typeof window !== 'undefined' && !!window.AFRAME;
+};
+
+/**
+ * Cleans up AR scene elements
+ */
+export function cleanupARScene(): void {
   if (typeof document !== 'undefined') {
-    const scenes = document.querySelectorAll('a-scene');
-    scenes.forEach(scene => {
+    // Find and remove A-Frame scenes
+    document.querySelectorAll('a-scene').forEach(scene => {
       scene.parentNode?.removeChild(scene);
     });
+    
+    // Remove any AR.js video elements that might be left
+    document.querySelectorAll('.a-canvas, .arjs-video').forEach(el => {
+      el.parentNode?.removeChild(el);
+    });
+    
+    console.log('AR Core: Scene cleanup complete');
   }
 }
 
-// Initialize A-Frame scene
+/**
+ * Sets up an empty A-Frame scene - typically not needed directly
+ */
 export function initializeARScene(): void {
-  // This function can be called to ensure A-Frame is properly initialized
-  // before creating any components - if needed for future extensions
+  // This is a placeholder for future setup needs
+  console.log('AR Scene initialized');
 }
 
-// Make sure external utilities can check if AR is ready
-export const isARReady = (): boolean => {
-  // Since we're directly importing A-Frame at the module level,
-  // we always consider it "ready" - no need to check window.AFRAME
-  return initialized;
-};
-
-// Export a typed interface for A-Frame scene element
-// to avoid TypeScript errors
+/**
+ * Type definition for A-Frame scene element
+ */
 export interface HTMLAFrameSceneElement extends HTMLElement {
   camera: any;
   renderer: any;
-  addEventListener: (event: string, callback: () => void) => void;
-  removeEventListener: (event: string, callback: () => void) => void;
 }

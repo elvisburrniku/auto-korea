@@ -137,6 +137,7 @@ export default function ARSizeComparison() {
         const response = await apiRequest({
           url: '/api/cars',
           method: 'GET',
+          params: {},
         });
         
         if (!response || !Array.isArray(response) || response.length === 0) {
@@ -183,30 +184,11 @@ export default function ARSizeComparison() {
     }
 
     if (!isARMode) {
-      // First try to initialize AR components dynamically
-      try {
-        const success = await initialize();
-        
-        if (!success) {
-          toast({
-            title: 'AR Not Ready',
-            description: 'Could not initialize AR components',
-            variant: 'destructive',
-          });
-          return;
-        }
-      } catch (error) {
-        console.error('Error initializing AR:', error);
-        toast({
-          title: 'AR Error',
-          description: 'Failed to initialize AR components',
-          variant: 'destructive',
-        });
-        return;
-      }
+      console.log('Entering AR mode...');
       
-      // Check if browser supports getUserMedia
+      // Check if browser supports camera/webcam
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error('Browser does not support getUserMedia');
         toast({
           title: 'Not supported',
           description: 'Your browser does not support camera access for AR',
@@ -216,10 +198,12 @@ export default function ARSizeComparison() {
       }
 
       try {
-        // Request camera permission
+        // First request camera permission before trying to initialize AR
+        console.log('Requesting camera permission...');
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         // Stop the stream as it will be used by the webcam component
         stream.getTracks().forEach(track => track.stop());
+        console.log('Camera permission granted');
       } catch (error) {
         console.error('Camera permission error:', error);
         toast({
@@ -229,11 +213,39 @@ export default function ARSizeComparison() {
         });
         return;
       }
+      
+      try {
+        // Now try to initialize AR components with our new direct script loading approach
+        console.log('Initializing AR libraries...');
+        const success = await initialize();
+        
+        if (!success) {
+          console.error('Failed to initialize AR components');
+          toast({
+            title: 'AR Not Ready',
+            description: 'Could not initialize AR components',
+            variant: 'destructive',
+          });
+          return;
+        }
+        
+        console.log('AR initialization successful');
+      } catch (error) {
+        console.error('Error initializing AR:', error);
+        toast({
+          title: 'AR Error',
+          description: 'Failed to initialize AR components',
+          variant: 'destructive',
+        });
+        return;
+      }
     } else {
       // When exiting AR mode, clean up any AR scene elements
+      console.log('Exiting AR mode, cleaning up...');
       cleanupARScene();
     }
 
+    console.log(`Toggling AR mode from ${isARMode} to ${!isARMode}`);
     setIsARMode(!isARMode);
   };
 

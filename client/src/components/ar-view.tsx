@@ -63,26 +63,44 @@ export default function ARView({ car, onClose }: ARViewProps) {
         
         if (!mounted) return;
         
-        // Now initialize AR libraries
+        // Now initialize AR libraries using our new direct script loading approach
         console.log('AR View: Initializing AR libraries');
-        const success = await initialize();
-        
-        if (!mounted) return;
-        
-        if (!success) {
-          console.error('AR View: AR initialization failed');
+        try {
+          const success = await initialize();
+          
+          if (!mounted) return;
+          
+          if (!success) {
+            console.error('AR View: AR initialization failed');
+            if (mounted) {
+              setError('Failed to initialize AR components');
+              toast({
+                title: 'AR Error',
+                description: 'Could not initialize AR components. Please try again later.',
+                variant: 'destructive',
+              });
+            }
+            return;
+          }
+          
+          // Give time for scripts to be fully processed
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          if (!mounted) return;
+          
+          console.log('AR View: AR setup completed successfully');
+        } catch (arErr) {
+          console.error('AR View: Failed to initialize libraries:', arErr);
           if (mounted) {
-            setError('Failed to initialize AR components');
+            setError('Failed to load AR libraries');
             toast({
               title: 'AR Error',
-              description: 'Could not initialize AR components. Please try again later.',
+              description: 'Could not load required AR libraries',
               variant: 'destructive',
             });
           }
           return;
         }
-        
-        console.log('AR View: AR setup completed successfully');
       } catch (err) {
         console.error('AR View: Setup error:', err);
         if (mounted) {
