@@ -1,141 +1,151 @@
-# Exporting and Testing the AutoMarket App on iPhone
+# iPhone Development Setup Guide for AutoMarket
 
-This guide will walk you through the process of exporting the AutoMarket mobile app from Replit and setting it up for testing on an iPhone.
+This guide will walk you through setting up your environment for native iOS development of the AutoMarket mobile app.
 
-## Part 1: Exporting from Replit
+## Prerequisites
 
-1. **Download the project as a ZIP**
-   - Click on the three dots (⋮) in the top-right corner of the Replit interface
-   - Select "Download as zip"
-   - Save the ZIP file to your computer
+Before you begin, make sure you have:
 
-2. **Extract the ZIP file**
-   - Right-click the downloaded ZIP file and select "Extract All" (Windows) or double-click (Mac)
-   - Choose a location where you want to extract the files
-   - Remember this location as we'll refer to it as `/path/to/extracted/project/`
+1. **macOS computer** - Required for iOS development
+2. **Apple Developer Account** - Either paid ($99/year) or free (with limitations)
+3. **Xcode** - Download the latest version from the Mac App Store
+4. **Node.js and npm** - Make sure you have Node.js v16 or newer installed
 
-## Part 2: Setting Up Development Environment
+## Setup Steps
 
-1. **Install Required Software**
-   - Install [Node.js](https://nodejs.org/) (v14 or later)
-   - Install [Xcode](https://apps.apple.com/us/app/xcode/id497799835) from the Mac App Store
-   - Install Xcode Command Line Tools by opening Terminal and running:
-     ```bash
-     xcode-select --install
-     ```
+### 1. Install Development Tools
 
-2. **Install React Native CLI**
-   - Open Terminal and run:
-     ```bash
-     npm install -g react-native-cli
-     ```
+```bash
+# Install CocoaPods (Ruby gem for iOS dependency management)
+sudo gem install cocoapods
 
-## Part 3: Configure iOS Project
+# Install React Native CLI globally
+npm install -g react-native-cli
+```
 
-1. **Navigate to the project directory**
-   ```bash
-   cd /path/to/extracted/project/mobile
-   ```
+### 2. Configure Xcode
 
-2. **Install project dependencies**
-   ```bash
-   npm install
-   ```
+1. Open Xcode
+2. Go to Preferences > Accounts
+3. Add your Apple ID
+4. Download Manual Profiles if prompted
 
-3. **Initialize iOS project files**
-   ```bash
-   npx react-native init AutoMarketMobile --template react-native-template-typescript --directory ios-setup
-   ```
+### 3. Clone and Setup the Project
 
-4. **Copy iOS files to your project**
-   ```bash
-   cp -R ios-setup/ios ./
-   rm -rf ios-setup
-   ```
+```bash
+# Navigate to the project directory
+cd mobile
 
-5. **Update Pod dependencies**
-   ```bash
-   cd ios
-   pod install
-   cd ..
-   ```
+# Install JavaScript dependencies
+npm install
+```
 
-## Part 4: Configuration for API Access
+### 4. Configure iOS Project
 
-1. **Update API URL**
-   - Open `src/api/apiClient.ts`
-   - Edit the `baseUrl` in the `API_CONFIG` to point to your deployed API:
-     ```typescript
-     const API_CONFIG = {
-       baseUrl: 'https://your-deployed-api-url.com/api',
-       // or use your local IP if testing on local network
-       // baseUrl: 'http://192.168.1.X:5000/api',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-     };
-     ```
+```bash
+# Install iOS dependencies using CocoaPods
+cd ios
+pod install
+cd ..
+```
 
-## Part 5: Prepare Xcode Project
+### 5. Running on Simulator
 
-1. **Open the Xcode workspace**
-   ```bash
-   open ios/AutoMarketMobile.xcworkspace
-   ```
+```bash
+# Start the Metro bundler
+npx react-native start
 
-2. **Sign the app**
-   - In Xcode, select the "AutoMarketMobile" project in the Project Navigator
-   - Select the "AutoMarketMobile" target
-   - Go to the "Signing & Capabilities" tab
-   - Sign in with your Apple ID (if not already signed in)
-   - Check "Automatically manage signing"
-   - Select your team from the dropdown
+# In another terminal, run the iOS app
+npx react-native run-ios
+```
 
-3. **Configure app permissions**
-   - Still in the "Signing & Capabilities" tab, click "+ Capability"
-   - Add the "Camera" capability for the car size visualization feature
+### 6. Running on Physical Device
 
-4. **Update Info.plist**
-   - Find and open `Info.plist`
-   - Add the following entries for camera permissions:
-     - Key: `NSCameraUsageDescription`
-     - Value: `AutoMarket needs camera access for car size visualization`
+#### Prepare your iOS device:
+1. Connect your iPhone to your Mac with a USB cable
+2. Open Xcode
+3. Go to Window > Devices and Simulators
+4. Select your device and make sure it's recognized
 
-## Part 6: Run on iPhone
+#### Configure app for your device:
+1. Open `ios/AutoMarket.xcworkspace` in Xcode
+2. Select your project in the Project Navigator
+3. Select the "AutoMarket" target
+4. Go to the "Signing & Capabilities" tab
+5. Select your development team
+6. Make sure "Automatically manage signing" is checked
 
-1. **Connect your iPhone to your Mac via USB**
-
-2. **Trust your Mac on your iPhone if prompted**
-
-3. **Select your device in Xcode**
-   - In the Xcode toolbar, select your iPhone from the device dropdown
-
-4. **Run the app**
-   - Click the "Play" button in Xcode, or press Command+R
-
-5. **Trust the developer on your iPhone**
-   - When first launching the app, you may need to trust your developer profile
-   - On your iPhone, go to Settings → General → Device Management
-   - Select your Apple ID and tap "Trust"
+#### Run on your device:
+```bash
+# Run the app on your connected device
+npx react-native run-ios --device
+```
 
 ## Troubleshooting
 
-### "Could not connect to development server"
-- Make sure your iPhone and Mac are on the same network
-- Try using your Mac's IP address in the Metro bundler URL
+### Common Issues
 
-### Build errors
-- Run `npm install` again to ensure all dependencies are installed
-- Check Xcode console for specific error details
-- Try cleaning the build folder: Xcode → Product → Clean Build Folder
+1. **Build Errors**:
+   - Make sure all dependencies are installed
+   - Try cleaning the build: `cd ios && xcodebuild clean && cd ..`
+   - Check for CocoaPods issues: `cd ios && pod install --repo-update && cd ..`
 
-### App crashes on startup
-- Check Xcode console for crash logs
-- Ensure all required native dependencies are installed and linked properly
+2. **Device Not Recognized**:
+   - Make sure your device is unlocked
+   - Trust your computer on the device if prompted
+   - Check your USB cable and try a different port
+
+3. **Signing Issues**:
+   - Verify your Apple Developer account is properly set up in Xcode
+   - Try using a personal development team for testing
+   - Check that your bundle identifier is unique (e.g., com.yourname.automarket)
+
+4. **App Crashing on Launch**:
+   - Check the Metro bundler console for JavaScript errors
+   - Look for native crash logs in Xcode > Window > Devices and Simulators > View Device Logs
+
+## Alternative: Using Expo
+
+If you're encountering difficulties with the native iOS setup, consider using Expo Go for testing as described in the `EXPO_GO_QUICK_START.md` guide. It's much simpler for testing purposes.
+
+## Advanced Configuration
+
+### Custom App Icons and Splash Screens
+
+The app icons and splash screens are located in:
+- `ios/AutoMarket/Images.xcassets/AppIcon.appiconset/`
+- `ios/AutoMarket/Images.xcassets/SplashScreen.imageset/`
+
+You can modify these using Xcode's Asset Catalog editor.
+
+### Debugging
+
+1. **React Native Debugger**:
+   - Install [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
+   - Run `open "rndebugger://set-debugger-loc?host=localhost&port=8081"`
+   - Enable debugging in the app's developer menu (shake device or press Cmd+D in simulator)
+
+2. **Native Code Debugging**:
+   - Use Xcode's debugging tools when running through Xcode
+   - Set breakpoints in Swift/Objective-C code
+
+## Publishing to App Store
+
+1. Configure app signing in Xcode with your Production certificate
+2. Create an App Store Connect entry for your app
+3. Build for release: `npx react-native run-ios --configuration Release`
+4. Use Xcode to upload the build to App Store Connect
+5. Complete the submission process in App Store Connect
+
+## Resources
+
+- [React Native Documentation](https://reactnative.dev/docs/environment-setup)
+- [Apple Developer Documentation](https://developer.apple.com/documentation/)
+- [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)
 
 ## Need Help?
 
-If you encounter issues during this process, you can:
-- Check the React Native documentation: https://reactnative.dev/docs/environment-setup
-- Search for error messages on Stack Overflow
-- Ask for help in the React Native community Discord
+If you encounter issues not covered in this guide, please:
+1. Check the React Native documentation
+2. Look for similar issues on Stack Overflow
+3. Reach out to the project maintainers

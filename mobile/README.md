@@ -1,87 +1,80 @@
-# AutoMarket Mobile App
+# AutoMarket Mobile Application
 
-This is the React Native mobile app for AutoMarket, a car marketplace application that allows users to browse, compare, and inquire about vehicles.
-
-## Features
-
-- **Browse Cars**: View all available cars with filtering options
-- **Car Details**: Detailed view of each car with specifications
-- **Size Visualization**: Compare car sizes in your environment using the camera
-- **Car Comparison**: Compare multiple cars side by side
-- **Wishlists**: Create and manage car wishlists
-- **User Registration**: Register to save preferences and wishlists
+This directory contains the AutoMarket mobile application built with React Native. The mobile app provides similar functionality to the web version with a native mobile experience.
 
 ## Project Structure
 
-- `src/api`: API client for communicating with the backend
-- `src/components`: Reusable UI components
-- `src/screens`: Main application screens
-- `src/navigation`: Navigation configuration
-- `src/utils`: Utility functions like unit conversion
+```
+mobile/
+├── expo-project/           # Standalone Expo project for easy testing
+├── src/                    # Main source code directory
+│   ├── api/                # API client for backend communication
+│   ├── components/         # Reusable UI components
+│   ├── hooks/              # Custom React hooks
+│   ├── navigation/         # Navigation configuration
+│   ├── screens/            # Screen components
+│   ├── utils/              # Utility functions
+│   └── App.tsx             # Main application component
+├── EXPO_GO_QUICK_START.md  # Guide for testing with Expo Go
+├── IPHONE_SETUP.md         # Guide for native iOS development
+├── index.js                # Entry point for the app
+└── package.json            # Dependencies and scripts
+```
+
+## Features
+
+The mobile application includes the following features:
+
+- **Car Browsing**: View and filter available cars
+- **Car Details**: View detailed information about specific vehicles
+- **Size Visualization**: Compare car sizes in your environment using the device camera
+- **Wishlists**: View and manage wishlists (requires authentication)
+- **Contact Forms**: Inquire about vehicles
+- **User Authentication**: Register and login to access personal features
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start with Expo Go
 
-- Node.js (v14 or later)
-- React Native CLI
-- Xcode (for iOS development)
-- Android Studio (for Android development)
+For the easiest way to test the mobile app, see the [Expo Go Quick Start Guide](./EXPO_GO_QUICK_START.md).
 
-### Installation
+### Native iOS Development
 
-1. Clone the repository
-2. Install dependencies:
-   ```
-   cd mobile
-   npm install
-   ```
-
-### Running the App
-
-#### iOS
-
-```
-npm run ios
-```
-
-#### Android
-
-```
-npm run android
-```
+For developing and testing on iOS devices using Xcode, see the [iPhone Setup Guide](./IPHONE_SETUP.md).
 
 ## Development
 
+### Dependencies
+
+The mobile app uses:
+
+- React Native for the core framework
+- React Navigation for navigation
+- Shared API client with the web version
+- Camera features for size visualization
+- Device-native capabilities
+
 ### API Integration
 
-The application uses a shared API client (`src/api/apiClient.ts`) that communicates with the backend server. The same client is used in both the web and mobile applications, ensuring consistency.
+The mobile app communicates with the same backend API as the web version, sharing data models and endpoints. Configuration for different environments is managed through environment variables.
 
-### Navigation
+## Testing
 
-The app uses React Navigation for handling screen transitions. The navigation configuration is defined in `src/navigation/AppNavigator.tsx`.
+- **Expo Go**: For quick testing on physical devices
+- **iOS Simulator**: For iOS-specific testing
+- **Jest**: For unit testing components and utilities
 
-### UI Components
+## Building for Production
 
-Reusable UI components are stored in the `src/components` directory. These components are designed to be responsive and work across different device sizes.
+For building production-ready versions:
 
-## Testing on iPhone
+1. Follow the setup guides for each platform
+2. Configure app signing and certificates
+3. Build using the appropriate production configuration
+4. Submit to respective app stores
 
-For detailed instructions on how to test the application on an iPhone, please refer to the [IPHONE_SETUP.md](./IPHONE_SETUP.md) document.
+## Notes
 
-## Troubleshooting
-
-If you encounter issues during development or when running the application, check the following:
-
-- Make sure all dependencies are installed correctly
-- For iOS, run `pod install` in the `ios` directory
-- Check that the API URL is set correctly in `src/api/apiClient.ts`
-- Verify that your development environment is set up correctly following React Native guidelines
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- The mobile app uses the European unit system (kilometers and euros)
+- The admin functionality is limited in the mobile version, focusing primarily on user features
+- The size visualization feature uses the device camera and does not require AR frameworks
