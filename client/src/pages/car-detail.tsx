@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
-import { ArrowLeft, CheckCircle, User, Phone, View } from "lucide-react";
+import { ArrowLeft, CheckCircle, User, Phone, View, Calculator } from "lucide-react";
 import { Car } from "@shared/schema";
 import { Container } from "@/components/ui/container";
 import CarGallery from "@/components/car-gallery";
