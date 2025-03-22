@@ -133,16 +133,29 @@ export default function ARSizeComparison() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await apiRequest<Car[]>({
+        console.log('Fetching cars for AR comparison...');
+        const response = await apiRequest({
           url: '/api/cars',
           method: 'GET',
         });
-        setCars(response);
+        
+        if (!response || !Array.isArray(response) || response.length === 0) {
+          console.error('API returned empty car list or invalid format');
+          toast({
+            title: 'Error',
+            description: 'No cars available for comparison. Please try again later.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        
+        console.log(`Successfully loaded ${response.length} cars`);
+        setCars(response as Car[]);
       } catch (error) {
         console.error('Error fetching cars:', error);
         toast({
           title: 'Error',
-          description: 'Failed to load cars. Please try again.',
+          description: 'Failed to load cars. Please try again later.',
           variant: 'destructive',
         });
       }

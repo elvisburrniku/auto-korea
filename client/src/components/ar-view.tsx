@@ -26,39 +26,70 @@ export default function ARView({ car, onClose }: ARViewProps) {
     async function setupAR() {
       try {
         setIsLoading(true);
+        console.log('AR View: Starting AR setup for car visualization');
         
-        // Dynamically initialize AR libraries
+        // Check if browser supports camera first
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          console.error('AR View: Browser does not support getUserMedia');
+          if (mounted) {
+            setError('Your browser does not support camera access for AR');
+          }
+          return;
+        }
+        
+        // Request camera permission early to ensure we can use AR
+        try {
+          console.log('AR View: Requesting camera permission');
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          
+          if (stream && mounted) {
+            console.log('AR View: Camera permission granted');
+            setHasPermission(true);
+            // Stop the stream since A-Frame will request it separately
+            stream.getTracks().forEach(track => track.stop());
+          }
+        } catch (cameraErr) {
+          console.error('AR View: Camera permission denied:', cameraErr);
+          if (mounted) {
+            setError('Camera permission denied');
+            toast({
+              title: 'Camera Access Denied',
+              description: 'Please grant camera permission to use AR features',
+              variant: 'destructive',
+            });
+          }
+          return;
+        }
+        
+        if (!mounted) return;
+        
+        // Now initialize AR libraries
+        console.log('AR View: Initializing AR libraries');
         const success = await initialize();
         
         if (!mounted) return;
         
         if (!success) {
-          setError('Failed to initialize AR components');
-          console.error('AR initialization failed');
+          console.error('AR View: AR initialization failed');
+          if (mounted) {
+            setError('Failed to initialize AR components');
+            toast({
+              title: 'AR Error',
+              description: 'Could not initialize AR components. Please try again later.',
+              variant: 'destructive',
+            });
+          }
           return;
         }
         
-        // Check if camera is available
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          setError('Your browser does not support camera access');
-          return;
-        }
-        
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        
-        if (stream && mounted) {
-          setHasPermission(true);
-          // Stop the stream since A-Frame will request it separately
-          stream.getTracks().forEach(track => track.stop());
-        }
-        
+        console.log('AR View: AR setup completed successfully');
       } catch (err) {
-        console.error('AR setup error:', err);
+        console.error('AR View: Setup error:', err);
         if (mounted) {
-          setError('Camera permission denied');
+          setError('AR initialization failed');
           toast({
-            title: 'Camera Access Denied',
-            description: 'Please grant camera permission to use AR features',
+            title: 'AR Error',
+            description: 'An unexpected error occurred during AR setup',
             variant: 'destructive',
           });
         }
