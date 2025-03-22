@@ -185,47 +185,71 @@ export default function ARSizeComparison() {
     if (!isARMode) {
       console.log('Entering AR mode...');
       
-      // For now, let's just use the simplified webcam-only version without AR.js
-      // This provides a simpler but more reliable experience 
-      
       // Check if browser supports camera/webcam
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('Browser does not support getUserMedia');
         toast({
           title: 'Not supported',
-          description: 'Your browser does not support camera access for AR',
+          description: 'Your browser does not support camera access for visualization',
           variant: 'destructive',
         });
         return;
       }
-
+      
+      // Safari requires specific settings for video constraints
+      const videoConstraints = {
+        facingMode: isMobile ? "environment" : "user", 
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      };
+      
       try {
-        // First request camera permission before proceeding
-        console.log('Requesting camera permission...');
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        // Stop the stream as it will be used by the webcam component
+        // Request camera permission - important to handle Safari requirements
+        console.log('Requesting camera permission with Safari compatibility...');
+        
+        // For Safari, we'll use a specialized approach
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: videoConstraints,
+          audio: false 
+        });
+        
+        // Stop this initial test stream as it will be recreated by Webcam component
         stream.getTracks().forEach(track => track.stop());
         console.log('Camera permission granted');
       } catch (error) {
         console.error('Camera permission error:', error);
-        toast({
-          title: 'Camera Access Denied',
-          description: 'Please allow camera access to use AR features',
-          variant: 'destructive',
-        });
+        
+        // Specific error for Safari
+        if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+          toast({
+            title: 'Safari Camera Access',
+            description: 'Make sure camera access is enabled in Safari settings. Go to Settings > Safari > Camera > Allow.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Camera Access Denied',
+            description: 'Please allow camera access to use visualization features',
+            variant: 'destructive',
+          });
+        }
         return;
       }
       
-      // We're moving to a simplified version without the external AR.js library
-      // This provides more compatibility across browsers
-      console.log('Using simplified AR mode (webcam-based visualization)');
+      console.log('Using browser-compatible visualization mode');
       
     } else {
-      // When exiting AR mode, clean up
-      console.log('Exiting AR mode');
+      // When exiting AR mode, ensure any active streams are stopped
+      if (webcamRef.current && webcamRef.current.video && webcamRef.current.video.srcObject) {
+        const stream = webcamRef.current.video.srcObject as MediaStream;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      }
+      console.log('Exiting visualization mode');
     }
 
-    console.log(`Toggling AR mode from ${isARMode} to ${!isARMode}`);
+    console.log(`Toggling visualization mode from ${isARMode} to ${!isARMode}`);
     setIsARMode(!isARMode);
   };
 
@@ -258,12 +282,12 @@ export default function ARSizeComparison() {
 
   return (
     <Container className="py-8">
-      <h1 className="text-3xl font-bold mb-6">AR Car Size Comparison</h1>
+      <h1 className="text-3xl font-bold mb-6">Car Size Visualization</h1>
       
       {!isARMode ? (
         <div className="space-y-6">
           <p className="text-lg">
-            Select a car and use AR mode to visualize its size in your environment
+            Select a car and use camera mode to visualize its size in your environment
           </p>
           
           {selectedCar ? (
@@ -311,7 +335,7 @@ export default function ARSizeComparison() {
               onClick={toggleARMode}
               disabled={!selectedCar}
             >
-              Enter AR Mode
+              Start Camera Visualization
             </Button>
           </div>
         </div>
@@ -323,13 +347,16 @@ export default function ARSizeComparison() {
               audio={false}
               screenshotFormat="image/jpeg"
               videoConstraints={{
-                facingMode: isMobile ? "environment" : "user"
+                facingMode: isMobile ? "environment" : "user",
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
               }}
               className="w-full rounded-lg"
               style={{
                 height: "calc(100vh - 250px)",
                 objectFit: "cover"
               }}
+              mirrored={!isMobile && !(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent))}
             />
             
             <div
@@ -365,7 +392,7 @@ export default function ARSizeComparison() {
             
             <div className="flex justify-center gap-4 mt-4">
               <Button onClick={toggleARMode} variant="outline">
-                Exit AR Mode
+                Exit Camera Mode
               </Button>
               {isMobile && (
                 <Button

@@ -86,15 +86,15 @@ export default function ARComparisonPage() {
 
   return (
     <Container className="py-8">
-      <h1 className="text-3xl font-bold mb-2">Car AR Experience</h1>
+      <h1 className="text-3xl font-bold mb-2">Car Size Comparison Tool</h1>
       <p className="text-muted-foreground mb-6">
-        Visualize cars in augmented reality to better understand their size and appearance
+        Visualize cars with interactive tools to better understand their size and appearance
       </p>
 
       <Tabs defaultValue={defaultTab} value={defaultTab} onValueChange={setDefaultTab} className="w-full">
         <TabsList className="mb-6">
-          <TabsTrigger value="simple">Simple Size Comparison</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced AR View</TabsTrigger>
+          <TabsTrigger value="simple">Camera Visualization</TabsTrigger>
+          <TabsTrigger value="advanced">3D Model View</TabsTrigger>
         </TabsList>
         
         <TabsContent value="simple">
@@ -104,10 +104,10 @@ export default function ARComparisonPage() {
         <TabsContent value="advanced">
           <div className="space-y-6">
             <div className="p-4 bg-muted rounded-lg">
-              <h2 className="text-xl font-semibold mb-2">Advanced AR Experience</h2>
+              <h2 className="text-xl font-semibold mb-2">3D Model Viewer</h2>
               <p>
-                This feature allows you to place a 3D model of your selected car in your
-                real environment using your camera. Select a car below and click "Start AR" to begin.
+                This feature allows you to view a 3D model of your selected car.
+                Select a car below and click "View 3D Model" to begin.
               </p>
               
               {selectedCar && (
@@ -123,13 +123,13 @@ export default function ARComparisonPage() {
                   onClick={handleStartAR}
                   disabled={!selectedCar}
                 >
-                  Start AR Experience
+                  View 3D Model
                 </Button>
               </div>
             </div>
             
             <div>
-              <h3 className="text-lg font-medium mb-4">Select a Car for AR View</h3>
+              <h3 className="text-lg font-medium mb-4">Select a Car for 3D View</h3>
               
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
