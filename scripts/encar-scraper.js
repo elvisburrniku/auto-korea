@@ -65,8 +65,6 @@ function extractCarListings(html) {
       const imageElement = infoElement.find('.thumb img');
       const title = titleElement.text().trim();
       const detailUrl = titleElement.attr('href');
-
-      const title = titleElement.text().trim();
       const make = 'BMW'; // Since we're searching BMW specifically
       const model = title.replace('BMW', '').trim();
       
