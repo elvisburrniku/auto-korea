@@ -1,15 +1,13 @@
-/**
- * Encar.com Car Listing Scraper for AutoMarket
- * 
- * This script fetches car listings from Encar.com and imports them into the AutoMarket database.
- * Note: Web scraping may be against the terms of service of some websites.
- * This script is for educational purposes only.
- */
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const fs = require('fs');
-const path = require('path');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get current directory name in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // AutoMarket API endpoint
 const AUTO_MARKET_API = 'https://automarket.relay.run';
