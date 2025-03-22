@@ -54,15 +54,18 @@ async function fetchEncarSearch(searchUrl) {
 function extractCarListings(html) {
   const $ = cheerio.load(html);
   const listings = [];
+  console.log("Parsing HTML...");
 
-  // Target the car listing items using the correct Encar.com class structure
-  $('.car_list > li').each((index, element) => {
+  // Target the car listing items
+  $('.everytime > li').each((index, element) => {
     try {
       const infoElement = $(element);
-      const titleElement = infoElement.find('.model');
-      const priceElement = infoElement.find('.price');
-      const infoDetailElement = infoElement.find('.inf');
-      const imageElement = infoElement.find('.thumb img');
+      console.log("Processing element:", index);
+      
+      const titleElement = infoElement.find('.inf a:first');
+      const priceElement = infoElement.find('.val');
+      const infoDetailElement = infoElement.find('.detail');
+      const imageElement = infoElement.find('.img img');
       const title = titleElement.text().trim();
       const detailUrl = titleElement.attr('href');
       const make = 'BMW'; // Since we're searching BMW specifically
