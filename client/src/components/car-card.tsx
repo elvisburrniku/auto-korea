@@ -22,9 +22,11 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
   };
 
   // Convert mpg to l/100km (European standard)
-  const getMpgInLitersPer100Km = (mpg: string | undefined) => {
+  const getMpgInLitersPer100Km = (mpg: string | undefined | null) => {
     if (!mpg) return "N/A";
-    const mpgValue = parseFloat(mpg.split(' ')[0] || "0");
+    const parts = mpg.split(' ');
+    const valueStr = parts.length > 0 ? parts[0] : "0";
+    const mpgValue = parseFloat(valueStr);
     if (isNaN(mpgValue) || mpgValue === 0) return "N/A";
     // Convert MPG to l/100km formula: 235.214 / mpg
     const litersPer100Km = Math.round(235.214 / mpgValue * 10) / 10;
@@ -53,7 +55,7 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
           </p>
           <div className="flex gap-2 mb-3">
             <div className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md text-xs flex items-center">
-              <Fuel className="mr-1 h-3 w-3" /> {getMpgInLitersPer100Km(car.mpg)}
+              <Fuel className="mr-1 h-3 w-3" /> {car.mpg ? getMpgInLitersPer100Km(car.mpg) : "N/A"}
             </div>
             <div className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md text-xs flex items-center">
               <GaugeCircle className="mr-1 h-3 w-3" /> {car.drivetrain}

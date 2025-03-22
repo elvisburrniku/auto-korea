@@ -30,9 +30,11 @@ export default function CarDetailPage() {
   };
   
   // Convert mpg to l/100km (European standard)
-  const getMpgInLitersPer100Km = (mpg: string | undefined) => {
+  const getMpgInLitersPer100Km = (mpg: string | undefined | null) => {
     if (!mpg) return "N/A";
-    const mpgValue = parseFloat(mpg.split(' ')[0] || "0");
+    const parts = mpg.split(' ');
+    const valueStr = parts.length > 0 ? parts[0] : "0";
+    const mpgValue = parseFloat(valueStr);
     if (isNaN(mpgValue) || mpgValue === 0) return "N/A";
     // Convert MPG to l/100km formula: 235.214 / mpg
     const litersPer100Km = Math.round(235.214 / mpgValue * 10) / 10;
@@ -160,7 +162,7 @@ export default function CarDetailPage() {
 
   // Get the current URL to include in the WhatsApp message
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const whatsappMessage = `I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}. ${currentUrl}`;
+  const whatsappMessage = `I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatEurPrice(car.price)}. ${currentUrl}`;
 
   return (
     <Container className="py-12">
@@ -199,7 +201,7 @@ export default function CarDetailPage() {
                   </li>
                   <li className="flex justify-between">
                     <span className="text-neutral-500">Mileage</span>
-                    <span className="font-medium">{formatNumberWithCommas(car.mileage)} miles</span>
+                    <span className="font-medium">{formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km</span>
                   </li>
                   {car.vin && (
                     <li className="flex justify-between">
@@ -241,8 +243,8 @@ export default function CarDetailPage() {
                   </li>
                   {car.mpg && (
                     <li className="flex justify-between">
-                      <span className="text-neutral-500">MPG</span>
-                      <span className="font-medium">{car.mpg}</span>
+                      <span className="text-neutral-500">Fuel Economy</span>
+                      <span className="font-medium">{getMpgInLitersPer100Km(car.mpg)}</span>
                     </li>
                   )}
                 </ul>
@@ -279,9 +281,9 @@ export default function CarDetailPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h1 className="text-2xl font-bold text-neutral-800">{car.make} {car.model}</h1>
-                <p className="text-neutral-500">{car.year} • {formatNumberWithCommas(car.mileage)} miles • {car.transmission}</p>
+                <p className="text-neutral-500">{car.year} • {formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km • {car.transmission}</p>
               </div>
-              <span className="text-2xl font-bold text-primary">{formatPrice(car.price)}</span>
+              <span className="text-2xl font-bold text-primary">{formatEurPrice(car.price)}</span>
             </div>
 
             <div className="border-t border-b border-neutral-200 py-4 my-4">
