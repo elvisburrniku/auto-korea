@@ -55,11 +55,15 @@ function extractCarListings(html) {
   const $ = cheerio.load(html);
   const listings = [];
 
-  // Target the car listing items
-  $('.car_info_top').each((index, element) => {
+  // Target the car listing items - trying multiple possible selectors
+  const carElements = $('.car_list .car_info_top, .car_listings .car_item, .search-results .car-item');
+  console.log('Found elements:', carElements.length);
+  
+  carElements.each((index, element) => {
     try {
       const infoElement = $(element);
-      const titleElement = infoElement.find('.tit a');
+      console.log('Processing element:', infoElement.html());
+      const titleElement = infoElement.find('a[class*="tit"], .title, .car-title');
       const title = titleElement.text().trim();
       const detailUrl = titleElement.attr('href');
 
