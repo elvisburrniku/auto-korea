@@ -20,6 +20,7 @@ import { WhatsAppButton } from './whatsapp-button';
 import { useToast } from '@/hooks/use-toast';
 import { getQueryFn, apiRequest } from '@/lib/queryClient';
 import { useFavorites } from '@/lib/useFavorites';
+import { formatEurPrice, milesToKm } from '@/lib/conversion';
 
 export default function CarComparison() {
   const isMobile = useIsMobile();
@@ -194,7 +195,7 @@ export default function CarComparison() {
               className="h-32 object-contain mb-4"
             />
             <h3 className="text-lg font-bold">{car.year} {car.make} {car.model}</h3>
-            <p className="text-xl font-bold text-primary">${car.price.toLocaleString()}</p>
+            <p className="text-xl font-bold text-primary">{formatEurPrice(car.price)}</p>
           </div>
           
           <Separator className="my-4" />
@@ -202,7 +203,7 @@ export default function CarComparison() {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Mileage:</span>
-              <span>{car.mileage.toLocaleString()} miles</span>
+              <span>{Math.round(milesToKm(car.mileage)).toLocaleString()} km</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Fuel Type:</span>
@@ -252,7 +253,7 @@ export default function CarComparison() {
                     className="h-24 object-contain mb-2"
                   />
                   <h3 className="text-base font-bold">{car.year} {car.make} {car.model}</h3>
-                  <p className="text-lg font-bold text-primary">${car.price.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-primary">{formatEurPrice(car.price)}</p>
                 </div>
               </TableHead>
             ))}
@@ -262,7 +263,7 @@ export default function CarComparison() {
           <TableRow>
             <TableCell className="font-medium">Mileage</TableCell>
             {selectedCars.map((car) => (
-              <TableCell key={car.id}>{car.mileage.toLocaleString()} miles</TableCell>
+              <TableCell key={car.id}>{Math.round(milesToKm(car.mileage)).toLocaleString()} km</TableCell>
             ))}
           </TableRow>
           <TableRow>
@@ -506,9 +507,9 @@ export default function CarComparison() {
               <div className="flex-1">
                 <h4 className="font-medium">{car.year} {car.make} {car.model}</h4>
                 <p className="text-sm text-muted-foreground">
-                  {car.mileage.toLocaleString()} miles • {car.fuelType}
+                  {Math.round(milesToKm(car.mileage)).toLocaleString()} km • {car.fuelType}
                 </p>
-                <p className="font-bold text-primary">${car.price.toLocaleString()}</p>
+                <p className="font-bold text-primary">{formatEurPrice(car.price)}</p>
               </div>
               <Button
                 variant="outline"
