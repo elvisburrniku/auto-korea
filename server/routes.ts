@@ -831,6 +831,14 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         
         console.log("Successfully fetched data from Encar.com");
         
+        // Save the HTML response to a file for inspection
+        const debugDir = path.join(process.cwd(), 'scripts', 'debug');
+        if (!fs.existsSync(debugDir)) {
+          fs.mkdirSync(debugDir, { recursive: true });
+        }
+        fs.writeFileSync(path.join(debugDir, 'encar-response.html'), response.data);
+        console.log("Saved HTML response to scripts/debug/encar-response.html");
+        
         // Parse HTML
         const $ = load(response.data);
         const carListings = [];
