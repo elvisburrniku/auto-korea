@@ -141,7 +141,7 @@ export default function BudgetCalculatorPage() {
                     <Button 
                       variant="link" 
                       className="p-0 h-auto flex items-center gap-1 text-primary" 
-                      onClick={() => navigate(`/car-detail?id=${selectedCar.id}`)}
+                      onClick={() => navigate(`/car-detail/${selectedCar.id}`)}
                     >
                       View Details <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
