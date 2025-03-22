@@ -8,6 +8,7 @@ import {
   GaugeCircle, 
   MapPin 
 } from "lucide-react";
+import { formatEurPrice, formatKmDistance, milesToKm } from "@/lib/conversion";
 
 export interface CarCardProps {
   car: Car;
@@ -16,19 +17,21 @@ export interface CarCardProps {
 }
 
 export default function CarCard({ car, featured = false, size = "medium" }: CarCardProps) {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(price);
-  };
-
   const formatNumberWithCommas = (num: number) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
-  const whatsappMessage = encodeURIComponent(`I'm interested in the ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}`);
+  // Convert mpg to l/100km (European standard)
+  const getMpgInLitersPer100Km = (mpg: string | undefined) => {
+    if (!mpg) return "N/A";
+    const mpgValue = parseFloat(mpg.split(' ')[0] || "0");
+    if (isNaN(mpgValue) || mpgValue === 0) return "N/A";
+    // Convert MPG to l/100km formula: 235.214 / mpg
+    const litersPer100Km = Math.round(235.214 / mpgValue * 10) / 10;
+    return `${litersPer100Km} l/100km`;
+  };
+
+  const whatsappMessage = encodeURIComponent(`I'm interested in the ${car.year} ${car.make} ${car.model} listed for ${formatEurPrice(car.price)}`);
 
   if (size === "small") {
     return (
@@ -43,20 +46,20 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
         <div className="p-4">
           <div className="flex justify-between items-start mb-1">
             <h3 className="text-base font-bold text-neutral-800">{car.make} {car.model}</h3>
-            <span className="text-base font-bold text-primary">{formatPrice(car.price)}</span>
+            <span className="text-base font-bold text-primary">{formatEurPrice(car.price)}</span>
           </div>
           <p className="text-neutral-500 text-xs mb-3">
-            {car.year} • {formatNumberWithCommas(car.mileage)} miles • {car.transmission}
+            {car.year} • {formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km • {car.transmission}
           </p>
           <div className="flex gap-2 mb-3">
             <div className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md text-xs flex items-center">
-              <Fuel className="mr-1 h-3 w-3" /> {car.mpg?.split(' ')[0] || "N/A"} MPG
+              <Fuel className="mr-1 h-3 w-3" /> {getMpgInLitersPer100Km(car.mpg)}
             </div>
             <div className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md text-xs flex items-center">
               <GaugeCircle className="mr-1 h-3 w-3" /> {car.drivetrain}
             </div>
             <div className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md text-xs flex items-center">
-              <MapPin className="mr-1 h-3 w-3" /> {formatNumberWithCommas(car.mileage)} mi
+              <MapPin className="mr-1 h-3 w-3" /> {formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km
             </div>
           </div>
           <div className="flex gap-2">
@@ -94,10 +97,10 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-bold text-neutral-800">{car.make} {car.model}</h3>
-          <span className="text-lg font-bold text-primary">{formatPrice(car.price)}</span>
+          <span className="text-lg font-bold text-primary">{formatEurPrice(car.price)}</span>
         </div>
         <p className="text-neutral-500 text-sm mb-3">
-          {car.year} • {formatNumberWithCommas(car.mileage)} miles • {car.transmission} • {car.fuelType}
+          {car.year} • {formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km • {car.transmission} • {car.fuelType}
         </p>
         <div className="flex flex-wrap gap-2 mb-4">
           {car.features?.slice(0, 4).map((feature, index) => (

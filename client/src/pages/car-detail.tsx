@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useFavorites } from '../lib/useFavorites';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from "@/components/ui/badge";
+import { formatEurPrice, formatKmDistance, milesToKm } from "@/lib/conversion";
 
 
 export default function CarDetailPage() {
@@ -24,16 +25,18 @@ export default function CarDetailPage() {
     enabled: !isNaN(carId),
   });
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(price);
-  };
-
   const formatNumberWithCommas = (num: number) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+  
+  // Convert mpg to l/100km (European standard)
+  const getMpgInLitersPer100Km = (mpg: string | undefined) => {
+    if (!mpg) return "N/A";
+    const mpgValue = parseFloat(mpg.split(' ')[0] || "0");
+    if (isNaN(mpgValue) || mpgValue === 0) return "N/A";
+    // Convert MPG to l/100km formula: 235.214 / mpg
+    const litersPer100Km = Math.round(235.214 / mpgValue * 10) / 10;
+    return `${litersPer100Km} l/100km`;
   };
 
   const { toggleFavorite, isFavorite } = useFavorites();
