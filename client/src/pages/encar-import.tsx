@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -75,41 +75,7 @@ export default function EncarImportPage() {
     }
   });
 
-  // Sample BMW cars that will be imported if web scraping fails
-  const sampleCars = [
-    {
-      make: "BMW",
-      model: "320i",
-      year: 2022,
-      price: 36000,
-      fuelType: "Gasoline",
-      transmission: "Automatic"
-    },
-    {
-      make: "BMW",
-      model: "330i xDrive",
-      year: 2021,
-      price: 42000,
-      fuelType: "Gasoline",
-      transmission: "Automatic"
-    },
-    {
-      make: "BMW",
-      model: "M340i",
-      year: 2020,
-      price: 48000,
-      fuelType: "Gasoline",
-      transmission: "Automatic"
-    },
-    {
-      make: "BMW",
-      model: "430i Coupe",
-      year: 2022,
-      price: 45500,
-      fuelType: "Gasoline",
-      transmission: "Automatic"
-    }
-  ];
+  // We use the BMW import API endpoint instead of hardcoded sample data
 
   const importFromEncar = async () => {
     setImportStarted(true);
@@ -252,9 +218,36 @@ export default function EncarImportPage() {
                       <AlertTitle>Import Errors</AlertTitle>
                       <AlertDescription>
                         <ul className="list-disc pl-5 space-y-1">
-                          {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
-                          ))}
+                          {errors.map((error, index) => {
+                            // Check if error contains a JSON string
+                            if (error.includes("{") && error.includes("}")) {
+                              try {
+                                // Extract the JSON part
+                                const jsonStr = error.substring(error.indexOf("{"), error.lastIndexOf("}") + 1);
+                                const errorObj = JSON.parse(jsonStr);
+                                
+                                // Return formatted error message
+                                return (
+                                  <React.Fragment key={index}>
+                                    <li className="font-medium">{errorObj.message || error}</li>
+                                    {errorObj.details && Array.isArray(errorObj.details) && (
+                                      <ul className="list-[circle] pl-8 mt-2 mb-3 text-sm">
+                                        {errorObj.details.map((detail: string, detailIndex: number) => (
+                                          <li key={`detail-${detailIndex}`}>{detail}</li>
+                                        ))}
+                                      </ul>
+                                    )}
+                                  </React.Fragment>
+                                );
+                              } catch (e) {
+                                // If JSON parsing fails, just display the original error
+                                return <li key={index}>{error}</li>;
+                              }
+                            } else {
+                              // Regular error message
+                              return <li key={index}>{error}</li>;
+                            }
+                          })}
                         </ul>
                       </AlertDescription>
                     </Alert>
