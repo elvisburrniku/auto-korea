@@ -836,7 +836,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         if (!fs.existsSync(debugDir)) {
           fs.mkdirSync(debugDir, { recursive: true });
         }
-        fs.writeFileSync(path.join(debugDir, 'encar-response.html'), response.data);
+        fs.writeFileSync(path.join(debugDir, 'encar-response.html'), typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2));
         console.log("Saved HTML response to scripts/debug/encar-response.html");
         
         // Parse HTML
