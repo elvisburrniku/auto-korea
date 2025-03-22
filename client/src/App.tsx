@@ -17,6 +17,7 @@ import EncarImportPage from "@/pages/encar-import";
 import WishlistsPage from "@/pages/wishlists";
 import WishlistDetailPage from "@/pages/wishlist-detail";
 import RegisterPage from "@/pages/register";
+import BudgetCalculatorPage from "@/pages/budget-calculator";
 import NotFound from "@/pages/not-found";
 
 import Navbar from "@/components/navbar";
@@ -54,6 +55,7 @@ function Router() {
           <Route path="/admin" component={AdminPage} />
           <Route path="/admin/import-cars" component={ImportCarsPage} />
           <Route path="/encar-import" component={EncarImportPage} />
+          <Route path="/budget-calculator" component={BudgetCalculatorPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

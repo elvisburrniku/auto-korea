@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useToast } from "@/hooks/use-toast";
+import SavingsAnimation from './savings-animation';
 
 interface BudgetDashboardProps {
   selectedCar?: Car | null;
@@ -206,6 +207,12 @@ export default function BudgetDashboard({ selectedCar }: BudgetDashboardProps) {
                     </div>
                   </div>
                 </div>
+                
+                <SavingsAnimation 
+                  currentAmount={currentSavings} 
+                  targetAmount={targetDownPayment} 
+                  className="mt-2 mb-4"
+                />
 
                 <div className="bg-muted p-4 rounded-lg">
                   <div className="grid grid-cols-2 gap-4">
