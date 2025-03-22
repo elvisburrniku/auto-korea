@@ -350,6 +350,14 @@ export default function CarDetailPage() {
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
+              
+              <Link href={`/budget-calculator?carId=${car.id}`}>
+                <Button variant="outline" className="w-full flex items-center mt-2">
+                  <Calculator className="h-5 w-5 mr-2" />
+                  Budget Calculator
+                  <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
+                </Button>
+              </Link>
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-200">
