@@ -12,6 +12,7 @@ import AboutPage from "@/pages/about";
 import ContactPage from "@/pages/contact";
 import AdminLoginPage from "@/pages/admin-login";
 import AdminPage from "@/pages/admin";
+import ImportCarsPage from "@/pages/import-cars";
 import WishlistsPage from "@/pages/wishlists";
 import WishlistDetailPage from "@/pages/wishlist-detail";
 import RegisterPage from "@/pages/register";
@@ -50,6 +51,7 @@ function Router() {
           <Route path="/register" component={RegisterPage} />
           <Route path="/admin-login" component={AdminLoginPage} />
           <Route path="/admin" component={AdminPage} />
+          <Route path="/admin/import-cars" component={ImportCarsPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
