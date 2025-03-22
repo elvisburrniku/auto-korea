@@ -1,107 +1,87 @@
 # AutoMarket Mobile App
 
-This is the React Native mobile app version of AutoMarket, a comprehensive car sales application. This mobile app is designed to work in parallel with the web version, sharing the same backend API but providing a native mobile experience.
-
-## Project Structure
-
-```
-/mobile/
-  /src/
-    /api/            # API client for communication with the backend
-    /components/     # Reusable React Native components
-    /hooks/          # Custom React hooks
-    /navigation/     # Navigation setup using React Navigation
-    /screens/        # Screen components for the app
-    /utils/          # Utility functions and helpers
-    App.tsx          # Main app component
-    index.js         # Entry point for the React Native app
-```
+This is the React Native mobile app for AutoMarket, a car marketplace application that allows users to browse, compare, and inquire about vehicles.
 
 ## Features
 
-- Browse and search for cars
-- View detailed car information
-- Car size visualization using camera
-- Compare different car models
-- Contact sellers via form or WhatsApp
-- Create and share wishlists
-- User registration and authentication
-- European unit system (kilometers, euros)
+- **Browse Cars**: View all available cars with filtering options
+- **Car Details**: Detailed view of each car with specifications
+- **Size Visualization**: Compare car sizes in your environment using the camera
+- **Car Comparison**: Compare multiple cars side by side
+- **Wishlists**: Create and manage car wishlists
+- **User Registration**: Register to save preferences and wishlists
 
-## Technical Implementation
+## Project Structure
 
-- **React Native**: Core framework for building the mobile app
-- **React Navigation**: For handling navigation between screens
-- **Native Device Features**: Camera access for car size visualization
-- **Shared API Client**: Compatible with the web version backend
-- **Responsive Design**: Adapts to different device sizes and orientations
+- `src/api`: API client for communicating with the backend
+- `src/components`: Reusable UI components
+- `src/screens`: Main application screens
+- `src/navigation`: Navigation configuration
+- `src/utils`: Utility functions like unit conversion
 
-## Setup and Running
+## Getting Started
 
 ### Prerequisites
 
 - Node.js (v14 or later)
 - React Native CLI
+- Xcode (for iOS development)
 - Android Studio (for Android development)
-- Xcode (for iOS development, macOS only)
 
 ### Installation
 
-1. Install dependencies:
+1. Clone the repository
+2. Install dependencies:
    ```
    cd mobile
    npm install
    ```
 
-2. For iOS (macOS only):
-   ```
-   cd ios
-   pod install
-   cd ..
-   ```
+### Running the App
 
-3. Run the development server:
-   ```
-   npm start
-   ```
-
-4. Run on Android:
-   ```
-   npm run android
-   ```
-
-5. Run on iOS (macOS only):
-   ```
-   npm run ios
-   ```
-
-## Integration with Web Version
-
-The mobile app uses the same API endpoints as the web version, ensuring data consistency across platforms. The shared code includes:
-
-- Data models (schema.ts)
-- API client logic
-- Utility functions
-- Business logic
-
-## Building for Production
-
-### Android
+#### iOS
 
 ```
-cd mobile
-npm run android -- --variant=release
+npm run ios
 ```
 
-### iOS
+#### Android
 
 ```
-cd mobile
-npm run ios -- --configuration Release
+npm run android
 ```
 
-## Notes
+## Development
 
-- The car size visualization feature uses a simpler camera-based approach compared to the AR implementation in the web version
-- The app is designed to work offline with data caching when possible
-- Deep linking is configured to allow opening the app from web links or other apps
+### API Integration
+
+The application uses a shared API client (`src/api/apiClient.ts`) that communicates with the backend server. The same client is used in both the web and mobile applications, ensuring consistency.
+
+### Navigation
+
+The app uses React Navigation for handling screen transitions. The navigation configuration is defined in `src/navigation/AppNavigator.tsx`.
+
+### UI Components
+
+Reusable UI components are stored in the `src/components` directory. These components are designed to be responsive and work across different device sizes.
+
+## Testing on iPhone
+
+For detailed instructions on how to test the application on an iPhone, please refer to the [IPHONE_SETUP.md](./IPHONE_SETUP.md) document.
+
+## Troubleshooting
+
+If you encounter issues during development or when running the application, check the following:
+
+- Make sure all dependencies are installed correctly
+- For iOS, run `pod install` in the `ios` directory
+- Check that the API URL is set correctly in `src/api/apiClient.ts`
+- Verify that your development environment is set up correctly following React Native guidelines
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
