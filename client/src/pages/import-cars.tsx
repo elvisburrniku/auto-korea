@@ -42,7 +42,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/3Series/MY22/BMW-MY22-3Series-330e-Gallery-05.jpg"],
+      images: ["https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -61,7 +61,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/3Series/MY21/BMW-MY21-3Series-330i-xDRIVE-Gallery-01.jpg"],
+      images: ["https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -80,7 +80,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/3Series/MY20/BMW-MY20-3Series-M340i-Gallery-01.jpg"],
+      images: ["https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -99,7 +99,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/4Series/MY22/BMW-MY22-4Series-430i-Coupe-Gallery-01.jpg"],
+      images: ["https://images.unsplash.com/photo-1543465077-db45d34b88a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -118,7 +118,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/X3/MY21/BMW-MY21-X3-Gallery-07.jpg"],
+      images: ["https://images.unsplash.com/photo-1622390349663-1cbe2ec9bec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym13JTIweDN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -137,7 +137,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/X5/MY22/BMW-MY22-X5-Gallery-01.jpg"],
+      images: ["https://images.unsplash.com/photo-1570356528233-b442cf2de345?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
@@ -156,7 +156,7 @@ export default function ImportCarsPage() {
       sellerPhone: "+82-1234-5678",
       sellerEmail: "import@automarket.com",
       sellerLocation: "Seoul, South Korea",
-      images: ["https://www.bmwusa.com/content/dam/bmwusa/i4/MY22/BMW-MY22-i4-Gallery-04.jpg"],
+      images: ["https://images.unsplash.com/photo-1655270001527-30d32aafb3bb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"],
       isFeatured: Math.random() > 0.7,
     },
     {
