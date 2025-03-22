@@ -430,17 +430,26 @@ export default function AdminPage() {
                       <p className="mb-4 text-muted-foreground">
                         This tool scrapes vehicle listings from Encar.com, a popular Korean car marketplace, and imports them into your inventory.
                       </p>
-                      <p className="text-sm text-yellow-600 dark:text-yellow-500">
-                        Note: This feature requires running a script from the terminal as it involves web scraping with session handling.
+                      <p className="text-sm">
+                        Our browser-based import tool provides a convenient interface, though direct web scraping might have limitations. For full functionality, you can also use the terminal script.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="flex flex-col gap-2">
+                      <Button 
+                        onClick={() => navigate("/encar-import")}
+                        className="w-full"
+                      >
+                        Use Browser Import
+                      </Button>
                       <Button 
                         variant="outline"
-                        className="w-full"
-                        disabled
+                        className="w-full text-xs"
+                        onClick={() => toast({
+                          title: "Terminal Command",
+                          description: "Run 'node scripts/encar-scraper.js' for full functionality",
+                        })}
                       >
-                        Available via Terminal
+                        Or use Terminal: node scripts/encar-scraper.js
                       </Button>
                     </CardFooter>
                   </Card>

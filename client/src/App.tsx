@@ -13,6 +13,7 @@ import ContactPage from "@/pages/contact";
 import AdminLoginPage from "@/pages/admin-login";
 import AdminPage from "@/pages/admin";
 import ImportCarsPage from "@/pages/import-cars";
+import EncarImportPage from "@/pages/encar-import";
 import WishlistsPage from "@/pages/wishlists";
 import WishlistDetailPage from "@/pages/wishlist-detail";
 import RegisterPage from "@/pages/register";
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/admin-login" component={AdminLoginPage} />
           <Route path="/admin" component={AdminPage} />
           <Route path="/admin/import-cars" component={ImportCarsPage} />
+          <Route path="/encar-import" component={EncarImportPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
