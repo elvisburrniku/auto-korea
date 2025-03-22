@@ -24,9 +24,13 @@ async function login() {
       password: ADMIN_PASSWORD
     });
 
-    return response.data.user;
+    if (!response.data || !response.data.isAdmin) {
+      throw new Error('Admin authentication required');
+    }
+
+    return response.data;
   } catch (error) {
-    console.error('Failed to login:', error.message);
+    console.error('Failed to login:', error.response?.data || error.message);
     throw new Error('Authentication failed');
   }
 }
