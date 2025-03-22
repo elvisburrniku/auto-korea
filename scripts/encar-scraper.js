@@ -204,67 +204,10 @@ function extractCarListings(html) {
     }
   }
   
-  // If we couldn't find any cars with any selector, use sample data
+  // If we couldn't find any cars with any selector, throw an error
   if (listings.length === 0) {
-    console.log("Could not extract any cars from the webpage. Creating sample BMW cars...");
-    
-    // Add some high-quality BMW 3 Series entries
-    listings.push({
-      make: 'BMW',
-      model: '320i',
-      year: 2022,
-      price: 36000,
-      mileage: 15000,
-      fuelType: 'Gasoline',
-      transmission: 'Automatic',
-      drivetrain: 'RWD',
-      exteriorColor: 'Alpine White',
-      interiorColor: 'Black',
-      description: '2022 BMW 320i with Sport Package. Features include sport seats, sport suspension, and BMW M Sport steering wheel. The vehicle comes with a 2.0L turbocharged engine providing excellent performance and fuel efficiency.',
-      sellerName: 'Import Motors',
-      sellerPhone: '+82-1234-5678',
-      sellerEmail: 'import@automarket.com',
-      sellerLocation: 'Seoul, South Korea',
-      images: ['https://www.bmwusa.com/content/dam/bmwusa/3Series/MY22/BMW-MY22-3Series-330e-Gallery-05.jpg'],
-    });
-    
-    listings.push({
-      make: 'BMW',
-      model: '330i xDrive',
-      year: 2021,
-      price: 42000,
-      mileage: 22000,
-      fuelType: 'Gasoline',
-      transmission: 'Automatic',
-      drivetrain: 'AWD',
-      exteriorColor: 'Black Sapphire',
-      interiorColor: 'Cognac',
-      description: '2021 BMW 330i xDrive with Executive Package. All-wheel drive provides excellent traction in all weather conditions. Features include premium sound system, heated seats, and advanced driver assistance systems.',
-      sellerName: 'Import Motors',
-      sellerPhone: '+82-1234-5678',
-      sellerEmail: 'import@automarket.com',
-      sellerLocation: 'Seoul, South Korea',
-      images: ['https://www.bmwusa.com/content/dam/bmwusa/3Series/MY21/BMW-MY21-3Series-330i-xDRIVE-Gallery-01.jpg'],
-    });
-    
-    listings.push({
-      make: 'BMW',
-      model: 'M340i',
-      year: 2020,
-      price: 48000,
-      mileage: 35000,
-      fuelType: 'Gasoline',
-      transmission: 'Automatic',
-      drivetrain: 'RWD',
-      exteriorColor: 'Portimao Blue',
-      interiorColor: 'Black',
-      description: '2020 BMW M340i with M Sport Package. This high-performance variant of the 3 Series features a 3.0L inline-6 turbocharged engine producing 382 horsepower. Includes adaptive M suspension, M Sport differential, and M Sport brakes.',
-      sellerName: 'Import Motors',
-      sellerPhone: '+82-1234-5678',
-      sellerEmail: 'import@automarket.com',
-      sellerLocation: 'Seoul, South Korea',
-      images: ['https://www.bmwusa.com/content/dam/bmwusa/3Series/MY20/BMW-MY20-3Series-M340i-Gallery-01.jpg'],
-    });
+    console.error("Could not extract any cars from the Encar.com webpage.");
+    throw new Error("Failed to extract car listings from the provided URL. The website structure may have changed or the URL is invalid.");
   }
   
   return listings;
