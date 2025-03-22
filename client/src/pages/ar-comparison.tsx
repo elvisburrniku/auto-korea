@@ -20,10 +20,16 @@ export default function ARComparisonPage() {
   
   const { data: cars, isLoading, error } = useQuery({
     queryKey: ['/api/cars'],
-    queryFn: () => apiRequest<Car[]>({ 
-      url: '/api/cars',
-      method: 'GET',
-    }),
+    queryFn: async () => {
+      console.log('Fetching cars for AR comparison...');
+      const response = await fetch('/api/cars');
+      if (!response.ok) {
+        throw new Error('Failed to fetch cars');
+      }
+      const data = await response.json();
+      console.log('Successfully loaded', data.length, 'cars');
+      return data as Car[];
+    },
   });
   
   // Check URL parameters for car ID to pre-select
