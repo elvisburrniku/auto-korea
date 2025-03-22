@@ -241,7 +241,7 @@ export default function CarDetailPage() {
                     <span className="text-neutral-500">Fuel Type</span>
                     <span className="font-medium">{car.fuelType}</span>
                   </li>
-                  {car.mpg && (
+                  {car.mpg && car.fuelType?.toLowerCase() !== 'electric' && (
                     <li className="flex justify-between">
                       <span className="text-neutral-500">Fuel Economy</span>
                       <span className="font-medium">{getMpgInLitersPer100Km(car.mpg)}</span>

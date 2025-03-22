@@ -213,7 +213,7 @@ export default function CarComparison() {
               <span className="text-muted-foreground">Fuel Type:</span>
               <span>{car.fuelType}</span>
             </div>
-            {car.fuelType?.toLowerCase() !== 'electric' && car.mpg && (
+            {car.fuelType?.toLowerCase() !== 'electric' && car.mpg && typeof car.mpg === 'number' && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Fuel Efficiency:</span>
                 <span>{(235.214583 / car.mpg).toFixed(1)} l/100km</span>
