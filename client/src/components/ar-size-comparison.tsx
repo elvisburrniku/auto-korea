@@ -134,11 +134,10 @@ export default function ARSizeComparison() {
     const fetchCars = async () => {
       try {
         console.log('Fetching cars for AR comparison...');
-        const response = await apiRequest({
-          url: '/api/cars',
+        const response = await fetch('/api/cars', {
           method: 'GET',
-          params: {},
-        });
+          credentials: 'include',
+        }).then(res => res.json());
         
         if (!response || !Array.isArray(response) || response.length === 0) {
           console.error('API returned empty car list or invalid format');
