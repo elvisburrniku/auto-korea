@@ -57,7 +57,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     fileFilter: (_req, file, cb) => {
       // Accept images only
       if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-        return cb(new Error('Only image files are allowed!'), false);
+        cb(null, false);
+        return;
       }
       cb(null, true);
     }
@@ -809,21 +810,17 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         });
       }
       
-      // This would normally trigger the server-side scraping script
-      // Since we can't easily run the script from the API route (due to module loading differences),
-      // we'll import the sample BMW cars instead as a fallback
-      
       console.log(`Received Encar.com import request for URL: ${url}`);
-      console.log("Using fallback import mechanism with sample cars");
       
-      // Redirect to our BMW import endpoint
-      const bmwResponse = await storage.getAllCars();
-      
-      return res.status(200).json({ 
-        success: true, 
-        cars: bmwResponse.slice(0, 5), // Just return the first 5 cars we already have as an example
-        message: `Successfully imported ${bmwResponse.length > 5 ? 5 : bmwResponse.length} cars from Encar.com`,
-        note: "Note: This is using fallback car data since direct web scraping isn't available through the browser interface. Use the terminal command for full functionality."
+      // Return an explanation about why we can't scrape directly
+      return res.status(422).json({ 
+        success: false, 
+        message: "Web scraping cannot be performed through the browser interface",
+        details: [
+          "Web scraping of Encar.com requires special character encoding (EUC-KR) handling",
+          "Session cookies and authentication are needed for a complete scrape",
+          "Please use the terminal command 'node scripts/encar-scraper.js' for full functionality"
+        ]
       });
     } catch (error: any) {
       console.error("Encar import failed:", error);

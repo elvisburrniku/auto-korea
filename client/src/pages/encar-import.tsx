@@ -32,6 +32,14 @@ export default function EncarImportPage() {
     mutationFn: async (data) => {
       const response = await apiRequest('POST', '/api/cars/import/encar', data);
       const json = await response.json();
+      
+      // If the response is not successful, throw an error with the details
+      if (!json.success) {
+        const error = new Error(json.message);
+        (error as any).details = json.details;
+        throw error;
+      }
+      
       return json;
     },
     onSuccess: (data) => {
@@ -51,10 +59,17 @@ export default function EncarImportPage() {
       }
     },
     onError: (error: any) => {
-      setErrors(prev => [...prev, `Import failed: ${error.message}`]);
+      const errorMessage = error.message || "Unknown error occurred";
+      setErrors(prev => [...prev, `Import failed: ${errorMessage}`]);
+      
+      // Add any additional details if available
+      if (error.details && Array.isArray(error.details)) {
+        setErrors(prev => [...prev, ...error.details]);
+      }
+      
       toast({
         title: "Import failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -164,8 +179,8 @@ export default function EncarImportPage() {
           <CardTitle>Encar.com Import Tool</CardTitle>
           <CardDescription>
             Import vehicles from Encar.com, a popular Korean car marketplace. 
-            This tool attempts to fetch and parse real listings, but due to web scraping 
-            challenges, it may fall back to importing sample BMW data.
+            Due to web scraping limitations in the browser, this feature requires using 
+            the terminal command for full functionality.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -281,9 +296,9 @@ export default function EncarImportPage() {
               <li>Importing each car into our database</li>
             </ol>
             <p>
-              Due to web scraping limitations in browsers, this tool requires server-side processing.
-              If the parsing process fails to find cars on the Encar.com page, the system will fall back
-              to importing a set of sample BMW cars with predefined details.
+              Due to web scraping limitations in browsers, this feature requires using the terminal command.
+              The browser interface cannot directly scrape Encar.com due to encoding challenges and session requirements.
+              For full functionality, please use <code>node scripts/encar-scraper.js</code> in the terminal.
             </p>
           </div>
         </CardContent>
