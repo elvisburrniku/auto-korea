@@ -185,6 +185,9 @@ export default function ARSizeComparison() {
     if (!isARMode) {
       console.log('Entering AR mode...');
       
+      // For now, let's just use the simplified webcam-only version without AR.js
+      // This provides a simpler but more reliable experience 
+      
       // Check if browser supports camera/webcam
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('Browser does not support getUserMedia');
@@ -197,7 +200,7 @@ export default function ARSizeComparison() {
       }
 
       try {
-        // First request camera permission before trying to initialize AR
+        // First request camera permission before proceeding
         console.log('Requesting camera permission...');
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         // Stop the stream as it will be used by the webcam component
@@ -213,35 +216,13 @@ export default function ARSizeComparison() {
         return;
       }
       
-      try {
-        // Now try to initialize AR components with our new direct script loading approach
-        console.log('Initializing AR libraries...');
-        const success = await initialize();
-        
-        if (!success) {
-          console.error('Failed to initialize AR components');
-          toast({
-            title: 'AR Not Ready',
-            description: 'Could not initialize AR components',
-            variant: 'destructive',
-          });
-          return;
-        }
-        
-        console.log('AR initialization successful');
-      } catch (error) {
-        console.error('Error initializing AR:', error);
-        toast({
-          title: 'AR Error',
-          description: 'Failed to initialize AR components',
-          variant: 'destructive',
-        });
-        return;
-      }
+      // We're moving to a simplified version without the external AR.js library
+      // This provides more compatibility across browsers
+      console.log('Using simplified AR mode (webcam-based visualization)');
+      
     } else {
-      // When exiting AR mode, clean up any AR scene elements
-      console.log('Exiting AR mode, cleaning up...');
-      cleanupARScene();
+      // When exiting AR mode, clean up
+      console.log('Exiting AR mode');
     }
 
     console.log(`Toggling AR mode from ${isARMode} to ${!isARMode}`);
