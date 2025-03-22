@@ -182,9 +182,9 @@ export default function ImportCarsPage() {
 
   const createCarMutation = useMutation<Car, Error, any>({
     mutationFn: async (carData: any) => {
-      const response = await apiRequest('/api/cars', 'POST', carData);
-      // The response already contains the Car data, we just need to return it
-      return response as unknown as Car;
+      const response = await apiRequest('POST', '/api/cars', carData);
+      const json = await response.json();
+      return json as Car;
     },
     onSuccess: (data: Car) => {
       setImportedCars(prev => [...prev, data]);
