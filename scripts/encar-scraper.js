@@ -55,30 +55,29 @@ function extractCarListings(html) {
   const $ = cheerio.load(html);
   const listings = [];
 
-  // Target the car listing items - trying multiple possible selectors
-  const carElements = $('.car_list .car_info_top, .car_listings .car_item, .search-results .car-item');
-  console.log('Found elements:', carElements.length);
-  
-  carElements.each((index, element) => {
+  // Target the car listing items using the correct Encar.com class structure
+  $('.car_list > li').each((index, element) => {
     try {
       const infoElement = $(element);
-      console.log('Processing element:', infoElement.html());
-      const titleElement = infoElement.find('a[class*="tit"], .title, .car-title');
+      const titleElement = infoElement.find('.model');
+      const priceElement = infoElement.find('.price');
+      const infoDetailElement = infoElement.find('.inf');
+      const imageElement = infoElement.find('.thumb img');
       const title = titleElement.text().trim();
       const detailUrl = titleElement.attr('href');
 
-      // Extract make and model from title
-      const titleParts = title.split(' ');
-      let make = titleParts[0] || 'BMW';  // Default to BMW if extraction fails
-      const model = titleParts.slice(1, 3).join(' ');
-
-      // Find the image
-      const imageElement = $(element).parent().parent().find('.img img');
+      const title = titleElement.text().trim();
+      const make = 'BMW'; // Since we're searching BMW specifically
+      const model = title.replace('BMW', '').trim();
+      
       const imageUrl = imageElement.attr('src');
-
-      // Extract price
-      const priceText = $(element).find('.val').text().trim().replace(/[^0-9]/g, '');
-      const price = parseInt(priceText) || 30000; // Default price if extraction fails
+      
+      // Extract price - remove non-numeric characters and convert from Korean Won
+      const priceText = priceElement.text().trim().replace(/[^0-9]/g, '');
+      const price = parseInt(priceText) || 30000;
+      
+      // Extract year and mileage from info details
+      const detailText = infoDetailElement.text().trim();
 
       // Extract year
       const yearText = $(element).find('.detail .yr').text().trim();
