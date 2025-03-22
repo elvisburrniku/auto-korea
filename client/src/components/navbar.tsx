@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Car, Heart } from "lucide-react";
+import { Menu, X, Car, Heart, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { apiRequest } from "@/lib/queryClient";
@@ -44,6 +44,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Browse Cars", href: "/browse-cars" },
     { name: "Compare Cars", href: "/compare-cars" },
+    { name: "Budget Calculator", href: "/budget-calculator" },
     { name: "AR View", href: "/ar-comparison" },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },

@@ -15,8 +15,8 @@ export default function BudgetCalculatorPage() {
   const [selectedCarId, setSelectedCarId] = useState<number | null>(null);
   
   // Get car ID from query parameters
-  const queryParams = new URLSearchParams(location.search);
-  const carIdParam = queryParams.get('carId');
+  const carIdParam = location.includes('carId=') ? 
+    location.split('carId=')[1].split('&')[0] : null;
   
   React.useEffect(() => {
     if (carIdParam) {
