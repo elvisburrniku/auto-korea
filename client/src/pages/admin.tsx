@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -166,6 +166,7 @@ export default function AdminPage() {
           <TabsList className="mb-4">
             <TabsTrigger value="cars">Cars</TabsTrigger>
             <TabsTrigger value="inquiries">Inquiries</TabsTrigger>
+            <TabsTrigger value="imports">Imports</TabsTrigger>
           </TabsList>
           
           <TabsContent value="cars">
@@ -380,6 +381,70 @@ export default function AdminPage() {
                     <p className="text-sm mt-2">Customer inquiries will appear here when they contact you about a car</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="imports">
+            <Card>
+              <CardHeader>
+                <CardTitle>Car Import Tools</CardTitle>
+                <CardDescription>
+                  Import cars from various sources to quickly populate your inventory
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* BMW Import Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>BMW Import</CardTitle>
+                      <CardDescription>
+                        Import a collection of premium BMW vehicles with high-quality images
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4">
+                        Add 8 premium BMW models to your inventory, including sedans, coupes, SUVs, and electric vehicles with detailed specifications and professional images.
+                      </p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        onClick={() => navigate("/admin/import-cars")}
+                        className="w-full"
+                      >
+                        Start BMW Import
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                  
+                  {/* Encar.com Scraper Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Encar.com Import</CardTitle>
+                      <CardDescription>
+                        Import vehicles from Encar.com (Korean car marketplace)
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4 text-muted-foreground">
+                        This tool scrapes vehicle listings from Encar.com, a popular Korean car marketplace, and imports them into your inventory.
+                      </p>
+                      <p className="text-sm text-yellow-600 dark:text-yellow-500">
+                        Note: This feature requires running a script from the terminal as it involves web scraping with session handling.
+                      </p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        variant="outline"
+                        className="w-full"
+                        disabled
+                      >
+                        Available via Terminal
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
