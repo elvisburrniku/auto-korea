@@ -306,7 +306,7 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price ($)</FormLabel>
+                <FormLabel>Price (€)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
@@ -315,6 +315,9 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
                     onChange={e => field.onChange(parseInt(e.target.value))}
                   />
                 </FormControl>
+                <FormDescription>
+                  Price in euros (€)
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -326,7 +329,7 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
             name="mileage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mileage</FormLabel>
+                <FormLabel>Mileage (miles)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
@@ -335,6 +338,9 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
                     onChange={e => field.onChange(parseInt(e.target.value))}
                   />
                 </FormControl>
+                <FormDescription>
+                  Current mileage in miles (will be displayed in kilometers to users)
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -499,6 +505,9 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
                 <FormControl>
                   <Input {...field} placeholder="e.g. 25 city / 32 highway" />
                 </FormControl>
+                <FormDescription>
+                  Fuel economy in MPG (will be displayed in L/100km to users)
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
