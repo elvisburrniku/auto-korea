@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // AutoMarket API endpoint
-const AUTO_MARKET_API = 'https://automarket.relay.run';
+const AUTO_MARKET_API = 'http://localhost:5000';
 // Admin credentials
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'admin123';

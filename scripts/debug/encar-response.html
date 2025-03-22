@@ -1,0 +1,63 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="euc-kr">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	
+
+
+<title>��ī�ϰ� 8��4��</title>
+
+<meta name="description" content="�� �� �� �� �Ϸ� ���� �ְ�����, �� �� �� �� 19���� �߰����� �ִ� ��ī��!">
+<meta name="keywords" content="�߰����ŸŻ���Ʈ, �߰���, �߰�������Ʈ, �߰����Ÿ�, �߰����Ǹ�"/>
+<meta name="naver-site-verification" content="69bcee7a7a6c763427d02b8507a49bbc6699cd97"/>
+<meta name="google-site-verification" content="k-XSUZ77xZ_-SZbScyPs2ahKnh-FPiib6Ks4Qoll-Q0" />
+<meta name="facebook-domain-verification" content="2xnfhiu5wheuiglzcp22q1c2gjsbpf" />
+<meta name="og:site_name" content="www.encar.com"/>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="��ī�ϰ� 8��4��">
+<meta property="og:description" content="�� �� �� �� �Ϸ� ���� �ְ�����, �� �� �� �� 19���� �߰����� �ִ� ��ī��!">
+<meta property="og:image" content="http://www.encar.com/images/common/icon/brand_logo_400x400_v3.jpg">
+<meta property="og:url" content="http://www.encar.com/index.do">
+
+<link rel="canonical" href="http://www.encar.com/index.do">
+<link rel="alternate" href="https://car.encar.com" media="only screen and (max-width: 768px)">
+
+	<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon"/>
+	<link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
+	<script type="text/javascript" language="javascript" src="/js/encarapp/lib/jquery/jquery-1.11.3.min.js?v=1742429226720"></script>
+</head>
+
+<script src="https://www.google.com/recaptcha/api.js?onload=recaptchaOnload&render=6Ld9gXsmAAAAAE_tgSNL-WBZ35ORXclvMLwwGtXZ" async defer></script>
+<script type="text/javascript">
+	var recaptchaOnload = function() {
+		grecaptcha.execute('6Ld9gXsmAAAAAE_tgSNL-WBZ35ORXclvMLwwGtXZ', {action: '/fc/fc_carsearchlist_do'}).then(function(token) {
+			jQuery.ajax({
+				url: "/validation_recaptcha.do?method=v3",
+				dataType: "json",
+				type: "POST",
+				data: {
+					token: token,
+				},
+			}).done(function(data) {
+				result = data[0];
+				if (result.success == true) {
+					location.reload();
+				} else {
+					if (confirm('����� �ٽ� �õ����ּ���.')) {
+						location.reload();
+					}
+				}
+			});
+		});
+	};
+</script>
+
+<body>
+</body>
+</html>
