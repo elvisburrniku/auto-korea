@@ -16,7 +16,7 @@ export default function EncarImportPage() {
   const [importStarted, setImportStarted] = useState(false);
   const [importedCars, setImportedCars] = useState<Car[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
-  const [searchUrl, setSearchUrl] = useState("http://www.encar.com/fc/fc_carsearchlist.do?carType=for&searchType=model&MakeName=BMW&ModelName=3%EC%8B%9C%EB%A6%AC%EC%A6%88");
+  const [searchUrl, setSearchUrl] = useState("https://api.encar.com/search/car/list/premium?count=true&q=(And.Hidden.N._.(C.CarType.N._.(C.Manufacturer.%EC%95%84%EC%9A%B0%EB%94%94._.ModelGroup.A6.))_.Year.range(201500..).)&sr=%7CModifiedDate%7C900%7C900");
 
   // Get current session to check if user is admin
   const { data: session, isLoading: sessionLoading } = useQuery<{

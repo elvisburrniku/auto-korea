@@ -1,132 +1,138 @@
-import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import axios from "axios";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const AUTO_MARKET_API = "http://localhost:5000";
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "admin123";
 
-const AUTO_MARKET_API = 'http://localhost:5000';
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin123';
+const ENCAR_API_URL =
+  "https://api.encar.com/search/car/list/general?count=true&q=(And.(And.Hidden.N._.(C.CarType.N._.(C.Manufacturer.BMW._.ModelGroup.5%EC%8B%9C%EB%A6%AC%EC%A6%88.)))_.AdType.A.)&sr=%7CModifiedDate%7C0%7C8";
 
 async function login() {
   try {
-    const response = await axios.post(`${AUTO_MARKET_API}/api/auth/login`, {
-      username: ADMIN_USERNAME,
-      password: ADMIN_PASSWORD
-    });
+    const response = await axios.post(
+      `${AUTO_MARKET_API}/api/auth/login`,
+      {
+        username: ADMIN_USERNAME,
+        password: ADMIN_PASSWORD,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     if (!response.data || !response.data.isAdmin) {
-      throw new Error('Admin authentication required');
+      throw new Error("Admin authentication required");
     }
 
     return response.data;
   } catch (error) {
-    console.error('Failed to login:', error.response?.data || error.message);
-    throw new Error('Authentication failed');
+    console.error("Failed to login:", error.response?.data || error.message);
+    throw error;
   }
 }
 
-async function fetchEncarAPI(searchUrl) {
+async function fetchEncarCars() {
   try {
-    console.log(`Fetching listings from API: ${searchUrl}`);
-    const response = await axios.get(searchUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
-
-    return response.data;
+    const response = await axios.get(ENCAR_API_URL);
+    return response.data.SearchResults;
   } catch (error) {
-    console.error('Failed to fetch Encar API:', error.message);
-    throw new Error('Failed to fetch car listings');
+    console.error("Failed to fetch data from Encar:", error.message);
+    throw error;
   }
 }
 
-function processAPIData(apiData) {
-  if (!apiData || !apiData.SearchResults) {
-    throw new Error('Invalid API response format');
-  }
-
-  return apiData.SearchResults.map(car => ({
-    make: car.Manufacturer || 'BMW',
-    model: car.Model || '5 Series',
-    year: Math.floor(car.Year) || 2020,
-    price: Math.round(car.Price * 800) || 30000, // Convert from Korean 10000s to EUR
-    mileage: car.Mileage || 50000,
-    fuelType: car.FuelType === '디젤' ? 'Diesel' : 'Gasoline',
-    transmission: 'Automatic',
-    drivetrain: 'RWD',
-    exteriorColor: 'Silver',
-    interiorColor: 'Black',
-    description: `${car.Year} ${car.Manufacturer} ${car.Model}. Imported from Encar.com.`,
-    sellerName: 'Auto Import',
-    sellerPhone: '+82-1234-5678',
-    sellerEmail: 'import@automarket.com',
-    sellerLocation: car.OfficeCityState || 'South Korea',
-    images: car.Photos ? car.Photos.map(photo => `https://ci.encar.com${photo.location}`) : []
-  }));
-}
-
-async function createCar(carData, authToken) {
+async function createCar(carData) {
   try {
+    carData.isFeatured = Math.random() > 0.7;
+
     const response = await axios.post(`${AUTO_MARKET_API}/api/cars`, carData, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`
-      }
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
     });
 
     return response.data;
   } catch (error) {
-    console.error('Failed to create car:', error.message);
-    throw new Error(`Failed to create car: ${carData.make} ${carData.model}`);
+    console.error(
+      `Failed to create car: ${carData.make} ${carData.model}`,
+      error.message,
+    );
+    if (error.response) console.error("Response data:", error.response.data);
+    throw error;
   }
 }
 
-async function scrapeAndImport(searchUrl) {
+function transformEncarCar(encarCar) {
+  const images = (encarCar.Photos || []).map(
+    (p) => `https://image.encar.com${p.location}`,
+  );
+  const year = parseInt(encarCar.FormYear);
+  const price = parseInt(encarCar.Price * 10000); // convert 만원 to 원
+  const mileage = parseInt(encarCar.Mileage);
+
+  return {
+    make: encarCar.Manufacturer || "BMW",
+    model: encarCar.Badge || encarCar.Model || "Unknown",
+    year,
+    price,
+    mileage,
+    fuelType:
+      encarCar.FuelType === "가솔린"
+        ? "Gasoline"
+        : encarCar.FuelType === "디젤"
+          ? "Diesel"
+          : encarCar.FuelType,
+    transmission: "Automatic",
+    drivetrain: "RWD", // guessing default, no info in API
+    exteriorColor: "Unknown",
+    interiorColor: "Unknown",
+    description: `Imported from Encar. Trim: ${encarCar.Badge || "N/A"}, Service: ${encarCar.ServiceMark?.join(", ") || "N/A"}, Condition: ${encarCar.Condition?.join(", ") || "N/A"}`,
+    sellerName: "Import Motors",
+    sellerPhone: "+82-1234-5678",
+    sellerEmail: "import@automarket.com",
+    sellerLocation: encarCar.OfficeCityState || "Korea",
+    images,
+  };
+}
+
+async function importEncarCars() {
   try {
     const user = await login();
-    console.log('Logged in successfully');
+    const encarCars = await fetchEncarCars();
 
-    const apiData = await fetchEncarAPI(searchUrl);
-    console.log(`Found ${apiData.Count || 0} listings`);
+    console.log(`Fetched ${encarCars.length} Encar cars`);
 
-    const carListings = processAPIData(apiData);
-    console.log(`Processed ${carListings.length} car listings`);
+    let imported = 0,
+      failed = 0;
 
-    const results = {
-      total: carListings.length,
-      imported: 0,
-      failed: 0
-    };
-
-    for (const car of carListings) {
+    for (const encarCar of encarCars) {
+      const carData = transformEncarCar(encarCar);
       try {
-        await createCar(car, user.token);
-        console.log(`Successfully imported: ${car.year} ${car.make} ${car.model}`);
-        results.imported++;
-      } catch (error) {
-        console.error(`Import failed for car:`, error.message);
-        results.failed++;
+        await createCar(carData);
+        console.log(
+          `✅ Imported: ${carData.year} ${carData.make} ${carData.model}`,
+        );
+        imported++;
+      } catch (err) {
+        console.log(
+          `❌ Failed: ${carData.year} ${carData.make} ${carData.model}`,
+        );
+        failed++;
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    console.log('Import complete!');
-    console.log(`Total listings: ${results.total}`);
-    console.log(`Successfully imported: ${results.imported}`);
-    console.log(`Failed imports: ${results.failed}`);
-
-  } catch (error) {
-    console.error('Scraping failed:', error.message);
+    console.log("🚗 Import complete!");
+    console.log(
+      `Total: ${encarCars.length}, Imported: ${imported}, Failed: ${failed}`,
+    );
+  } catch (err) {
+    console.error("Import failed:", err.message);
   }
 }
 
-// Get the URL from command line or use default
-const searchUrl = process.argv[2] || 'https://api.encar.com/search/car/list/premium?count=true&q=(And.Hidden.N._.(C.CarType.N._.(C.Manufacturer.BMW._.ModelGroup.5%EC%8B%9C%EB%A6%AC%EC%A6%88.)))';
-
-scrapeAndImport(searchUrl)
-  .then(() => console.log('Script completed'))
-  .catch(err => console.error('Script failed:', err.message));
+importEncarCars()
+  .then(() => console.log("Script completed"))
+  .catch((err) => console.error("Script error:", err.message));

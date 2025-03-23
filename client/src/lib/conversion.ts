@@ -1,7 +1,7 @@
 // Unit conversion utilities
 
 // Constant conversion rates
-const MILES_TO_KM_RATIO = 1.60934;
+const MILES_TO_KM_RATIO = 1;
 const USD_TO_EUR_RATIO = 0.93; // This is an approximate rate, may need adjustment
 
 /**
@@ -46,7 +46,7 @@ export function eurToUsd(eur: number): number {
  * @returns Formatted price string with Euro symbol
  */
 export function formatEurPrice(price: number): string {
-  const eurPrice = usdToEur(price);
+  const eurPrice = price;
   return `€${eurPrice.toLocaleString('de-DE', { 
     minimumFractionDigits: 0,
     maximumFractionDigits: 0

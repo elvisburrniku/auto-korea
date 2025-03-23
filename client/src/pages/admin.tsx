@@ -199,6 +199,7 @@ export default function AdminPage() {
                               <TableHead>Year</TableHead>
                               <TableHead>Price</TableHead>
                               <TableHead>Featured</TableHead>
+                              <TableHead>Encar Link</TableHead>
                               <TableHead>Actions</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -206,12 +207,25 @@ export default function AdminPage() {
                             {cars && cars.length > 0 ? (
                               cars.map((car: Car) => (
                                 <TableRow key={car.id}>
-                                  <TableCell>{car.id}</TableCell>
+                                  <TableCell>{car.id} - {car?.car_id}</TableCell>
                                   <TableCell>{car.make}</TableCell>
                                   <TableCell>{car.model}</TableCell>
                                   <TableCell>{car.year}</TableCell>
                                   <TableCell>${car.price.toLocaleString()}</TableCell>
                                   <TableCell>{car.isFeatured ? "Yes" : "No"}</TableCell>
+                                  <TableCell>
+                                    {car?.car_id ? (
+                                      <a
+                                        href={`https://fem.encar.com/cars/detail/${car.car_id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        Link
+                                      </a>
+                                    ) : (
+                                      'No link'
+                                    )}
+                                  </TableCell>
                                   <TableCell>
                                     <div className="flex space-x-2">
                                       <Button 

@@ -36,6 +36,7 @@ export const cars = pgTable("cars", {
   year: integer("year").notNull(),
   price: integer("price").notNull(),
   mileage: integer("mileage").notNull(),
+  car_id: text("car_id").notNull(),
   fuelType: text("fuel_type").notNull(), // Gasoline, Diesel, Electric, Hybrid
   transmission: text("transmission").notNull(), // Automatic, Manual
   drivetrain: text("drivetrain").notNull(), // FWD, RWD, AWD, 4WD
@@ -67,6 +68,7 @@ export const carValidationSchema = insertCarSchema.extend({
   year: z.number().int().min(1900).max(new Date().getFullYear() + 1),
   price: z.number().int().min(0),
   mileage: z.number().int().min(0),
+  car_id: z.string().min(0),
   sellerPhone: z.string().min(10, "Valid phone number is required"),
   images: z.array(z.string()).min(1, "At least one image is required"),
 });
