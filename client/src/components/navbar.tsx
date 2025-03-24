@@ -45,7 +45,6 @@ export default function Navbar() {
     { name: "Browse Cars", href: "/browse-cars" },
     { name: "Compare Cars", href: "/compare-cars" },
     { name: "Budget Calculator", href: "/budget-calculator" },
-    { name: "AR View", href: "/ar-comparison" },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
