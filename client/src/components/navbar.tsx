@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Car, Heart, Calculator } from "lucide-react";
+import { Menu, X, Heart, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { apiRequest } from "@/lib/queryClient";
@@ -56,8 +56,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                <Car className="text-primary h-7 w-7 mr-2" />
-                <span className="font-bold text-xl text-neutral-800">AutoMarket</span>
+                <img src="https://auto-korea.clientlly.com/file/logo?t=1742816556" width="70px" height="auto" className="big-logo"/>
               </Link>
             </div>
             <nav className="hidden md:ml-10 md:flex md:space-x-8">
