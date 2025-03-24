@@ -15,19 +15,22 @@ app.use(express.urlencoded({ extended: false }));
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
 
-// Session configuration
+app.set('trust proxy', 1); // 🔑 REQUIRED if behind proxy (e.g. on Vercel, Fly, or using reverse proxy like Nginx)
+
 app.use(
   session({
     secret: "auto-market-secret-key",
     resave: false,
     saveUninitialized: false,
     store: new MemoryStoreSession({
-      checkPeriod: 86400000 // 24 hours
+      checkPeriod: 86400000, // 24 hours
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
-      secure: process.env.NODE_ENV === "production"
-    }
+      secure: process.env.NODE_ENV === "production", // ✅ required for HTTPS
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ allow cross-site cookies in prod
+      httpOnly: true,
+    },
   })
 );
 
