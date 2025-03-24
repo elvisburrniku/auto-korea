@@ -41,12 +41,12 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Browse Cars", href: "/browse-cars" },
-    { name: "Compare Cars", href: "/compare-cars" },
-    { name: "Budget Calculator", href: "/budget-calculator" },
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: "Ballina", href: "/" },
+    { name: "Kërko vetura", href: "/browse-cars" },
+    { name: "Krahaso vetura", href: "/compare-cars" },
+    { name: "Llogaritësi i buxhetit", href: "/budget-calculator" },
+    { name: "Rreth nesh", href: "/about" },
+    { name: "Kontakt", href: "/contact" },
   ];
 
   return (
@@ -78,7 +78,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/wishlists" className="flex items-center text-primary hover:text-primary-dark">
               <Heart className="h-5 w-5 mr-1" />
-              <span>Wishlists</span>
+              <span>Listat e dëshirave</span>
             </Link>
             
             {isAuthenticated ? (
@@ -96,17 +96,17 @@ export default function Navbar() {
                   }
                 }}
               >
-                Logout
+                Dilni
               </Button>
             ) : (
               <>
                 <Link href="/admin-login">
                   <Button variant="ghost" className="px-4 py-2 text-primary">
-                    Admin Login
+                    Identifikohu
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button>Register</Button>
+                  <Button>Regjistrohu</Button>
                 </Link>
               </>
             )}
@@ -151,7 +151,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               <Heart className="h-5 w-5 mr-2" />
-              Wishlists
+              Listat e dëshirave
             </Link>
             {isAuthenticated ? (
               <Button 
@@ -169,18 +169,18 @@ export default function Navbar() {
                   }
                 }}
               >
-                Logout
+                Dilni
               </Button>
             ) : (
               <>
                 <Link href="/admin-login" className="block w-full">
                   <Button variant="outline" className="w-full px-4 py-2 text-center">
-                    Admin Login
+                    Identifikohu
                   </Button>
                 </Link>
                 <Link href="/register" className="block w-full">
                   <Button className="w-full mt-2 px-4 py-2 text-center">
-                    Register
+                    Regjistrohu
                   </Button>
                 </Link>
               </>

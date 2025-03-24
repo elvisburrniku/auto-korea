@@ -22,12 +22,12 @@ import { Car, CarFilter } from "@shared/schema";
 import { Container } from "@/components/ui/container";
 
 const PRICE_RANGES = [
-  { min: 0, max: 10000, label: "Under $10,000" },
-  { min: 10000, max: 20000, label: "$10,000 - $20,000" },
-  { min: 20000, max: 30000, label: "$20,000 - $30,000" },
-  { min: 30000, max: 50000, label: "$30,000 - $50,000" },
-  { min: 50000, max: 100000, label: "$50,000 - $100,000" },
-  { min: 100000, max: null, label: "Over $100,000" },
+  { min: 0, max: 10000, label: "Under €10,000" },
+  { min: 10000, max: 20000, label: "€10,000 - €20,000" },
+  { min: 20000, max: 30000, label: "€20,000 - €30,000" },
+  { min: 30000, max: 50000, label: "€30,000 - €50,000" },
+  { min: 50000, max: 100000, label: "€50,000 - €100,000" },
+  { min: 100000, max: null, label: "Over €100,000" },
 ];
 
 const YEAR_RANGES = [
@@ -36,7 +36,7 @@ const YEAR_RANGES = [
   { min: 2010, max: 2014, label: "2010 - 2014" },
   { min: 2005, max: 2009, label: "2005 - 2009" },
   { min: 2000, max: 2004, label: "2000 - 2004" },
-  { min: null, max: 1999, label: "1999 & Older" },
+  { min: null, max: 1999, label: "1999 & Më e vjetër" },
 ];
 
 interface CarFilterProps {
@@ -86,11 +86,11 @@ export default function CarFilterComponent({
   // Unique fuel types and transmissions
   const fuelTypes = allCars 
     ? Array.from(new Set(allCars.map(car => car.fuelType))).sort() 
-    : ["Gasoline", "Diesel", "Electric", "Hybrid"];
+    : ["Benzinë", "Dizell", "Elektrik", "Hybrid"];
 
   const transmissions = allCars 
     ? Array.from(new Set(allCars.map(car => car.transmission))).sort() 
-    : ["Automatic", "Manual"];
+    : ["Automatik", "Manual"];
 
   // Selected price range for display
   const selectedPriceRange = (() => {
@@ -100,7 +100,7 @@ export default function CarFilterComponent({
       );
       return range?.label || `$${filters.minPrice} - $${filters.maxPrice}`;
     }
-    return "Any Price";
+    return "Çdo çmim";
   })();
 
   // Selected year range for display
@@ -111,11 +111,11 @@ export default function CarFilterComponent({
       );
       return range?.label || `${filters.minYear} - ${filters.maxYear}`;
     } else if (filters.minYear !== undefined) {
-      return `${filters.minYear} & Newer`;
+      return `${filters.minYear} & Më e re`;
     } else if (filters.maxYear !== undefined) {
-      return `${filters.maxYear} & Older`;
+      return `${filters.maxYear} & Më e vjetër`;
     }
-    return "Any Year";
+    return "Çdo vit";
   })();
 
   // Update URL when filters change
@@ -178,15 +178,15 @@ export default function CarFilterComponent({
     <div className={className}>
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="filters">
-          <AccordionTrigger className="text-lg font-medium">Filter Cars</AccordionTrigger>
+          <AccordionTrigger className="text-lg font-medium">Filtro veturat</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-6">
               {/* Search */}
               <div>
-                <Label htmlFor="search">Keyword Search</Label>
+                <Label htmlFor="search">Kërkim me fjalë kyçe</Label>
                 <Input
                   id="search"
-                  placeholder="Search by keyword..."
+                  placeholder="Kërko sipas fjalës kyçe..."
                   value={filters.search || ""}
                   onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   className="mt-1"
@@ -196,16 +196,16 @@ export default function CarFilterComponent({
               {/* Make and Model */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="make">Make</Label>
+                  <Label htmlFor="make">Marka</Label>
                   <Select
                     value={filters.make || "any"}
                     onValueChange={(value) => setFilters({ ...filters, make: value === "any" ? "" : value, model: "" })}
                   >
                     <SelectTrigger id="make" className="mt-1">
-                      <SelectValue placeholder="Any Make" />
+                      <SelectValue placeholder="Çdo markë" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any Make</SelectItem>
+                      <SelectItem value="any">Çdo markë</SelectItem>
                       {uniqueMakes.map((make) => (
                         <SelectItem key={make} value={make}>
                           {make}
@@ -216,17 +216,17 @@ export default function CarFilterComponent({
                 </div>
 
                 <div>
-                  <Label htmlFor="model">Model</Label>
+                  <Label htmlFor="model">Modeli</Label>
                   <Select
                     value={filters.model || "any"}
                     onValueChange={(value) => setFilters({ ...filters, model: value === "any" ? "" : value })}
                     disabled={!filters.make}
                   >
                     <SelectTrigger id="model" className="mt-1">
-                      <SelectValue placeholder={filters.make ? "Select Model" : "Select Make First"} />
+                      <SelectValue placeholder={filters.make ? "Selekto Model" : "Slektoni marken fillimishtë"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any Model</SelectItem>
+                      <SelectItem value="any">Çdo Model</SelectItem>
                       {availableModels.map((model) => (
                         <SelectItem key={model} value={model}>
                           {model}
@@ -239,7 +239,7 @@ export default function CarFilterComponent({
 
               {/* Price Range */}
               <div>
-                <Label>Price Range: {selectedPriceRange}</Label>
+                <Label>Çmimi: {selectedPriceRange}</Label>
                 <div className="mt-1">
                   <Select
                     value={selectedPriceRange}
@@ -255,10 +255,10 @@ export default function CarFilterComponent({
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Any Price" />
+                      <SelectValue placeholder="Çdo çmim" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Any Price">Any Price</SelectItem>
+                      <SelectItem value="Çdo çmim">Çdo çmim</SelectItem>
                       {PRICE_RANGES.map((range) => (
                         <SelectItem key={range.label} value={range.label}>
                           {range.label}
@@ -271,7 +271,7 @@ export default function CarFilterComponent({
 
               {/* Min Year */}
               <div>
-                <Label htmlFor="minYear">Min Year</Label>
+                <Label htmlFor="minYear">Min Viti</Label>
                 <Select
                   value={filters.minYear?.toString() || "any"}
                   onValueChange={(value) => {
@@ -286,10 +286,10 @@ export default function CarFilterComponent({
                   }}
                 >
                   <SelectTrigger id="minYear" className="mt-1">
-                    <SelectValue placeholder="Any Min Year" />
+                    <SelectValue placeholder="Çdo Min Vit" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any Min Year</SelectItem>
+                    <SelectItem value="any">Çdo Min Vit</SelectItem>
                     {availableYears.map((year) => (
                       <SelectItem key={`min-${year}`} value={year.toString()}>
                         {year}
@@ -301,7 +301,7 @@ export default function CarFilterComponent({
 
               {/* Max Year */}
               <div>
-                <Label htmlFor="maxYear">Max Year</Label>
+                <Label htmlFor="maxYear">Max Viti</Label>
                 <Select
                   value={filters.maxYear?.toString() || "any"}
                   onValueChange={(value) => {
@@ -316,10 +316,10 @@ export default function CarFilterComponent({
                   }}
                 >
                   <SelectTrigger id="maxYear" className="mt-1">
-                    <SelectValue placeholder="Any Max Year" />
+                    <SelectValue placeholder="Çdo Max Vit" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any Max Year</SelectItem>
+                    <SelectItem value="any">Çdo Max Vit</SelectItem>
                     {availableYears.map((year) => (
                       <SelectItem key={`max-${year}`} value={year.toString()}>
                         {year}
@@ -331,16 +331,16 @@ export default function CarFilterComponent({
 
               {/* Fuel Type */}
               <div>
-                <Label htmlFor="fuelType">Fuel Type</Label>
+                <Label htmlFor="fuelType">Lloji i karburantit</Label>
                 <Select
                   value={filters.fuelType || "any"}
                   onValueChange={(value) => setFilters({ ...filters, fuelType: value === "any" ? "" : value })}
                 >
                   <SelectTrigger id="fuelType" className="mt-1">
-                    <SelectValue placeholder="Any Fuel Type" />
+                    <SelectValue placeholder="Çdo lloj i karburantit" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any Fuel Type</SelectItem>
+                    <SelectItem value="any">Çdo lloj i karburantit</SelectItem>
                     {fuelTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
@@ -352,16 +352,16 @@ export default function CarFilterComponent({
 
               {/* Transmission */}
               <div>
-                <Label htmlFor="transmission">Transmission</Label>
+                <Label htmlFor="transmission">Transmisioni</Label>
                 <Select
                   value={filters.transmission || "any"}
                   onValueChange={(value) => setFilters({ ...filters, transmission: value === "any" ? "" : value })}
                 >
                   <SelectTrigger id="transmission" className="mt-1">
-                    <SelectValue placeholder="Any Transmission" />
+                    <SelectValue placeholder="Çdo Transmision" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any Transmission</SelectItem>
+                    <SelectItem value="any">Çdo Transmision</SelectItem>
                     {transmissions.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
@@ -374,10 +374,10 @@ export default function CarFilterComponent({
               {/* Filter Buttons */}
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button onClick={applyFilters} className="flex-1">
-                  Apply Filters
+                  Apliko filtrat
                 </Button>
                 <Button variant="outline" onClick={resetFilters} className="flex-1">
-                  Reset Filters
+                  Rivendos filtrat
                 </Button>
               </div>
             </div>

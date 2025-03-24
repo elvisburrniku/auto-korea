@@ -48,10 +48,10 @@ export default function CarDetailPage() {
     return (
       <Container className="py-12">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h1 className="text-xl font-bold text-red-700 mb-2">Invalid Car ID</h1>
-          <p className="text-red-600 mb-4">The car ID provided is not valid.</p>
+          <h1 className="text-xl font-bold text-red-700 mb-2">ID e veturës është e pavlefshme</h1>
+          <p className="text-red-600 mb-4">ID-ja e veturës që keni dhënë nuk është e vlefshme.</p>
           <Button asChild>
-            <Link href="/browse-cars">Browse All Cars</Link>
+            <Link href="/browse-cars">Kërko të gjitha veturat</Link>
           </Button>
         </div>
       </Container>
@@ -150,10 +150,10 @@ export default function CarDetailPage() {
     return (
       <Container className="py-12">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h1 className="text-xl font-bold text-red-700 mb-2">Car Not Found</h1>
-          <p className="text-red-600 mb-4">We couldn't find the car you're looking for. It may have been removed or sold.</p>
+          <h1 className="text-xl font-bold text-red-700 mb-2">Vetura nuk u gjet</h1>
+          <p className="text-red-600 mb-4">Nuk mundëm të gjejmë veturën që po kërkoni. Mund të jetë hequr ose shitur.</p>
           <Button asChild>
-            <Link href="/browse-cars">Browse All Cars</Link>
+            <Link href="/browse-cars">Kërko të gjitha veturat</Link>
           </Button>
         </div>
       </Container>
@@ -169,7 +169,7 @@ export default function CarDetailPage() {
       <div className="mb-6">
         <Link href="/browse-cars" className="text-primary hover:text-primary-dark font-medium flex items-center">
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Back to Listings
+          Kthehu te Listimet
         </Link>
       </div>
 
@@ -181,69 +181,69 @@ export default function CarDetailPage() {
           />
 
           <div className="mt-8">
-            <h3 className="text-xl font-bold text-neutral-800 mb-4">Vehicle Specifications</h3>
+            <h3 className="text-xl font-bold text-neutral-800 mb-4">Specifikimet e Veturës</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-neutral-50 p-4 rounded-lg">
-                <h4 className="font-medium text-neutral-500 mb-1">Basic Information</h4>
+                <h4 className="font-medium text-neutral-500 mb-1">Informacione Bazë</h4>
                 <ul className="space-y-2">
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Make</span>
+                    <span className="text-neutral-500">Marka</span>
                     <span className="font-medium">{car.make}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Model</span>
+                    <span className="text-neutral-500">Modeli</span>
                     <span className="font-medium">{car.model}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Year</span>
+                    <span className="text-neutral-500">Viti</span>
                     <span className="font-medium">{car.year}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Mileage</span>
+                    <span className="text-neutral-500">Kilometrazhi</span>
                     <span className="font-medium">{formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km</span>
                   </li>
                   {car.vin && (
                     <li className="flex justify-between">
-                      <span className="text-neutral-500">VIN</span>
+                      <span className="text-neutral-500">Numri i shasis</span>
                       <span className="font-medium">{car.vin}</span>
                     </li>
                   )}
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Exterior Color</span>
+                    <span className="text-neutral-500">Ngjyra e jashtme</span>
                     <span className="font-medium">{car.exteriorColor}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Interior Color</span>
+                    <span className="text-neutral-500">Ngjyra e brendshme</span>
                     <span className="font-medium">{car.interiorColor}</span>
                   </li>
                 </ul>
               </div>
 
               <div className="bg-neutral-50 p-4 rounded-lg">
-                <h4 className="font-medium text-neutral-500 mb-1">Performance</h4>
+                <h4 className="font-medium text-neutral-500 mb-1">Performanca</h4>
                 <ul className="space-y-2">
                   {car.engineDetails && (
                     <li className="flex justify-between">
-                      <span className="text-neutral-500">Engine</span>
+                      <span className="text-neutral-500">Motorri</span>
                       <span className="font-medium">{car.engineDetails}</span>
                     </li>
                   )}
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Transmission</span>
+                    <span className="text-neutral-500">Transmisioni</span>
                     <span className="font-medium">{car.transmission}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Drivetrain</span>
+                    <span className="text-neutral-500">Sistemi i lëvizjes (Drivetrain)</span>
                     <span className="font-medium">{car.drivetrain}</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-neutral-500">Fuel Type</span>
+                    <span className="text-neutral-500">Lloji i Karburantit</span>
                     <span className="font-medium">{car.fuelType}</span>
                   </li>
                   {car.mpg && car.fuelType?.toLowerCase() !== 'electric' && (
                     <li className="flex justify-between">
-                      <span className="text-neutral-500">Fuel Economy</span>
+                      <span className="text-neutral-500">Konsumi i Karburantit</span>
                       <span className="font-medium">{getMpgInLitersPer100Km(car.mpg)}</span>
                     </li>
                   )}
@@ -254,7 +254,7 @@ export default function CarDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               {car.features && car.features.length > 0 && (
                 <div className="bg-neutral-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-neutral-500 mb-1">Features & Options</h4>
+                  <h4 className="font-medium text-neutral-500 mb-1">Veçoritë dhe Opsionet</h4>
                   <ul className="grid grid-cols-2 gap-y-2">
                     {car.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
@@ -268,7 +268,7 @@ export default function CarDetailPage() {
 
               {car.description && (
                 <div className="bg-neutral-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-neutral-500 mb-1">Description</h4>
+                  <h4 className="font-medium text-neutral-500 mb-1">Pëshkrimi</h4>
                   <p className="text-neutral-700">{car.description}</p>
                 </div>
               )}
@@ -287,7 +287,7 @@ export default function CarDetailPage() {
             </div>
 
             <div className="border-t border-b border-neutral-200 py-4 my-4">
-              <h4 className="font-medium text-neutral-800 mb-2">Seller Information</h4>
+              <h4 className="font-medium text-neutral-800 mb-2">Informacioni i Shitësit</h4>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden mr-3 flex items-center justify-center">
                   <User className="h-8 w-8 text-neutral-400" />
@@ -295,7 +295,7 @@ export default function CarDetailPage() {
                 <div>
                   <p className="font-medium">{car.sellerName}</p>
                   {car.sellerSince && (
-                    <p className="text-sm text-neutral-500">Member since {car.sellerSince}</p>
+                    <p className="text-sm text-neutral-500">Anëtar që nga {car.sellerSince}</p>
                   )}
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function CarDetailPage() {
                 className="block w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-md font-medium text-center flex justify-center items-center"
               >
                 <Phone className="text-xl mr-2 h-5 w-5" />
-                Call Seller
+                Thirr Shitësin
               </a>
 
               <Button 
@@ -333,7 +333,7 @@ export default function CarDetailPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
-                Save to Favorites
+                Ruaje te të Preferuarat
               </Button>
               
               <AddToWishlist car={car} />
@@ -346,7 +346,7 @@ export default function CarDetailPage() {
                     <path d="m6 12 6 3 6-3"></path>
                     <path d="m6 15 6 3 6-3"></path>
                   </svg>
-                  View in AR
+                  Shiko në AR (Argumented Reality)
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
@@ -354,14 +354,14 @@ export default function CarDetailPage() {
               <Link href={`/budget-calculator?carId=${car.id}`}>
                 <Button variant="outline" className="w-full flex items-center mt-2">
                   <Calculator className="h-5 w-5 mr-2" />
-                  Budget Calculator
+                  Kalkulatori i Buxhetit
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-200">
-              <h4 className="font-medium text-neutral-800 mb-4">Send a Message</h4>
+              <h4 className="font-medium text-neutral-800 mb-4">Dërgo një Mesazh</h4>
               <InquiryForm carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
             </div>
           </div>

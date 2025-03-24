@@ -86,8 +86,8 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg">
       <div className="relative">
         {featured && (
-          <Badge className="absolute top-2 left-2 z-10 bg-secondary text-white" variant="secondary">
-            Featured
+          <Badge className="absolute top-2 left-2 z-10 bg-primary text-white" variant="default">
+            Në Ofertë
           </Badge>
         )}
         <img 
@@ -117,7 +117,7 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
             className="flex-1" 
             asChild
           >
-            <Link href={`/car/${car.id}`}>View Details</Link>
+            <Link href={`/car/${car.id}`}>Shiko Detajet</Link>
           </Button>
           <WhatsAppButton 
             phoneNumber={car.sellerPhone} 

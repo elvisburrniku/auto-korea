@@ -28,9 +28,9 @@ export default function HomePage() {
       <section className="py-12 bg-white">
         <Container>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Featured Vehicles</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Në Ofertë</h2>
             <Link href="/browse-cars" className="text-primary hover:text-primary-dark font-medium flex items-center">
-              View All 
+              Shiko të gjitha
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -65,7 +65,7 @@ export default function HomePage() {
               ))
             ) : (
               <div className="col-span-3 text-center py-8">
-                <p className="text-neutral-500">No featured vehicles available at the moment.</p>
+                <p className="text-neutral-500">Nuk ka vetura ne ofertë.</p>
               </div>
             )}
           </div>
@@ -76,9 +76,9 @@ export default function HomePage() {
       <section className="py-12 bg-neutral-50">
         <Container>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Recent Listings</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Listimet e fundit</h2>
             <Link href="/browse-cars" className="text-primary hover:text-primary-dark font-medium flex items-center">
-              View All 
+              Shiko të gjitha
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -113,7 +113,7 @@ export default function HomePage() {
               ))
             ) : (
               <div className="col-span-4 text-center py-8">
-                <p className="text-neutral-500">No recent listings available at the moment.</p>
+                <p className="text-neutral-500">Nuk ka listime të fundit të disponueshme për momentin.</p>
               </div>
             )}
           </div>
@@ -124,7 +124,7 @@ export default function HomePage() {
       <section className="py-12 bg-white">
         <Container>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Plan Your Car Purchase</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800">Planifikoni blerjen e makinës suaj</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -132,42 +132,41 @@ export default function HomePage() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl font-bold flex items-center">
                   <Calculator className="h-6 w-6 mr-2 text-primary" />
-                  Budget Calculator
+                  Llogaritësi i buxhetit
                 </CardTitle>
                 <CardDescription>
-                  Find out how much car you can afford based on your budget and savings plan
+                  Zbuloni se çfarë veture mund të përballoni bazuar në buxhetin tuaj dhe planin tuaj të kursimeve.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="mb-4 text-neutral-600">
-                  Our interactive budget calculator helps you visualize your savings progress
-                  and plan ahead for your dream car purchase.
+                  Kalkulatori ynë interaktiv i buxhetit ju ndihmon të vizualizoni progresin e kursimeve tuaja dhe të planifikoni paraprakisht blerjen e veturës suaj të ëndrrave.
                 </p>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-start">
                     <svg className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span>Calculate monthly payments</span>
+                    <span>Kalkuloni pagesat mujore</span>
                   </li>
                   <li className="flex items-start">
                     <svg className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span>Visualize savings progress with animated meter</span>
+                    <span>Vizualizoni progresin e kursimeve me matës të animuar</span>
                   </li>
                   <li className="flex items-start">
                     <svg className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span>Plan for down payments and financing options</span>
+                    <span>Planifikoni pagesat fillestare dhe opsionet e financimit</span>
                   </li>
                 </ul>
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
                   <Link href="/budget-calculator">
-                    Try Budget Calculator
+                    Provoni Kalkulatorin e Buxhetit
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -177,10 +176,10 @@ export default function HomePage() {
             <div className="bg-neutral-50 rounded-lg shadow-md p-6 flex flex-col justify-center">
               <div className="mb-6">
                 <PiggyBank className="h-16 w-16 text-primary mb-4" />
-                <h3 className="text-xl font-bold text-neutral-800 mb-2">Savings Visualization</h3>
+                <h3 className="text-xl font-bold text-neutral-800 mb-2">Vizualizimi i Kursimeve</h3>
                 <p className="text-neutral-600">
-                  See how your monthly savings add up towards your car purchase goal with our
-                  animated savings meter. Know exactly when you'll reach your target.
+                  Shikoni se si kursimet tuaja mujore grumbullohen drejt synimit tuaj për blerjen e veturës me matësin tonë të animuar të kursimeve.
+                  Mësoni saktësisht kur do ta arrini objektivin tuaj.
                 </p>
               </div>
               
@@ -188,7 +187,7 @@ export default function HomePage() {
                 <div className="bg-white rounded-lg p-4 shadow-sm border border-neutral-200">
                   <div className="mb-3">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-neutral-500">Current Savings</span>
+                      <span className="text-neutral-500">Kursimet aktuale</span>
                       <span className="font-medium">€5,000</span>
                     </div>
                     <div className="w-full bg-neutral-200 rounded-full h-2.5">
@@ -196,14 +195,14 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-neutral-500">Target: €20,000</span>
-                    <span className="text-neutral-500">25% Complete</span>
+                    <span className="text-neutral-500">Targeti: €20,000</span>
+                    <span className="text-neutral-500">25% Pëfunduar</span>
                   </div>
                 </div>
                 
                 <Button variant="outline" asChild className="w-full mt-4">
                   <Link href="/budget-calculator">
-                    Start Planning
+                    Filloni Planifikimin
                   </Link>
                 </Button>
               </div>

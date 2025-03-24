@@ -249,9 +249,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: errorMessage });
       }
 
-      const allCars = await storage.getAllCars();
-      console.log("Total cars before filtering:", allCars.length);
-
+      // const allCars = await storage.getAllCars();
+      // console.log("Total cars before filtering:", allCars.length);
       const filteredCars = await storage.filterCars(validationResult.data);
       console.log("Filtered cars count:", filteredCars.length);
 

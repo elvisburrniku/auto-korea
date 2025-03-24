@@ -32,7 +32,7 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
   const [selectedWishlistId, setSelectedWishlistId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch user's wishlists
+  // Merr wishlist-et e përdoruesit
   useEffect(() => {
     if (userId) {
       const fetchWishlists = async () => {
@@ -40,13 +40,13 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         try {
           const response = await apiRequest('GET', `/api/wishlists/user/${userId}`);
           const data = await response.json();
-          console.log("User wishlists:", data);
+          console.log("Wishlist-et e përdoruesit:", data);
           setWishlists(data);
         } catch (error) {
-          console.error("Error fetching wishlists:", error);
+          console.error("Gabim gjatë marrëveshjes së wishlist-eve:", error);
           toast({
-            title: "Error",
-            description: "Failed to load wishlists",
+            title: "Gabim",
+            description: "Dështim në ngarkimin e wishlist-eve",
             variant: "destructive"
           });
         } finally {
@@ -58,12 +58,12 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
     }
   }, [userId, toast]);
 
-  // Handler for creating a new wishlist
+  // Menaxhimi për krijimin e një wishlist-i të ri
   const handleCreateWishlist = async () => {
     if (!newWishlistName.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a wishlist name",
+        title: "Gabim",
+        description: "Ju lutem vendosni një emër për wishlist-in",
         variant: "destructive"
       });
       return;
@@ -71,7 +71,7 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
 
     setIsLoading(true);
     try {
-      // Extract car IDs from the selected cars
+      // Nxjerrni ID-të e makinave nga makinat e përzgjedhura
       const carIds = selectedCars.map(car => car.id.toString());
       
       const newWishlist = {
@@ -87,27 +87,27 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
       );
       
       const data = await response.json();
-      console.log("Created wishlist:", data);
+      console.log("Krijuar wishlist:", data);
 
-      // Add the new wishlist to the state
+      // Shtoni wishlist-in e ri në shtetin
       setWishlists([...wishlists, data]);
       
-      // Reset form and close dialog
+      // Rinisni formularin dhe mbyllni dialogun
       setNewWishlistName("");
       setIsCreateDialogOpen(false);
       
       toast({
-        title: "Success",
-        description: "Wishlist created successfully",
+        title: "Sukses",
+        description: "Wishlist-i u krijua me sukses",
       });
 
-      // Invalidate cache to refresh wishlists
+      // Invalidoni cache-n për të rifreskuar wishlist-et
       queryClient.invalidateQueries({ queryKey: [`/api/wishlists/user/${userId}`] });
     } catch (error) {
-      console.error("Error creating wishlist:", error);
+      console.error("Gabim gjatë krijimit të wishlist-it:", error);
       toast({
-        title: "Error",
-        description: "Failed to create wishlist",
+        title: "Gabim",
+        description: "Dështim në krijimin e wishlist-it",
         variant: "destructive"
       });
     } finally {
@@ -115,12 +115,12 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
     }
   };
 
-  // Handler for adding cars to an existing wishlist
+  // Menaxhimi për shtimin e makinave në një wishlist ekzistuese
   const handleAddToWishlist = async (wishlistId: number) => {
     if (selectedCars.length === 0) {
       toast({
-        title: "Error",
-        description: "No cars selected to add to the wishlist",
+        title: "Gabim",
+        description: "Nuk ka makina të përzgjedhura për t'u shtuar në wishlist",
         variant: "destructive"
       });
       return;
@@ -128,20 +128,20 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
 
     setIsLoading(true);
     try {
-      // Find the existing wishlist
+      // Gjeni wishlist-in ekzistues
       const wishlist = wishlists.find(w => w.id === wishlistId);
       if (!wishlist) {
-        throw new Error("Wishlist not found");
+        throw new Error("Wishlist-i nuk u gjet");
       }
 
-      // Get existing car IDs
+      // Merrni ID-të e makinave ekzistuese
       const existingCarIds = wishlist.cars || [];
       
-      // Add new car IDs (avoiding duplicates)
+      // Shtoni ID-të e makinave të reja (pa u dyfishuar)
       const selectedCarIds = selectedCars.map(car => car.id.toString());
       const updatedCarIds = Array.from(new Set([...existingCarIds, ...selectedCarIds]));
       
-      // Update the wishlist
+      // Përshtatni wishlist-in
       const response = await apiRequest(
         "PATCH",
         `/api/wishlists/${wishlistId}`,
@@ -149,26 +149,26 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
       );
       
       const updatedWishlist = await response.json();
-      console.log("Updated wishlist:", updatedWishlist);
+      console.log("Wishlist i përditësuar:", updatedWishlist);
 
-      // Update the state
+      // Përshtatni shtetin
       setWishlists(wishlists.map(w => w.id === wishlistId ? updatedWishlist : w));
       
       toast({
-        title: "Success",
-        description: "Cars added to wishlist",
+        title: "Sukses",
+        description: "Makina u shtuan në wishlist",
       });
 
-      // Close the dialog if provided
+      // Mbyllni dialogun nëse është ofruar
       if (onClose) onClose();
 
-      // Invalidate cache to refresh wishlists
+      // Invalidoni cache-n për të rifreskuar wishlist-et
       queryClient.invalidateQueries({ queryKey: [`/api/wishlists/user/${userId}`] });
     } catch (error) {
-      console.error("Error adding to wishlist:", error);
+      console.error("Gabim gjatë shtimit në wishlist:", error);
       toast({
-        title: "Error",
-        description: "Failed to update wishlist",
+        title: "Gabim",
+        description: "Dështim në përditësimin e wishlist-it",
         variant: "destructive"
       });
     } finally {
@@ -176,9 +176,9 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
     }
   };
 
-  // Handler for deleting a wishlist
+  // Menaxhimi për fshirjen e një wishlist-i
   const handleDeleteWishlist = async (wishlistId: number) => {
-    if (!confirm("Are you sure you want to delete this wishlist?")) {
+    if (!confirm("Jeni të sigurt që doni të fshini këtë wishlist?")) {
       return;
     }
 
@@ -189,21 +189,21 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         `/api/wishlists/${wishlistId}`
       );
 
-      // Remove the deleted wishlist from state
+      // Hiqni wishlist-in e fshirë nga shteti
       setWishlists(wishlists.filter(w => w.id !== wishlistId));
       
       toast({
-        title: "Success",
-        description: "Wishlist deleted successfully",
+        title: "Sukses",
+        description: "Wishlist-i u fshi me sukses",
       });
 
-      // Invalidate cache to refresh wishlists
+      // Invalidoni cache-n për të rifreskuar wishlist-et
       queryClient.invalidateQueries({ queryKey: [`/api/wishlists/user/${userId}`] });
     } catch (error) {
-      console.error("Error deleting wishlist:", error);
+      console.error("Gabim gjatë fshirjes së wishlist-it:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete wishlist",
+        title: "Gabim",
+        description: "Dështim në fshirjen e wishlist-it",
         variant: "destructive"
       });
     } finally {
@@ -211,33 +211,33 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
     }
   };
 
-  // Handler for generating and showing share URL
+  // Menaxhimi për krijimin dhe shfaqjen e URL-së për ndarjen
   const handleShareWishlist = (wishlist: Wishlist) => {
     const shareUrl = `${window.location.origin}/wishlist/share/${wishlist.shareId}`;
     setShareUrl(shareUrl);
     setIsShareDialogOpen(true);
   };
 
-  // Handler for copying share URL to clipboard
+  // Menaxhimi për kopjimin e URL-së për ndarjen në clipboard
   const handleCopyShareUrl = () => {
     navigator.clipboard.writeText(shareUrl)
       .then(() => {
         toast({
-          title: "Success",
-          description: "Link copied to clipboard",
+          title: "Sukses",
+          description: "Linku u kopjua në clipboard",
         });
       })
       .catch(err => {
-        console.error("Could not copy text: ", err);
+        console.error("Nuk mund të kopjohet teksti: ", err);
         toast({
-          title: "Error",
-          description: "Failed to copy link to clipboard",
+          title: "Gabim",
+          description: "Dështim në kopjimin e linkut në clipboard",
           variant: "destructive"
         });
       });
   };
 
-  // Handler for viewing a wishlist
+  // Menaxhimi për shikimin e një wishlist-i
   const handleViewWishlist = (wishlistId: number) => {
     setLocation(`/wishlist/${wishlistId}`);
   };
@@ -245,36 +245,36 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">My Wishlists</h2>
+        <h2 className="text-2xl font-semibold">Wishlist-ët E Mia</h2>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <FaPlus className="mr-2" />
-              Create New Wishlist
+              Krijoni Wishlist të Ri
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create a New Wishlist</DialogTitle>
+              <DialogTitle>Krijoni një Wishlist të Ri</DialogTitle>
               <DialogDescription>
-                Give your wishlist a name and it will include your currently selected cars.
+                Jepni një emër wishlist-it tuaj dhe ai do të përfshijë makinat që keni përzgjedhur.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
-                  Wishlist Name
+                  Emri i Wishlist-it
                 </label>
                 <Input
                   id="name"
-                  placeholder="My Dream Cars"
+                  placeholder="Makina ime të Dëshiruara"
                   value={newWishlistName}
                   onChange={(e) => setNewWishlistName(e.target.value)}
                 />
               </div>
               {selectedCars.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Selected Cars ({selectedCars.length})</p>
+                  <p className="text-sm font-medium mb-2">Makina të Përzgjedhura ({selectedCars.length})</p>
                   <ScrollArea className="h-[200px]">
                     {selectedCars.map((car) => (
                       <div key={car.id} className="py-2">
@@ -291,26 +291,26 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
             </div>
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                Cancel
+                Anulo
               </Button>
               <Button onClick={handleCreateWishlist} disabled={isLoading}>
-                Create Wishlist
+                Krijo Wishlist
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
-      {isLoading && <p className="text-center">Loading wishlists...</p>}
+      {isLoading && <p className="text-center">Po ngarkohen wishlist-et...</p>}
 
       {!isLoading && Array.isArray(wishlists) && wishlists.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-lg text-muted-foreground">You don't have any wishlists yet.</p>
+          <p className="text-lg text-muted-foreground">Nuk keni asnjë wishlist deri tani.</p>
           <Button 
             className="mt-4" 
             onClick={() => setIsCreateDialogOpen(true)}
           >
-            Create Your First Wishlist
+            Krijo Wishlist-in Tënd të Parë
           </Button>
         </div>
       )}
@@ -322,7 +322,7 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
               <CardHeader>
                 <CardTitle>{wishlist.name}</CardTitle>
                 <CardDescription>
-                  {wishlist.cars?.length || 0} cars • Created {new Date(wishlist.createdAt).toLocaleDateString()}
+                  {wishlist.cars?.length || 0} makina • Krijuar {new Date(wishlist.createdAt).toLocaleDateString()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -332,27 +332,27 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
                     onClick={() => handleAddToWishlist(wishlist.id)}
                     className="w-full mb-4"
                   >
-                    <FaPlus className="mr-2" /> Add Selected Cars
+                    <FaPlus className="mr-2" /> Shto Makina të Përzgjedhura
                   </Button>
                 )}
                 <ScrollArea className="h-[150px] w-full">
                   {wishlist.cars && wishlist.cars.length > 0 ? (
                     wishlist.cars.map((carId, index) => (
                       <div key={`${carId}-${index}`} className="py-2">
-                        <div className="font-medium">Car ID: {carId}</div>
+                        <div className="font-medium">ID e Makinës: {carId}</div>
                         <Separator className="my-2" />
                       </div>
                     ))
                   ) : (
                     <p className="text-center py-4 text-muted-foreground">
-                      No cars in this wishlist yet
+                      Nuk ka makina në këtë wishlist ende
                     </p>
                   )}
                 </ScrollArea>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <Button variant="outline" onClick={() => handleViewWishlist(wishlist.id)}>
-                  View
+                  Shiko
                 </Button>
                 <div className="space-x-2">
                   <Button
@@ -376,18 +376,18 @@ export default function WishlistManager({ userId, selectedCars = [], onClose }: 
         </div>
       )}
 
-      {/* Share Dialog */}
+      {/* Dialogu i Ndarjes */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Share Wishlist</DialogTitle>
+            <DialogTitle>Ndaj Wishlist-in</DialogTitle>
             <DialogDescription>
-              Copy this link to share your wishlist with others.
+              Kopjoni këtë lidhje për të ndarë wishlist-in tuaj me të tjerët.
             </DialogDescription>
           </DialogHeader>
           <div className="flex space-x-2 py-4">
             <Input value={shareUrl} readOnly />
-            <Button onClick={handleCopyShareUrl}>Copy</Button>
+            <Button onClick={handleCopyShareUrl}>Kopjo</Button>
           </div>
         </DialogContent>
       </Dialog>

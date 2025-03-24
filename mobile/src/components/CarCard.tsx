@@ -43,7 +43,7 @@ const CarCard: React.FC<CarCardProps> = ({
         />
         {featured && (
           <View style={styles.featuredBadge}>
-            <Text style={styles.featuredText}>Featured</Text>
+            <Text style={styles.featuredText}>Ofertë</Text>
           </View>
         )}
       </View>
@@ -55,23 +55,23 @@ const CarCard: React.FC<CarCardProps> = ({
         <View style={styles.specs}>
           <View style={styles.specItem}>
             <Text style={styles.specValue}>{formatKmDistance(car.mileage)}</Text>
-            <Text style={styles.specLabel}>Mileage</Text>
+            <Text style={styles.specLabel}>Kilometrazhi</Text>
           </View>
           
           <View style={styles.specItem}>
             <Text style={styles.specValue}>{car.transmission}</Text>
-            <Text style={styles.specLabel}>Transmission</Text>
+            <Text style={styles.specLabel}>Transmisioni</Text>
           </View>
           
           <View style={styles.specItem}>
             <Text style={styles.specValue}>{car.fuelType}</Text>
-            <Text style={styles.specLabel}>Fuel Type</Text>
+            <Text style={styles.specLabel}>Lloji i karburantit</Text>
           </View>
         </View>
         
         {!isElectric(car.fuelType) && car.fuelEfficiency && size !== 'small' && (
           <Text style={styles.fuelEfficiency}>
-            Fuel Efficiency: {car.fuelEfficiency} L/100km
+            Konsumi i karburantit: {car.fuelEfficiency} L/100km
           </Text>
         )}
       </View>

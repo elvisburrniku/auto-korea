@@ -121,7 +121,7 @@ export default function BrowseCarsPage() {
     if (initialFilters.fuelType) parts.push(initialFilters.fuelType);
     if (initialFilters.transmission) parts.push(initialFilters.transmission);
     
-    return parts.length > 0 ? parts.join(" • ") : "All Cars";
+    return parts.length > 0 ? parts.join(" • ") : "Të gjitha veturat";
   };
   
   return (
@@ -129,19 +129,19 @@ export default function BrowseCarsPage() {
       {/* Page Header */}
       <div className="bg-primary text-white py-10">
         <Container>
-          <h1 className="text-3xl font-bold mb-4">Browse Cars</h1>
+          <h1 className="text-3xl font-bold mb-4">Kërko vetura</h1>
           <div className="flex flex-col sm:flex-row gap-4">
             <form onSubmit={handleQuickSearch} className="flex-1 flex gap-2">
               <Input
                 type="text"
-                placeholder="Quick search by make, model, or keywords"
+                placeholder="Kërkim i shpejtë sipas markës, modelit ose fjalëve kyçe"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-white text-neutral-800"
               />
               <Button type="submit">
                 <Search className="h-4 w-4 mr-2" />
-                Search
+                Gjej
               </Button>
             </form>
           </div>
@@ -180,7 +180,7 @@ export default function BrowseCarsPage() {
             <div className="mb-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold">
-                  {isLoading ? "Loading..." : `${cars?.length || 0} Results`}
+                  {isLoading ? "Duke u ngarkuar..." : `${cars?.length || 0} Rezultatet`}
                 </h2>
                 <p className="text-sm text-neutral-500">{getFilterSummary()}</p>
               </div>
@@ -214,7 +214,7 @@ export default function BrowseCarsPage() {
               </div>
             ) : error ? (
               <div className="bg-red-50 border border-red-200 rounded-md p-4 text-red-700">
-                An error occurred while fetching cars. Please try again.
+                Ndodhi një gabim gjatë marrjes së veturave. Ju lutemi provoni përsëri.
               </div>
             ) : cars && cars.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -228,9 +228,9 @@ export default function BrowseCarsPage() {
                   <div className="bg-neutral-100 p-4 rounded-full mb-4">
                     <Search className="h-8 w-8 text-neutral-400" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">No cars found</h3>
+                  <h3 className="text-xl font-semibold mb-2">Nuk u gjet asnjë veturë</h3>
                   <p className="text-neutral-500 mb-6">
-                    We couldn't find any cars matching your search criteria. Try adjusting your filters.
+                    Nuk mundëm të gjenim asnjë veturë që përputhet me kriteret tuaja të kërkimit. Provoni të ndryshoni filtrat tuaj.
                   </p>
                   <Button
                     variant="outline"
@@ -249,7 +249,7 @@ export default function BrowseCarsPage() {
                       window.location.href = "/browse-cars";
                     }}
                   >
-                    Clear All Filters
+                    Pastro të Gjithë Filtrat
                   </Button>
                 </div>
               </div>

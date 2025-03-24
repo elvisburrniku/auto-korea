@@ -42,8 +42,8 @@ export default function AddToWishlist({ car, userId, variant = "default", classN
   const handleAddToWishlist = () => {
     if (!isLoggedIn) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to add cars to your wishlist",
+        title: "Kërkohet Autentifikim",
+        description: "Ju lutemi hyni për të shtuar vetura në listën tuaj të dëshirave",
         variant: "destructive"
       });
       return;
@@ -71,16 +71,16 @@ export default function AddToWishlist({ car, userId, variant = "default", classN
           onClick={handleAddToWishlist}
         >
           <FaHeart className="mr-2 h-4 w-4" />
-          Add to Wishlist
+          Shto në Listën e Dëshirave
         </Button>
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
-            <DialogTitle>Add to Wishlist</DialogTitle>
+            <DialogTitle>Shto në Listën e Dëshirave</DialogTitle>
             <DialogDescription>
-              Add this car to an existing wishlist or create a new one.
+              Shtoni këtë veturë në një listë ekzistuese të dëshirave ose krijoni një të re.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">

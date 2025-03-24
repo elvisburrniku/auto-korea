@@ -15,10 +15,10 @@ export default function HeroSection() {
   const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    make: "Any Make",
-    model: "Any Model",
-    priceRange: "Any Price",
-    year: "Any Year"
+    make: "Marka",
+    model: "Modeli",
+    priceRange: "Çmimi",
+    year: "Viti"
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -29,20 +29,20 @@ export default function HeroSection() {
       queryParams.append("search", searchTerm);
     }
 
-    if (filters.make !== "Any Make") {
+    if (filters.make !== "Marka") {
       queryParams.append("make", filters.make);
     }
 
-    if (filters.model !== "Any Model") {
+    if (filters.model !== "Modeli") {
       queryParams.append("model", filters.model);
     }
 
-    if (filters.priceRange !== "Any Price") {
+    if (filters.priceRange !== "Çmimi") {
       const priceRanges: Record<string, [number, number]> = {
-        "Under $10,000": [0, 10000],
-        "$10,000 - $30,000": [10000, 30000],
-        "$30,000 - $50,000": [30000, 50000],
-        "Over $50,000": [50000, 1000000]
+        "Më pak se €10,000": [0, 10000],
+        "€10,000 - €30,000": [10000, 30000],
+        "€30,000 - €50,000": [30000, 50000],
+        "Më shum se €50,000": [50000, 1000000]
       };
 
       const [min, max] = priceRanges[filters.priceRange];
@@ -50,7 +50,7 @@ export default function HeroSection() {
       queryParams.append("maxPrice", max.toString());
     }
 
-    if (filters.year !== "Any Year") {
+    if (filters.year !== "Viti") {
       if (filters.year === "2023") {
         queryParams.append("minYear", "2023");
       } else if (filters.year === "2022") {
@@ -103,10 +103,10 @@ const modelsByMake: { [key: string]: string[] } = {
 };
 
 const getModelsForMake = (make: string) => {
-  return make && make !== "Any Make" ? ["Any Model", ...modelsByMake[make]] : ["Any Model"];
+  return make && make !== "Marka" ? ["Modeli", ...modelsByMake[make]] : ["Modeli"];
 };
-  const priceRanges = ["Any Price", "Under $10,000", "$10,000 - $30,000", "$30,000 - $50,000", "Over $50,000"];
-  const yearOptions = ["Any Year", "2023", "2022", "2021", "2020", "2019 or older"];
+  const priceRanges = ["Çmimi", "Më pak se €10,000", "€10,000 - €30,000", "€30,000 - €50,000", "Më shum se €50,000"];
+  const yearOptions = ["Viti", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"];
 
   return (
     <section className="relative bg-neutral-800 overflow-hidden">
@@ -121,10 +121,10 @@ const getModelsForMake = (make: string) => {
       <Container className="py-12 md:py-20 lg:py-24 relative z-10">
         <div className="max-w-3xl">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Find Your Dream Car Today
+            Gjeni Veturën Tuaj të Ëndrrave Tani
           </h1>
           <p className="text-lg md:text-xl text-neutral-100 mb-8">
-            Browse our extensive collection of premium vehicles and connect directly with sellers.
+            Shfletoni koleksionin tonë të gjerë të veturave premium
           </p>
 
           {/* Search Form */}
@@ -134,14 +134,14 @@ const getModelsForMake = (make: string) => {
                 <div className="flex-grow">
                   <Input
                     type="text"
-                    placeholder="Search by make, model, or keyword"
+                    placeholder="Kërko sipas markës, modelit ose fjalës kyçe"
                     className="w-full px-4 py-3 border border-neutral-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <Button type="submit" className="px-6 py-3">
-                  Search Cars
+                  Kërko Veturat
                 </Button>
               </div>
 
@@ -171,7 +171,7 @@ const getModelsForMake = (make: string) => {
 
                 {/* Model Dropdown */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild disabled={!filters.make || filters.make === "Any Make"}>
+                  <DropdownMenuTrigger asChild disabled={!filters.make || filters.make === "Marka"}>
                     <Button 
                       variant="outline" 
                       className="w-full px-3 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-md text-left flex justify-between items-center"

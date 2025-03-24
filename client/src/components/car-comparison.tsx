@@ -28,7 +28,7 @@ export default function CarComparison() {
   const [selectedCars, setSelectedCars] = useState<Car[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // State for advanced filters
+  // Shteti për filtrat e avancuar
   const [advancedFilter, setAdvancedFilter] = useState<{
     make: string;
     minYear: string;
@@ -49,13 +49,13 @@ export default function CarComparison() {
   
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
-  // Get all cars for selection
+  // Merr të gjitha makinat për zgjedhje
   const { data: allCars = [], isLoading } = useQuery<Car[]>({
     queryKey: ['/api/cars'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
   });
 
-  // Get filtered cars when advanced filters are applied
+  // Merr makinat e filtruar kur filtrat e avancuar janë aplikuar
   const { data: filteredApiCars = [], isLoading: isFilterLoading } = useQuery<Car[]>({
     queryKey: ['/api/cars/filter', 
       advancedFilter.make,
@@ -67,7 +67,7 @@ export default function CarComparison() {
       advancedFilter.fuelType
     ],
     queryFn: async () => {
-      // Build filter query parameters
+      // Ndërto parametrat e filtrit
       const params = new URLSearchParams();
       if (advancedFilter.make) params.append('make', advancedFilter.make);
       if (advancedFilter.minYear) params.append('minYear', advancedFilter.minYear);
@@ -79,22 +79,22 @@ export default function CarComparison() {
       
       const response = await apiRequest('GET', `/api/cars/filter?${params.toString()}`);
       const data = await response.json();
-      console.log("Car filter data:", data);
+      console.log("Të dhënat e filtrit të makinave:", data);
       return data;
     },
-    // Only run the query if at least one filter is applied
+    // Ekzekuto pyetjen vetëm nëse është aplikuar të paktën një filtër
     enabled: Object.values(advancedFilter).some(v => !!v),
   });
 
-  // Get favorites from local storage
+  // Merr preferencat nga ruajtja lokale
   const { favorites, toggleFavorite } = useFavorites();
 
-  // Base cars to filter (either all cars or filtered cars from API)
+  // Makina bazë për filtrim (ose të gjitha makinat ose makinat e filtruar nga API)
   const carsToFilter = Object.values(advancedFilter).some(v => !!v)
     ? filteredApiCars
     : allCars;
 
-  // Filter cars by search term
+  // Filtron makinat sipas termit të kërkimit
   const filteredCars = searchTerm
     ? carsToFilter.filter((car: Car) =>
         `${car.make} ${car.model} ${car.year}`
@@ -103,23 +103,23 @@ export default function CarComparison() {
       )
     : carsToFilter;
   
-  // Get unique makes for filter dropdown
+  // Merr marka unike për dropdown-in e filtrit
   const makesSet = new Set<string>();
   allCars.forEach(car => makesSet.add(car.make));
   const uniqueMakes = Array.from(makesSet).sort();
   
-  // Get min/max years for filter dropdowns
+  // Merr vitet minimale/maksimale për dropdown-et e filtrave
   const years = allCars.map(car => car.year).sort((a, b) => a - b);
   const minYear = years.length > 0 ? Math.min(...years) : new Date().getFullYear() - 10;
   const maxYear = years.length > 0 ? Math.max(...years) : new Date().getFullYear();
   
-  // Available years for dropdown
+  // Vitet e mundshme për dropdown
   const yearOptions = Array.from(
     { length: maxYear - minYear + 1 },
     (_, i) => minYear + i
   ).reverse();
   
-  // Reset all filters
+  // Pastro të gjitha filtrat
   const resetFilters = () => {
     setAdvancedFilter({
       make: '',
@@ -133,12 +133,12 @@ export default function CarComparison() {
     setSearchTerm('');
   };
 
-  // Add a car to comparison
+  // Shto një makinë në krahasim
   const addToComparison = (car: Car) => {
     if (selectedCars.length >= 3) {
       toast({
-        title: 'Maximum cars reached',
-        description: 'You can compare up to 3 cars at a time',
+        title: 'Arritët në makinat maksimale',
+        description: 'Mund të krahasoni deri në 3 makina në të njëjtën kohë',
         variant: 'destructive',
       });
       return;
@@ -146,8 +146,8 @@ export default function CarComparison() {
     
     if (selectedCars.some(c => c.id === car.id)) {
       toast({
-        title: 'Car already added',
-        description: 'This car is already in your comparison',
+        title: 'Makinë tashmë e shtuar',
+        description: 'Kjo makinë është tashmë në krahasimin tuaj',
         variant: 'destructive',
       });
       return;
@@ -156,17 +156,17 @@ export default function CarComparison() {
     setSelectedCars([...selectedCars, car]);
   };
 
-  // Remove a car from comparison
+  // Hiq një makinë nga krahasimi
   const removeFromComparison = (carId: number) => {
     setSelectedCars(selectedCars.filter(car => car.id !== carId));
   };
 
-  // Clear all cars from comparison
+  // Pastro të gjitha makinat nga krahasimi
   const clearComparison = () => {
     setSelectedCars([]);
   };
 
-  // Generate a WhatsApp message with comparison details
+  // Gjenero një mesazh WhatsApp me detajet e krahasimit
   const generateWhatsAppMessage = () => {
     const compareUrl = window.location.href;
     const carDetails = selectedCars.map(car => {
@@ -175,10 +175,10 @@ export default function CarComparison() {
       return `${car.year} ${car.make} ${car.model} (${eurPrice}, ${kmMileage} km)`;
     }).join(', ');
     
-    return `I'm interested in comparing these vehicles: ${carDetails}. Please provide more information.`;
+    return `Jam i interesuar për të krahasuar këto mjete: ${carDetails}. Ju lutem më jepni më shumë informacion.`;
   };
 
-  // Card view for mobile
+  // Pamja për celular
   const renderMobileView = () => (
     <div className="space-y-4">
       {selectedCars.map((car) => (
@@ -206,25 +206,25 @@ export default function CarComparison() {
           
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Mileage:</span>
+              <span className="text-muted-foreground">Kilometrazhi:</span>
               <span>{Math.round(milesToKm(car.mileage)).toLocaleString()} km</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Fuel Type:</span>
+              <span className="text-muted-foreground">Lloji i Karburantit:</span>
               <span>{car.fuelType}</span>
             </div>
             {car.fuelType?.toLowerCase() !== 'electric' && car.mpg && typeof car.mpg === 'number' && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Fuel Efficiency:</span>
+                <span className="text-muted-foreground">Efikasiteti i Karburantit:</span>
                 <span>{(235.214583 / car.mpg).toFixed(1)} l/100km</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Transmission:</span>
+              <span className="text-muted-foreground">Transmetimi:</span>
               <span>{car.transmission}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Color:</span>
+              <span className="text-muted-foreground">Ngjyra e Jashtme:</span>
               <span>{car.exteriorColor}</span>
             </div>
           </div>
@@ -233,19 +233,19 @@ export default function CarComparison() {
       
       {selectedCars.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Select cars to compare</p>
+          <p className="text-muted-foreground">Zgjidhni makina për të krahasuar</p>
         </div>
       )}
     </div>
   );
   
-  // Table view for desktop
+  // Pamja për desktop
   const renderDesktopView = () => (
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Feature</TableHead>
+            <TableHead>Karakteristika</TableHead>
             {selectedCars.map((car) => (
               <TableHead key={car.id} className="relative">
                 <Button
@@ -271,58 +271,58 @@ export default function CarComparison() {
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell className="font-medium">Mileage</TableCell>
+            <TableCell className="font-medium">Kilometrazhi</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{Math.round(milesToKm(car.mileage)).toLocaleString()} km</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Year</TableCell>
+            <TableCell className="font-medium">Viti</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.year}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Fuel Type</TableCell>
+            <TableCell className="font-medium">Lloji i Karburantit</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.fuelType}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Transmission</TableCell>
+            <TableCell className="font-medium">Transmetimi</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.transmission}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Drivetrain</TableCell>
+            <TableCell className="font-medium">Traksioni</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.drivetrain}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Exterior Color</TableCell>
+            <TableCell className="font-medium">Ngjyra e Jashtme</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.exteriorColor}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Interior Color</TableCell>
+            <TableCell className="font-medium">Ngjyra e Brendshme</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.interiorColor}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Fuel Efficiency (l/100km)</TableCell>
+            <TableCell className="font-medium">Efikasiteti i Karburantit (l/100km)</TableCell>
             {selectedCars.map((car) => {
-              // For electric cars, show 'Electric' instead of fuel efficiency
+              // Për makinat elektrike, shfaq "Elektrike" në vend të efikasitetit të karburantit
               if (car.fuelType?.toLowerCase() === 'electric') {
-                return <TableCell key={car.id}>Electric</TableCell>;
+                return <TableCell key={car.id}>Elektrike</TableCell>;
               }
               
               let liters100km = null;
               if (car.mpg && typeof car.mpg === 'number') {
-                // Convert MPG to l/100km (235.214583 is the conversion factor)
+                // Konverto MPG në l/100km (235.214583 është faktori i konvertimit)
                 liters100km = (235.214583 / car.mpg).toFixed(1);
               }
               return (
@@ -331,13 +331,13 @@ export default function CarComparison() {
             })}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Engine</TableCell>
+            <TableCell className="font-medium">Motori</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>{car.engineDetails || 'N/A'}</TableCell>
             ))}
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Contact</TableCell>
+            <TableCell className="font-medium">Kontakti</TableCell>
             {selectedCars.map((car) => (
               <TableCell key={car.id}>
                 <Button
@@ -345,7 +345,7 @@ export default function CarComparison() {
                     const kmMileage = Math.round(milesToKm(car.mileage)).toLocaleString();
                     const eurPrice = formatEurPrice(car.price);
                     window.open(
-                      `https://wa.me/${car.sellerPhone}?text=${encodeURIComponent(`I'm interested in the ${car.year} ${car.make} ${car.model} (${eurPrice}, ${kmMileage} km)`)}`, 
+                      `https://wa.me/${car.sellerPhone}?text=${encodeURIComponent(`Jam i interesuar për ${car.year} ${car.make} ${car.model} (${eurPrice}, ${kmMileage} km)`)}`, 
                       '_blank'
                     )
                   }}
@@ -355,7 +355,7 @@ export default function CarComparison() {
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
                   </svg>
-                  Contact
+                  Kontaktoni
                 </Button>
               </TableCell>
             ))}
@@ -365,22 +365,22 @@ export default function CarComparison() {
       
       {selectedCars.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Select cars to compare</p>
+          <p className="text-muted-foreground">Zgjidhni makina për të krahasuar</p>
         </div>
       )}
     </div>
   );
 
-  // Search and selection section
+  // Seksioni i kërkimit dhe zgjedhjes
   const renderCarSelection = () => (
     <div className="mt-8">
-      <h3 className="text-lg font-semibold mb-2">Choose Cars to Compare</h3>
+      <h3 className="text-lg font-semibold mb-2">Zgjidhni Makina për të Krahasuar</h3>
       
       <div className="relative mb-4">
         <div className="flex items-center mb-2">
           <input
             type="text"
-            placeholder="Search by make, model, or year..."
+            placeholder="Kërko sipas markës, modelit, ose vitit..."
             className="w-full p-2 border rounded-lg"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -390,36 +390,36 @@ export default function CarComparison() {
             variant="outline" 
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
           >
-            {showAdvancedFilters ? 'Hide Filters' : 'Advanced Filters'}
+            {showAdvancedFilters ? 'Fshih Filtrat' : 'Filtra të Avancuar'}
           </Button>
         </div>
         
         {showAdvancedFilters && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-muted p-4 rounded-lg mb-4">
-            {/* Make filter */}
+            {/* Filtri për Markën */}
             <div>
-              <label className="block text-sm font-medium mb-1">Make</label>
+              <label className="block text-sm font-medium mb-1">Marka</label>
               <select 
                 className="w-full p-2 border rounded-lg" 
                 value={advancedFilter.make}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, make: e.target.value})}
               >
-                <option value="">Any Make</option>
+                <option value="">Çdo Markë</option>
                 {uniqueMakes.map(make => (
                   <option key={make} value={make}>{make}</option>
                 ))}
               </select>
             </div>
             
-            {/* Year Range */}
+            {/* Intervali i Vitit */}
             <div>
-              <label className="block text-sm font-medium mb-1">Min Year</label>
+              <label className="block text-sm font-medium mb-1">Viti Min.</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.minYear}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, minYear: e.target.value})}
               >
-                <option value="">Any Year</option>
+                <option value="">Çdo Vit</option>
                 {yearOptions.map(year => (
                   <option key={year} value={year}>{year}</option>
                 ))}
@@ -427,28 +427,28 @@ export default function CarComparison() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">Max Year</label>
+              <label className="block text-sm font-medium mb-1">Viti Max.</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.maxYear}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, maxYear: e.target.value})}
               >
-                <option value="">Any Year</option>
+                <option value="">Çdo Vit</option>
                 {yearOptions.map(year => (
                   <option key={year} value={year}>{year}</option>
                 ))}
               </select>
             </div>
             
-            {/* Price Range */}
+            {/* Intervali i Çmimit */}
             <div>
-              <label className="block text-sm font-medium mb-1">Min Price</label>
+              <label className="block text-sm font-medium mb-1">Çmimi Min.</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.minPrice}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, minPrice: e.target.value})}
               >
-                <option value="">Any Price</option>
+                <option value="">Çdo Çmim</option>
                 <option value="10000">€9,000</option>
                 <option value="20000">€18,000</option>
                 <option value="30000">€27,000</option>
@@ -458,13 +458,13 @@ export default function CarComparison() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">Max Price</label>
+              <label className="block text-sm font-medium mb-1">Çmimi Max.</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.maxPrice}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, maxPrice: e.target.value})}
               >
-                <option value="">Any Price</option>
+                <option value="">Çdo Çmim</option>
                 <option value="20000">€18,000</option>
                 <option value="30000">€27,000</option>
                 <option value="40000">€36,000</option>
@@ -474,41 +474,41 @@ export default function CarComparison() {
               </select>
             </div>
             
-            {/* Transmission */}
+            {/* Transmetimi */}
             <div>
-              <label className="block text-sm font-medium mb-1">Transmission</label>
+              <label className="block text-sm font-medium mb-1">Transmetimi</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.transmission}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, transmission: e.target.value})}
               >
-                <option value="">Any Transmission</option>
-                <option value="Automatic">Automatic</option>
+                <option value="">Çdo Transmetim</option>
+                <option value="Automatic">Automatik</option>
                 <option value="Manual">Manual</option>
                 <option value="CVT">CVT</option>
               </select>
             </div>
             
-            {/* Fuel Type */}
+            {/* Lloji i Karburantit */}
             <div>
-              <label className="block text-sm font-medium mb-1">Fuel Type</label>
+              <label className="block text-sm font-medium mb-1">Lloji i Karburantit</label>
               <select 
                 className="w-full p-2 border rounded-lg"
                 value={advancedFilter.fuelType}
                 onChange={(e) => setAdvancedFilter({...advancedFilter, fuelType: e.target.value})}
               >
-                <option value="">Any Fuel Type</option>
-                <option value="Gasoline">Gasoline</option>
-                <option value="Diesel">Diesel</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="Electric">Electric</option>
+                <option value="">Çdo Lloj Karburanti</option>
+                <option value="Gasoline">Benzinë</option>
+                <option value="Diesel">Naftë</option>
+                <option value="Hybrid">Hibrid</option>
+                <option value="Electric">Elektrik</option>
               </select>
             </div>
             
-            {/* Reset button */}
+            {/* Butoni për Pastrimin */}
             <div className="md:col-span-3 flex justify-end mt-2">
               <Button variant="outline" className="mr-2" onClick={resetFilters}>
-                Reset Filters
+                Pastroni Filtrat
               </Button>
             </div>
           </div>
@@ -547,7 +547,7 @@ export default function CarComparison() {
                 disabled={selectedCars.some(c => c.id === car.id)}
               >
                 <PlusCircle className="h-4 w-4 mr-1" />
-                Compare
+                Krahaso
               </Button>
             </div>
           </Card>
@@ -556,13 +556,13 @@ export default function CarComparison() {
       
       {isLoading && (
         <div className="text-center py-4">
-          <p>Loading cars...</p>
+          <p>Po ngarkohen makinat...</p>
         </div>
       )}
       
       {!isLoading && filteredCars.length === 0 && (
         <div className="text-center py-4">
-          <p>No cars found matching your search</p>
+          <p>Nuk ka makina që përputhen me kërkesën tuaj</p>
         </div>
       )}
     </div>
@@ -571,11 +571,11 @@ export default function CarComparison() {
   return (
     <Container className="py-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Compare Cars</h2>
+        <h2 className="text-2xl font-bold">Krahaso Makina</h2>
         {selectedCars.length > 0 && (
           <div className="flex gap-2">
             <Button variant="outline" onClick={clearComparison}>
-              Clear All
+              Pastro të Gjitha
             </Button>
             {selectedCars.length >= 2 && (
               <Button 
@@ -583,9 +583,9 @@ export default function CarComparison() {
                 className="flex items-center gap-2 bg-green-600 text-white hover:bg-green-700"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
                 </svg>
-                Ask About Comparison
+                Pyesni për Krahasimin
               </Button>
             )}
           </div>
@@ -596,15 +596,15 @@ export default function CarComparison() {
         <div className="flex items-center gap-2 text-muted-foreground">
           <ArrowLeftRight className="h-5 w-5" />
           <p className="text-sm">
-            Select up to 3 cars to compare their features side by side.
+            Zgjidhni deri në 3 makina për të krahasuar karakteristikat e tyre krah për krah.
           </p>
         </div>
       </div>
       
-      {/* Display the comparison */}
+      {/* Shfaq krahasimin */}
       {isMobile ? renderMobileView() : renderDesktopView()}
       
-      {/* Car selection section */}
+      {/* Seksioni i zgjedhjes së makinave */}
       {renderCarSelection()}
     </Container>
   );

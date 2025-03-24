@@ -1,6 +1,7 @@
 // PostgresStorage.ts
 import { eq } from "drizzle-orm";
 import { db } from "../shared/db";
+import { and, eq, gte, lte, like, ilike } from "drizzle-orm"; // or your ORM's functions
 import {
   users,
   cars,
@@ -66,9 +67,50 @@ export class PostgresStorage implements IStorage {
   }
 
   async filterCars(filter: CarFilter): Promise<Car[]> {
+    let conditions: any[] = [];
+  
+    if (filter.make) {
+      conditions.push(eq(cars.make, filter.make));
+    }
+  
+    if (filter.model) {
+      conditions.push(eq(cars.model, filter.model));
+    }
+  
+    if (filter.minPrice) {
+      conditions.push(gte(cars.price, filter.minPrice));
+    }
+  
+    if (filter.maxPrice) {
+      conditions.push(lte(cars.price, filter.maxPrice));
+    }
+  
+    if (filter.minYear) {
+      conditions.push(gte(cars.year, filter.minYear));
+    }
+  
+    if (filter.maxYear) {
+      conditions.push(lte(cars.year, filter.maxYear));
+    }
+  
+    if (filter.fuelType) {
+      conditions.push(eq(cars.fuelType, filter.fuelType));
+    }
+  
+    if (filter.transmission) {
+      conditions.push(eq(cars.transmission, filter.transmission));
+    }
+  
+    if (filter.search) {
+      const searchTerm = `%${filter.search}%`;
+      conditions.push(ilike(cars.title, searchTerm)); // Assuming 'title' is a text field combining make + model etc.
+    }
+  
     let query = db.select().from(cars);
-    // Filtering logic can be added here with conditional clauses
-    // Example: query = query.where(and(eq(cars.make, filter.make), ...));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+  
     return await query;
   }
 

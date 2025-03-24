@@ -32,8 +32,8 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
       name: "",
       email: "",
       phone: "",
-      subject: `Inquiry about ${carName}`,
-      message: `I'm interested in the ${carName}. Please provide more information.`
+      subject: `Kërkesë për informacion mbi ${carName}`,
+      message: `Jam i interesuar për ${carName}. Ju lutem më jepni më shumë informacion.`,
     }
   });
 
@@ -44,23 +44,23 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
     },
     onSuccess: () => {
       toast({
-        title: "Message Sent",
-        description: "Your inquiry has been successfully sent to the seller.",
+        title: "Mesazhi u Dërgua",
+        description: "Kërkesa juaj është dërguar me sukses te shitësi.",
       });
       form.reset({
         carId,
         name: "",
         email: "",
         phone: "",
-        subject: `Inquiry about ${carName}`,
-        message: `I'm interested in the ${carName}. Please provide more information.`
+        subject: `Kërkesë për informacion mbi ${carName}`,
+        message: `Jam i interesuar për ${carName}. Ju lutem më jepni më shumë informacion.`,
       });
       queryClient.invalidateQueries({ queryKey: [`/api/contact/${carId}`] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to send message. Please try again.",
+        title: "Gabim",
+        description: error.message || "Dështim në dërgimin e mesazhit. Ju lutem provoni përsëri.",
         variant: "destructive",
       });
     }
@@ -78,7 +78,7 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your Name</FormLabel>
+              <FormLabel>Emri Juaj</FormLabel>
               <FormControl>
                 <Input placeholder="John Smith" {...field} />
               </FormControl>
@@ -92,7 +92,7 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your Email</FormLabel>
+              <FormLabel>Email Juaj</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="john@example.com" {...field} />
               </FormControl>
@@ -106,7 +106,7 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number (optional)</FormLabel>
+              <FormLabel>Numri i Telefonit (Opsional)</FormLabel>
               <FormControl>
                 <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
               </FormControl>
@@ -120,9 +120,9 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject</FormLabel>
+              <FormLabel>Subjekti</FormLabel>
               <FormControl>
-                <Input placeholder="Inquiry about vehicle" {...field} />
+                <Input placeholder="Kërkesë për informacion mbi makinën" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,10 +134,10 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Message</FormLabel>
+              <FormLabel>Mesazhi</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="I'm interested in this vehicle..." 
+                  placeholder="Jam i interesuar për këtë makinë..." 
                   rows={4} 
                   {...field} 
                 />
@@ -148,7 +148,7 @@ export default function InquiryForm({ carId, carName }: InquiryFormProps) {
         />
         
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Sending..." : "Send Message"}
+          {isPending ? "Dërgimi..." : "Dërgo Mesazhin"}
         </Button>
       </form>
     </Form>
