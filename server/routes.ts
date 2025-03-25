@@ -1056,8 +1056,8 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             const displacement = carDetail.spec?.displacement || null;
             const transmission = translatedTranssmision || "Unknown";
             const fuelType =  translatedFuel || "Other";
-            const exteriorColor = carDetail.spec?.colorName || "Silver";
-            const interiorColor = "Black"; // Fallback or derive if available
+            const exteriorColor = carDetail.spec?.colorName || "Unknown";
+            const interiorColor = carDetail.spec?.colorName || "Unknown"; // Fallback or derive if available
             const bodyType = carDetail.spec?.bodyName || "";
             const seatCount = carDetail.spec?.seatCount || null;
             const extraDescription = carDetail.contents?.text?.replace(/\r\n/g, "\n") || "";

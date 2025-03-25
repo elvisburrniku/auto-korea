@@ -112,7 +112,7 @@ export class PostgresStorage implements IStorage {
   
     if (filter.search) {
       const searchTerm = `%${filter.search}%`;
-      conditions.push(ilike(cars.title, searchTerm)); // Assuming 'title' is a text field combining make + model etc.
+      conditions.push(ilike(cars.full_name, searchTerm));
     }
   
     let query = db.select().from(cars);
