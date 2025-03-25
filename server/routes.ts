@@ -1006,6 +1006,13 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             Record: "Service History",
             Resume: "Resume Available",
           },
+          transmission: {
+            오토: "Automatic",
+            수동: "Manual",
+            세미오토: "Semi-Automatic",
+            CVT: "CVT",
+            기타: "etc"
+          }
         };
   
         const translate = (value: string, map: Record<string, string>) => {
@@ -1032,16 +1039,43 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
   
         for (const car of rawCars) {
           try {
-            const images = (car.Photos || []).map((p) => {
-              const imagePath = p.location.startsWith("/carpicture")
-                ? p.location
-                : `/carpicture${p.location}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20241227140745`;
-              const timestamp = new Date(p.updatedDate)
-                .toISOString()
-                .replace(/[-:TZ.]/g, "")
-                .slice(0, 14);
-              return `http://ci.encar.com/carpicture${imagePath}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30&t=${timestamp}`;
-            });
+            const phoneNumbers = ["+38345255388", "+38345432999", "+38349854504"];
+            const randomPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+            const carDetailRes = await axios.get(`https://api.encar.com/v1/readside/vehicle/${car.Id}`);
+            const carDetail = carDetailRes.data;
+            const translatedConditions = (car.Condition || []).map((c) =>
+              translate(c, TRANSLATIONS.condition),
+            );
+            const translatedServices = (car.ServiceMark || []).map((s) => s);
+            const translatedManufacturer = translate(car.Manufacturer, TRANSLATIONS.manufacturer);
+            const translatedModel = translate(car.Model, TRANSLATIONS.modelGroup);
+            const translatedFuel = translate(carDetail.spec?.fuelName, TRANSLATIONS.fuelType);
+            const translatedTranssmision = translate(carDetail.spec?.transmissionName, TRANSLATIONS.transmission);
+
+            // Override or enhance data using the detail API
+            const displacement = carDetail.spec?.displacement || null;
+            const transmission = translatedTranssmision || "Unknown";
+            const fuelType =  translatedFuel || "Other";
+            const exteriorColor = carDetail.spec?.colorName || "Silver";
+            const interiorColor = "Black"; // Fallback or derive if available
+            const bodyType = carDetail.spec?.bodyName || "";
+            const seatCount = carDetail.spec?.seatCount || null;
+            const extraDescription = carDetail.contents?.text?.replace(/\r\n/g, "\n") || "";
+            const vehiclePhotos = carDetail.photos || [];
+            const images = vehiclePhotos.map((photo) => `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`);
+
+            const description = `Imported from Encar.\n\nTrim: ${car.Badge || "N/A"}\nCondition: ${translatedConditions.join(", ")}\nService: ${translatedServices.join(", ")}\n\n${extraDescription}`;
+
+            // const images = (car.Photos || []).map((p) => {
+            //   const imagePath = p.location.startsWith("/carpicture")
+            //     ? p.location
+            //     : `/carpicture${p.location}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20241227140745`;
+            //   const timestamp = new Date(p.updatedDate)
+            //     .toISOString()
+            //     .replace(/[-:TZ.]/g, "")
+            //     .slice(0, 14);
+            //   return `http://ci.encar.com/carpicture${imagePath}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30&t=${timestamp}`;
+            // });
   
             const year = parseInt(car.FormYear);
             const mileage = parseInt(car.Mileage);
@@ -1057,37 +1091,72 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             } else if (basePrice >= 40000) {
               finalPrice += 5050;
             }
-  
-            const translatedManufacturer = translate(car.Manufacturer, TRANSLATIONS.manufacturer);
-            const translatedModel = translate(car.Model, TRANSLATIONS.modelGroup);
-            const translatedFuel = translate(car.FuelType, TRANSLATIONS.fuelType);
-            const translatedConditions = (car.Condition || []).map((c) =>
-              translate(c, TRANSLATIONS.condition),
-            );
-            const translatedServices = (car.ServiceMark || []).map((s) => s);
-  
             const transformedCar = {
               car_id: car.Id,
-              make: translatedManufacturer || car.Manufacturer || "Unknown",
-              model: car.Badge || translatedModel || car.Model || "Unknown",
+              full_name: carDetail?.category?.manufacturerEnglishName + ' ' + carDetail?.category?.modelGroupEnglishName + ' ' + carDetail?.category?.gradeEnglishName,
+              make: carDetail?.category?.manufacturerEnglishName || translatedManufacturer || car.Manufacturer || "Unknown",
+              model: carDetail?.category?.modelGroupEnglishName || car.Badge || translatedModel || car.Model || "Unknown",
+              grade: carDetail?.category?.gradeEnglishName || car.Badge || translatedModel || car.Model || "Unknown",
               year,
               price: finalPrice,
               mileage,
-              fuelType: translatedFuel || "Other",
-              transmission: "Automatic",
+              fuelType,
+              type: bodyType,
+              transmission,
               drivetrain: "RWD",
-              exteriorColor: "Silver",
-              interiorColor: "Black",
-              description: `Imported from Encar. Trim: ${car.Badge || "N/A"}, Condition: ${translatedConditions.join(", ")}, Service: ${translatedServices.join(", ")}`,
+              displacement, // 💡 NEW
+              seatCount,    // 💡 NEW
+              exteriorColor,
+              interiorColor,
+              description,
               sellerName: "Auto Korea Kosova Import",
-              sellerPhone: "+38345255388",
+              sellerPhone: randomPhone,
               sellerEmail: "order.autokorea@gmail.com",
               sellerLocation: car.OfficeCityState || "Korea",
               images,
               isFeatured: Math.random() > 0.7,
+              warranty: {
+                bodyMonth: carDetail?.category?.warranty?.bodyMonth || 0,
+                bodyMileage: carDetail?.category?.warranty?.bodyMileage || 0,
+                transmissionMonth: carDetail?.category?.warranty?.transmissionMonth || 0,
+                transmissionMileage: carDetail?.category?.warranty?.transmissionMileage || 0,
+              },
+              dealer: {
+                name: carDetail?.partnership?.dealer?.name || null,
+                firm: carDetail?.partnership?.dealer?.firm?.name || null,
+                location: carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]?.address || null,
+                phone: carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]?.telephoneNumber || null,
+              },
+              options: carDetail?.options?.standard || [],
+              originalPriceKRW: carDetail?.category?.originPrice || null,
+              registrationDate: carDetail?.manage?.registDateTime || null,
+              viewCount: carDetail?.manage?.viewCount || 0,
+              subscriberCount: carDetail?.manage?.subscribeCount || 0,
             };
-  
-            console.log(transformedCar);
+            
+            // const transformedCar = {
+            //   car_id: car.Id,
+            //   make: translatedManufacturer || car.Manufacturer || "Unknown",
+            //   model: car.Badge || translatedModel || car.Model || "Unknown",
+            //   year,
+            //   price: finalPrice,
+            //   mileage,
+            //   fuelType: translatedFuel || "Other",
+            //   type: "",
+            //   transmission: "Automatic",
+            //   drivetrain: "RWD",
+            //   exteriorColor: "Silver",
+            //   interiorColor: "Black",
+            //   description: `Imported from Encar. Trim: ${car.Badge || "N/A"}, Condition: ${translatedConditions.join(", ")}, Service: ${translatedServices.join(", ")}`,
+            //   sellerName: "Auto Korea Kosova Import",
+            //   sellerPhone: randomPhone,
+            //   sellerEmail: "order.autokorea@gmail.com",
+            //   sellerLocation: car.OfficeCityState || "Korea",
+            //   images,
+            //   isFeatured: Math.random() > 0.7,
+            // };
+
+
             const savedCar = await storage.createCar(transformedCar);
             importedCars.push(savedCar);
             console.log(`✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`);

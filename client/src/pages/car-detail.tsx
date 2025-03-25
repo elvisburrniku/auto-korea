@@ -162,7 +162,7 @@ export default function CarDetailPage() {
 
   // Get the current URL to include in the WhatsApp message
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const whatsappMessage = `I'm interested in your ${car.year} ${car.make} ${car.model} listed for ${formatEurPrice(car.price)}. ${currentUrl}`;
+  const whatsappMessage = `I'm interested in your ${car.year} ${car.full_name} listed for ${formatEurPrice(car.price)}. ${currentUrl}`;
 
   return (
     <Container className="py-12">
@@ -177,7 +177,7 @@ export default function CarDetailPage() {
         <div className="lg:col-span-3">
           <CarGallery 
             images={car.images} 
-            alt={`${car.make} ${car.model}`}
+            alt={`${car.full_name}`}
           />
 
           <div className="mt-8">
@@ -194,6 +194,10 @@ export default function CarDetailPage() {
                   <li className="flex justify-between">
                     <span className="text-neutral-500">Modeli</span>
                     <span className="font-medium">{car.model}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-neutral-500">Tipi</span>
+                    <span className="font-medium">{car.grade}</span>
                   </li>
                   <li className="flex justify-between">
                     <span className="text-neutral-500">Viti</span>
@@ -280,7 +284,7 @@ export default function CarDetailPage() {
           <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-sm sticky top-4">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-neutral-800">{car.make} {car.model}</h1>
+                <h1 className="text-2xl font-bold text-neutral-800">{car.full_name}</h1>
                 <p className="text-neutral-500">{car.year} • {formatNumberWithCommas(Math.round(milesToKm(car.mileage)))} km • {car.transmission}</p>
               </div>
               <span className="text-2xl font-bold text-primary">{formatEurPrice(car.price)}</span>
@@ -362,7 +366,7 @@ export default function CarDetailPage() {
 
             <div className="mt-6 pt-6 border-t border-neutral-200">
               <h4 className="font-medium text-neutral-800 mb-4">Dërgo një Mesazh</h4>
-              <InquiryForm carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
+              <InquiryForm carId={car.id} carName={`${car.year} ${car.full_name}`} />
             </div>
           </div>
         </div>

@@ -31,27 +31,68 @@
   // Cars Table
   export const cars = pgTable("cars", {
     id: serial("id").primaryKey(),
+  
+    // Core details
+    full_name: text("full_name").notNull(),
     make: text("make").notNull(),
     model: text("model").notNull(),
+    grade: text("grade").notNull(),
     year: integer("year").notNull(),
     price: integer("price").notNull(),
     mileage: integer("mileage").notNull(),
     car_id: text("car_id").notNull(),
-    fuelType: text("fuel_type").notNull(), // Gasoline, Diesel, Electric, Hybrid
-    transmission: text("transmission").notNull(), // Automatic, Manual
-    drivetrain: text("drivetrain").notNull(), // FWD, RWD, AWD, 4WD
+  
+    // Specs
+    fuelType: text("fuel_type").notNull(), // Gasoline, Diesel, etc.
+    transmission: text("transmission").notNull(), // Auto, Manual
+    drivetrain: text("drivetrain").notNull(), // RWD, FWD, AWD, 4WD
+    displacement: integer("displacement"), // New field: e.g., 1984
+    seatCount: integer("seat_count"), // New field: e.g., 5
+    type: text("type"), // Body type (e.g., sedan, SUV)
+  
+    // Colors
     exteriorColor: text("exterior_color").notNull(),
     interiorColor: text("interior_color").notNull(),
+  
+    // Optional fields
     vin: text("vin"),
     engineDetails: text("engine_details"),
     mpg: text("mpg"),
     description: text("description"),
+  
+    // Seller info
     sellerName: text("seller_name").notNull(),
-    sellerPhone: text("seller_phone").notNull(), // For WhatsApp integration
+    sellerPhone: text("seller_phone").notNull(),
+    sellerEmail: text("seller_email"),
     sellerSince: text("seller_since"),
+    sellerLocation: text("seller_location"),
+  
+    // Media and tags
     images: json("images").$type<string[]>().notNull(),
     features: json("features").$type<string[]>(),
     isFeatured: boolean("is_featured").default(false),
+  
+    // Encar-specific extras
+    originalPriceKRW: integer("original_price_krw"), // New
+    viewCount: integer("view_count"), // New
+    subscriberCount: integer("subscriber_count"), // New
+  
+    // Warranty info
+    warranty: json("warranty").$type<{
+      bodyMonth: number;
+      bodyMileage: number;
+      transmissionMonth: number;
+      transmissionMileage: number;
+    }>(),
+  
+    // Dealer info
+    dealer: json("dealer").$type<{
+      name: string | null;
+      firm: string | null;
+      location: string | null;
+      phone: string | null;
+    }>(),
+  
     createdAt: timestamp("created_at").defaultNow(),
   });
 

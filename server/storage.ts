@@ -43,7 +43,16 @@ export class PostgresStorage implements IStorage {
     return car;
   }
 
-  async createCar(car: InsertCar): Promise<Car> {
+  async createCar(car: InsertCar): Promise<Car | null> {
+    // Check if car already exists
+    const existingCar = await db.select().from(cars).where(eq(cars.car_id, car.car_id)).limit(1);
+    
+    if (existingCar.length > 0) {
+      // Car already exists, return it or return null based on your preference
+      return existingCar[0]; // or return null;
+    }
+  
+    // Insert new car
     const [newCar] = await db.insert(cars).values(car).returning();
     return newCar;
   }

@@ -92,13 +92,13 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
         )}
         <img 
           src={car.images[0]} 
-          alt={`${car.make} ${car.model}`} 
+          alt={`${car.full_name}`} 
           className="w-full h-48 object-cover" 
         />
       </div>
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-lg font-bold text-neutral-800">{car.make} {car.model}</h3>
+          <h3 className="text-lg font-bold text-neutral-800">{car.full_name}</h3>
           <span className="text-lg font-bold text-primary">{formatEurPrice(car.price)}</span>
         </div>
         <p className="text-neutral-500 text-sm mb-3">
