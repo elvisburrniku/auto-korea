@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error during registration:", error);
         res.status(500).json({ message: "Registration failed" });
       }
-    },
+    }
   );
 
   // Login route
@@ -141,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(
         "User found:",
         user ? "Yes" : "No",
-        user ? `Admin: ${user.isAdmin}` : "",
+        user ? `Admin: ${user.isAdmin}` : ""
       );
 
       if (!user || user.password !== password) {
@@ -273,7 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching featured cars:", error);
         res.status(500).json({ message: "Failed to fetch featured cars" });
       }
-    },
+    }
   );
 
   // Get recent cars - Moving this route before the :id route as well
@@ -288,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching recent cars:", error);
         res.status(500).json({ message: "Failed to fetch recent cars" });
       }
-    },
+    }
   );
 
   // Get a specific car by ID - This should come after all specific /cars/* routes
@@ -329,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching similar cars:", error);
         res.status(500).json({ message: "Failed to fetch similar cars" });
       }
-    },
+    }
   );
 
   // Create a new car listing - Admin only
@@ -351,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error creating car:", error);
         res.status(500).json({ message: "Failed to create car listing" });
       }
-    },
+    }
   );
 
   // Update a car listing - Admin only
@@ -376,7 +376,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error updating car:", error);
         res.status(500).json({ message: "Failed to update car listing" });
       }
-    },
+    }
   );
 
   // Delete a car listing - Admin only
@@ -400,7 +400,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error deleting car:", error);
         res.status(500).json({ message: "Failed to delete car listing" });
       }
-    },
+    }
   );
 
   // Submit contact message
@@ -414,7 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const newMessage = await storage.createContactMessage(
-        validationResult.data,
+        validationResult.data
       );
 
       // Get car details if this inquiry is about a specific car
@@ -460,7 +460,12 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         // Send email using Sendinblue/Brevo
         await storage.sendEmail({
           to: "order.autokorea@gmail.com", // Replace with your desired recipient email
-          subject: `AutoMarket Inquiry: ${validationResult.data.subject || (validationResult.data.carId ? "Car #" + validationResult.data.carId : "General Inquiry")}`,
+          subject: `AutoMarket Inquiry: ${
+            validationResult.data.subject ||
+            (validationResult.data.carId
+              ? "Car #" + validationResult.data.carId
+              : "General Inquiry")
+          }`,
           text: emailContent,
         });
         console.log("Contact form email sent successfully");
@@ -492,7 +497,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error fetching contact messages:", error);
         res.status(500).json({ message: "Failed to fetch contact messages" });
       }
-    },
+    }
   );
 
   // Get all contact messages - Admin only
@@ -507,7 +512,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error fetching all contact messages:", error);
         res.status(500).json({ message: "Failed to fetch contact messages" });
       }
-    },
+    }
   );
 
   // Wishlist routes
@@ -517,7 +522,9 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
 
       // Create a unique share ID if not provided
       if (!wishlistData.shareId) {
-        wishlistData.shareId = `share_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        wishlistData.shareId = `share_${Date.now()}_${Math.random()
+          .toString(36)
+          .substr(2, 9)}`;
       }
 
       // Validate data using Zod
@@ -550,7 +557,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error fetching user wishlists:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    },
+    }
   );
 
   app.get(`${apiPrefix}/wishlists/:id`, async (req: Request, res: Response) => {
@@ -589,7 +596,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error fetching shared wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    },
+    }
   );
 
   app.patch(
@@ -615,7 +622,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error updating wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    },
+    }
   );
 
   app.delete(
@@ -638,7 +645,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("Error deleting wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    },
+    }
   );
 
   // Debug endpoint to view database state (admin only)
@@ -679,7 +686,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
         console.error("File upload error:", error);
         res.status(500).json({ message: "File upload failed" });
       }
-    },
+    }
   );
 
   // Import routes for car data
@@ -891,7 +898,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
           message: `Import failed: ${error.message}`,
         });
       }
-    },
+    }
   );
 
   // Encar.com import route
@@ -901,26 +908,29 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
     async (req: Request, res: Response) => {
       try {
         const { url } = req.body;
-  
+
         if (!url) {
           return res.status(400).json({
             success: false,
             message: "Missing URL parameter",
           });
         }
-  
+
         console.log(`Received Encar.com API import request for URL: ${url}`);
-  
+
         const { default: axios } = await import("axios");
-  
-        const getExchangeRate = async (from: string, to: string): Promise<number> => {
+
+        const getExchangeRate = async (
+          from: string,
+          to: string
+        ): Promise<number> => {
           try {
             const { default: axios } = await import("axios");
-  
+
             const res = await axios.get(`https://api.frankfurter.app/latest`, {
               params: { from, to },
             });
-  
+
             const rate = res.data?.rates?.[to];
             if (rate) {
               console.log(`💱 1 ${from} = ${rate} ${to}`);
@@ -934,7 +944,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             return 0;
           }
         };
-  
+
         const exchangeRate = await getExchangeRate("KRW", "EUR");
         if (!exchangeRate) {
           return res.status(500).json({
@@ -942,7 +952,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             message: "Unable to fetch exchange rate from KRW to EUR",
           });
         }
-  
+
         const TRANSLATIONS = {
           manufacturer: {
             BMW: "BMW",
@@ -970,6 +980,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             랜드로버: "Land Rover",
           },
           fuelType: {
+            디젤: "Diesel",
             디젠: "Diesel",
             가솔린: "Gasoline",
             하이브리드: "Hybrid",
@@ -1011,21 +1022,21 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             수동: "Manual",
             세미오토: "Semi-Automatic",
             CVT: "CVT",
-            기타: "etc"
-          }
+            기타: "etc",
+          },
         };
-  
+
         const translate = (value: string, map: Record<string, string>) => {
           if (!value || typeof value !== "string") return value;
           return map[value.trim()] || value;
         };
-  
+
         const response = await axios.get(url, {
           headers: {
             "User-Agent": "Mozilla/5.0",
           },
         });
-  
+
         const data = response.data;
         if (!data || !Array.isArray(data.SearchResults)) {
           return res.status(422).json({
@@ -1033,38 +1044,66 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             message: "Invalid API response format",
           });
         }
-  
+
         const rawCars = data.SearchResults;
         const importedCars: any[] = [];
-  
+
         for (const car of rawCars) {
           try {
-            const phoneNumbers = ["+38345255388", "+38345432999", "+38349854504"];
-            const randomPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
-            const carDetailRes = await axios.get(`https://api.encar.com/v1/readside/vehicle/${car.Id}`);
+            const phoneNumbers = [
+              "+38345255388",
+              "+38345432999",
+              "+38349854504",
+            ];
+            const randomPhone =
+              phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+            const carDetailRes = await axios.get(
+              `https://api.encar.com/v1/readside/vehicle/${car.Id}`
+            );
             const carDetail = carDetailRes.data;
             const translatedConditions = (car.Condition || []).map((c) =>
-              translate(c, TRANSLATIONS.condition),
+              translate(c, TRANSLATIONS.condition)
             );
             const translatedServices = (car.ServiceMark || []).map((s) => s);
-            const translatedManufacturer = translate(car.Manufacturer, TRANSLATIONS.manufacturer);
-            const translatedModel = translate(car.Model, TRANSLATIONS.modelGroup);
-            const translatedFuel = translate(carDetail.spec?.fuelName, TRANSLATIONS.fuelType);
-            const translatedTranssmision = translate(carDetail.spec?.transmissionName, TRANSLATIONS.transmission);
-
+            const translatedManufacturer = translate(
+              car.Manufacturer,
+              TRANSLATIONS.manufacturer
+            );
+            const translatedModel = translate(
+              car.Model,
+              TRANSLATIONS.modelGroup
+            );
+            const translatedFuel = translate(
+              carDetail.spec?.fuelName,
+              TRANSLATIONS.fuelType
+            );
+            const translatedTranssmision = translate(
+              carDetail.spec?.transmissionName,
+              TRANSLATIONS.transmission
+            );
             // Override or enhance data using the detail API
             const displacement = carDetail.spec?.displacement || null;
             const transmission = translatedTranssmision || "Unknown";
-            const fuelType =  translatedFuel || "Other";
+            const fuelType = translatedFuel || "Other";
             const exteriorColor = carDetail.spec?.colorName || "Unknown";
             const interiorColor = carDetail.spec?.colorName || "Unknown"; // Fallback or derive if available
             const bodyType = carDetail.spec?.bodyName || "";
             const seatCount = carDetail.spec?.seatCount || null;
-            const extraDescription = carDetail.contents?.text?.replace(/\r\n/g, "\n") || "";
+            const extraDescription =
+              carDetail.contents?.text?.replace(/\r\n/g, "\n") || "";
             const vehiclePhotos = carDetail.photos || [];
-            const images = vehiclePhotos.map((photo) => `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`);
+            const images = vehiclePhotos.map(
+              (photo) =>
+                `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`
+            );
 
-            const description = `Imported from Encar.\n\nTrim: ${car.Badge || "N/A"}\nCondition: ${translatedConditions.join(", ")}\nService: ${translatedServices.join(", ")}\n\n${extraDescription}`;
+            const description = `Imported from Encar.\n\nTrim: ${
+              car.Badge || "N/A"
+            }\nCondition: ${translatedConditions.join(
+              ", "
+            )}\nService: ${translatedServices.join(
+              ", "
+            )}\n\n${extraDescription}`;
 
             // const images = (car.Photos || []).map((p) => {
             //   const imagePath = p.location.startsWith("/carpicture")
@@ -1076,12 +1115,12 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             //     .slice(0, 14);
             //   return `http://ci.encar.com/carpicture${imagePath}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30&t=${timestamp}`;
             // });
-  
+
             const year = parseInt(car.FormYear);
             const mileage = parseInt(car.Mileage);
             let basePrice = Math.round(car.Price * 10000 * exchangeRate);
             let finalPrice = basePrice;
-  
+
             if (basePrice < 12000) {
               finalPrice += 3050;
             } else if (basePrice >= 12000 && basePrice < 24000) {
@@ -1093,10 +1132,29 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             }
             const transformedCar = {
               car_id: car.Id,
-              full_name: carDetail?.category?.manufacturerEnglishName + ' ' + carDetail?.category?.modelGroupEnglishName + ' ' + carDetail?.category?.gradeEnglishName,
-              make: carDetail?.category?.manufacturerEnglishName || translatedManufacturer || car.Manufacturer || "Unknown",
-              model: carDetail?.category?.modelGroupEnglishName || car.Badge || translatedModel || car.Model || "Unknown",
-              grade: carDetail?.category?.gradeEnglishName || car.Badge || translatedModel || car.Model || "Unknown",
+              full_name:
+                carDetail?.category?.manufacturerEnglishName +
+                " " +
+                carDetail?.category?.modelGroupEnglishName +
+                " " +
+                carDetail?.category?.gradeEnglishName,
+              make:
+                carDetail?.category?.manufacturerEnglishName ||
+                translatedManufacturer ||
+                car.Manufacturer ||
+                "Unknown",
+              model:
+                carDetail?.category?.modelGroupEnglishName ||
+                car.Badge ||
+                translatedModel ||
+                car.Model ||
+                "Unknown",
+              grade:
+                carDetail?.category?.gradeEnglishName ||
+                car.Badge ||
+                translatedModel ||
+                car.Model ||
+                "Unknown",
               year,
               price: finalPrice,
               mileage,
@@ -1105,7 +1163,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               transmission,
               drivetrain: "RWD",
               displacement, // 💡 NEW
-              seatCount,    // 💡 NEW
+              seatCount, // 💡 NEW
               exteriorColor,
               interiorColor,
               description,
@@ -1118,14 +1176,20 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               warranty: {
                 bodyMonth: carDetail?.category?.warranty?.bodyMonth || 0,
                 bodyMileage: carDetail?.category?.warranty?.bodyMileage || 0,
-                transmissionMonth: carDetail?.category?.warranty?.transmissionMonth || 0,
-                transmissionMileage: carDetail?.category?.warranty?.transmissionMileage || 0,
+                transmissionMonth:
+                  carDetail?.category?.warranty?.transmissionMonth || 0,
+                transmissionMileage:
+                  carDetail?.category?.warranty?.transmissionMileage || 0,
               },
               dealer: {
                 name: carDetail?.partnership?.dealer?.name || null,
                 firm: carDetail?.partnership?.dealer?.firm?.name || null,
-                location: carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]?.address || null,
-                phone: carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]?.telephoneNumber || null,
+                location:
+                  carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]
+                    ?.address || null,
+                phone:
+                  carDetail?.partnership?.dealer?.firm?.diagnosisCenters?.[0]
+                    ?.telephoneNumber || null,
               },
               options: carDetail?.options?.standard || [],
               originalPriceKRW: carDetail?.category?.originPrice || null,
@@ -1133,7 +1197,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               viewCount: carDetail?.manage?.viewCount || 0,
               subscriberCount: carDetail?.manage?.subscribeCount || 0,
             };
-            
+
             // const transformedCar = {
             //   car_id: car.Id,
             //   make: translatedManufacturer || car.Manufacturer || "Unknown",
@@ -1156,17 +1220,18 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             //   isFeatured: Math.random() > 0.7,
             // };
 
-
             const savedCar = await storage.createCar(transformedCar);
             importedCars.push(savedCar);
-            console.log(`✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`);
-  
+            console.log(
+              `✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`
+            );
+
             await new Promise((resolve) => setTimeout(resolve, 500));
           } catch (err) {
             console.error(`❌ Failed to import car: ${car.Badge}`, err);
           }
         }
-  
+
         if (importedCars.length > 0) {
           return res.status(200).json({
             success: true,
@@ -1183,10 +1248,8 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
           message: `Import failed: ${error.message}`,
         });
       }
-    },
+    }
   );
-  
-  
 
   const httpServer = createServer(app);
   return httpServer;
