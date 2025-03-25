@@ -1024,6 +1024,46 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
             CVT: "CVT",
             기타: "etc",
           },
+          color: {
+            검정색: "Black",
+            흰색: "White",
+            회색: "Gray",
+            은색: "Silver",
+            청색: "Blue",
+            남색: "Navy",
+            파란색: "Blue",
+            하늘색: "Sky Blue",
+            빨간색: "Red",
+            자주색: "Burgundy",
+            분홍색: "Pink",
+            주황색: "Orange",
+            주황빛: "Orange Tint",
+            노란색: "Yellow",
+            갈색: "Brown",
+            초록색: "Green",
+            연두색: "Light Green",
+            베이지색: "Beige",
+            금색: "Gold",
+            보라색: "Purple",
+            청회색: "Blue Gray",
+            진회색: "Dark Gray",
+            진청색: "Dark Blue",
+            진주색: "Pearl",
+            카키색: "Khaki",
+            아이보리: "Ivory",
+            와인색: "Wine",
+            민트색: "Mint",
+            기타: "Other",
+            쥐색: "Mouse gray",
+            은회색: "Silver gray",
+          },
+          type: {
+            중형차: "Midsize car",
+            스포츠카: "Sports car",
+            대형차: "Large car",
+            SUV: "SUV",
+            준중형차: "Compact car"
+          }
         };
 
         const translate = (value: string, map: Record<string, string>) => {
@@ -1081,13 +1121,22 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               carDetail.spec?.transmissionName,
               TRANSLATIONS.transmission
             );
+            const translatedCarColor = translate(
+              carDetail.spec?.colorName,
+              TRANSLATIONS.color
+            );
+
+            const translatedType = translate(
+              carDetail.spec?.bodyName,
+              TRANSLATIONS.type
+            );
             // Override or enhance data using the detail API
             const displacement = carDetail.spec?.displacement || null;
             const transmission = translatedTranssmision || "Unknown";
             const fuelType = translatedFuel || "Other";
-            const exteriorColor = carDetail.spec?.colorName || "Unknown";
-            const interiorColor = carDetail.spec?.colorName || "Unknown"; // Fallback or derive if available
-            const bodyType = carDetail.spec?.bodyName || "";
+            const exteriorColor = translatedCarColor || "Unknown";
+            const interiorColor = "Unknown"; // Fallback or derive if available
+            const bodyType = translatedType || "";
             const seatCount = carDetail.spec?.seatCount || null;
             const extraDescription =
               carDetail.contents?.text?.replace(/\r\n/g, "\n") || "";
