@@ -1090,6 +1090,17 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
 
         for (const car of rawCars) {
           try {
+            const carDetailRes = await axios.get(
+              `https://api.encar.com/v1/readside/vehicle/${car.Id}`
+            );
+            const carDetail = carDetailRes.data;
+        
+            // 🚫 Skip if the car is webReserved
+            if (carDetail?.manage?.webReserved) {
+              console.log(`🚫 Skipping reserved car: ${car.Id}`);
+              continue;
+            }
+        
             const phoneNumbers = [
               "+38345255388",
               "+38345432999",
@@ -1097,10 +1108,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             ];
             const randomPhone =
               phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
-            const carDetailRes = await axios.get(
-              `https://api.encar.com/v1/readside/vehicle/${car.Id}`
-            );
-            const carDetail = carDetailRes.data;
+        
             const translatedConditions = (car.Condition || []).map((c) =>
               translate(c, TRANSLATIONS.condition)
             );
@@ -1130,12 +1138,12 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
               carDetail.spec?.bodyName,
               TRANSLATIONS.type
             );
-            // Override or enhance data using the detail API
+        
             const displacement = carDetail.spec?.displacement || null;
             const transmission = translatedTranssmision || "Unknown";
             const fuelType = translatedFuel || "Other";
             const exteriorColor = translatedCarColor || "Unknown";
-            const interiorColor = "Unknown"; // Fallback or derive if available
+            const interiorColor = "Unknown";
             const bodyType = translatedType || "";
             const seatCount = carDetail.spec?.seatCount || null;
             const extraDescription =
@@ -1145,31 +1153,18 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
               (photo) =>
                 `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`
             );
-
+        
             const description = `Imported from Encar.\n\nTrim: ${
               car.Badge || "N/A"
             }\nCondition: ${translatedConditions.join(
               ", "
-            )}\nService: ${translatedServices.join(
-              ", "
-            )}\n\n${extraDescription}`;
-
-            // const images = (car.Photos || []).map((p) => {
-            //   const imagePath = p.location.startsWith("/carpicture")
-            //     ? p.location
-            //     : `/carpicture${p.location}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20241227140745`;
-            //   const timestamp = new Date(p.updatedDate)
-            //     .toISOString()
-            //     .replace(/[-:TZ.]/g, "")
-            //     .slice(0, 14);
-            //   return `http://ci.encar.com/carpicture${imagePath}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30&t=${timestamp}`;
-            // });
-
+            )}\nService: ${translatedServices.join(", ")}\n\n${extraDescription}`;
+        
             const year = parseInt(car.FormYear);
             const mileage = parseInt(car.Mileage);
             let basePrice = Math.round(car.Price * 10000 * exchangeRate);
             let finalPrice = basePrice;
-
+        
             if (basePrice < 12000) {
               finalPrice += 3050;
             } else if (basePrice >= 12000 && basePrice < 24000) {
@@ -1179,6 +1174,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             } else if (basePrice >= 40000) {
               finalPrice += 5050;
             }
+        
             const transformedCar = {
               car_id: car.Id,
               full_name:
@@ -1211,8 +1207,8 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
               type: bodyType,
               transmission,
               drivetrain: "RWD",
-              displacement, // 💡 NEW
-              seatCount, // 💡 NEW
+              displacement,
+              seatCount,
               exteriorColor,
               interiorColor,
               description,
@@ -1247,6 +1243,30 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
               subscriberCount: carDetail?.manage?.subscribeCount || 0,
             };
 
+
+            // const transformedCar = {
+            //   car_id: car.Id,
+            //   make: translatedManufacturer || car.Manufacturer || "Unknown",
+            //   model: car.Badge || translatedModel || car.Model || "Unknown",
+            //   year,
+            //   price: finalPrice,
+            //   mileage,
+            //   fuelType: translatedFuel || "Other",
+            //   type: "",
+            //   transmission: "Automatic",
+            //   drivetrain: "RWD",
+            //   exteriorColor: "Silver",
+            //   interiorColor: "Black",
+            //   description: `Imported from Encar. Trim: ${car.Badge || "N/A"}, Condition: ${translatedConditions.join(", ")}, Service: ${translatedServices.join(", ")}`,
+            //   sellerName: "Auto Korea Kosova Import",
+            //   sellerPhone: randomPhone,
+            //   sellerEmail: "order.autokorea@gmail.com",
+            //   sellerLocation: car.OfficeCityState || "Korea",
+            //   images,
+            //   isFeatured: Math.random() > 0.7,
+            // };
+
+        
             // const transformedCar = {
             //   car_id: car.Id,
             //   make: translatedManufacturer || car.Manufacturer || "Unknown",
@@ -1274,12 +1294,13 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             console.log(
               `✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`
             );
-
+        
             await new Promise((resolve) => setTimeout(resolve, 500));
           } catch (err) {
             console.error(`❌ Failed to import car: ${car.Badge}`, err);
           }
         }
+        
 
         if (importedCars.length > 0) {
           return res.status(200).json({

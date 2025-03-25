@@ -88,7 +88,7 @@ export default function HeroSection() {
 ];
 
 const modelsByMake: { [key: string]: string[] } = {
-  "BMW": ["1 Series", "2 Series", "3 Series", "4 Series", "5 Series", "6 Series", "7 Series", "X1", "X3", "X5", "M3", "M4", "M5"],
+  "BMW": ["1-Series", "2-Series", "3-Series", "4-Series", "5-Series", "6-Series", "7-Series", "X1", "X3", "X5", "M3", "M4", "M5"],
   "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "4Runner", "Tacoma", "Tundra", "Prius", "Sienna"],
   "Honda": ["Civic", "Accord", "CR-V", "Pilot", "HR-V", "Odyssey", "Ridgeline"],
   "Ford": ["Mustang", "F-150", "Escape", "Explorer", "Edge", "Bronco", "Ranger"],

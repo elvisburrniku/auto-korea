@@ -176,7 +176,7 @@ export default function CarFilterComponent({
 
   return (
     <div className={className}>
-      <Accordion type="single" collapsible className="w-full">
+      <Accordion type="single" defaultValue="filters" collapsible className="w-full">
         <AccordionItem value="filters">
           <AccordionTrigger className="text-lg font-medium">Filtro veturat</AccordionTrigger>
           <AccordionContent>

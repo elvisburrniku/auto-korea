@@ -14,11 +14,15 @@ import { useFavorites } from '../lib/useFavorites';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from "@/components/ui/badge";
 import { formatEurPrice, formatKmDistance, milesToKm } from "@/lib/conversion";
+import { useEffect, useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 
 export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();
   const carId = parseInt(id);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ id: string } | null>(null);
 
   const { data: car, isLoading, error } = useQuery<Car>({
     queryKey: [`/api/cars/${carId}`],
@@ -43,6 +47,31 @@ export default function CarDetailPage() {
 
   const { toggleFavorite, isFavorite } = useFavorites();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const checkSession = async () => {
+      try {
+        const response = await apiRequest('GET', '/api/auth/session');
+        const sessionData = await response.json();
+        console.log("Session check:", sessionData);
+        
+        setIsAuthenticated(sessionData.isAuthenticated);
+        
+        if (sessionData.isAuthenticated && sessionData.user) {
+          setUser({ id: sessionData.user.id, isAdmin: sessionData.user.isAdmin });
+        } else {
+          setUser({ id: 'guest-user', isAdmin: false });
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+        setIsAuthenticated(false);
+        setUser({ id: 'guest-user', isAdmin: false });
+      }
+    };
+
+    checkSession();
+  }, []);
 
   if (isNaN(carId)) {
     return (
@@ -323,7 +352,7 @@ export default function CarDetailPage() {
 
               <Button 
                 variant="outline" 
-                className="flex items-center"
+                className="w-full flex items-center mt-2"
                 onClick={() => {
                   toggleFavorite(car.id);
                   toast({
@@ -340,7 +369,7 @@ export default function CarDetailPage() {
                 Ruaje te të Preferuarat
               </Button>
               
-              <AddToWishlist car={car} />
+              <AddToWishlist className="w-full" car={car} />
               
               <Link href={`/ar-comparison?carId=${car.id}`}>
                 <Button variant="outline" className="w-full flex items-center mt-2">
@@ -354,7 +383,21 @@ export default function CarDetailPage() {
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
-              
+
+              {isAuthenticated && user?.isAdmin ? (
+                <a target="_blank" href={`https://fem.encar.com/cars/detail/${car.car_id}`}>
+                  <Button variant="outline" className="w-full flex items-center mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                      <path d="M21 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path>
+                      <path d="m6 9 6-3 6 3"></path>
+                      <path d="m6 12 6 3 6-3"></path>
+                      <path d="m6 15 6 3 6-3"></path>
+                    </svg>
+                    Shiko në Encar
+                    <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
+                  </Button>
+                </a>
+              ) : ''}
               <Link href={`/budget-calculator?carId=${car.id}`}>
                 <Button variant="outline" className="w-full flex items-center mt-2">
                   <Calculator className="h-5 w-5 mr-2" />
