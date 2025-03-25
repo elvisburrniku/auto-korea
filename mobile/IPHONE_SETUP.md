@@ -1,6 +1,6 @@
-# iPhone Development Setup Guide for AutoMarket
+# iPhone Development Setup Guide for Auto Korea Kosova Import
 
-This guide will walk you through setting up your environment for native iOS development of the AutoMarket mobile app.
+This guide will walk you through setting up your environment for native iOS development of the Auto Korea Kosova Import mobile app.
 
 ## Prerequisites
 
@@ -68,9 +68,9 @@ npx react-native run-ios
 4. Select your device and make sure it's recognized
 
 #### Configure app for your device:
-1. Open `ios/AutoMarket.xcworkspace` in Xcode
+1. Open `ios/Auto Korea Kosova Import.xcworkspace` in Xcode
 2. Select your project in the Project Navigator
-3. Select the "AutoMarket" target
+3. Select the "Auto Korea Kosova Import" target
 4. Go to the "Signing & Capabilities" tab
 5. Select your development team
 6. Make sure "Automatically manage signing" is checked
@@ -98,7 +98,7 @@ npx react-native run-ios --device
 3. **Signing Issues**:
    - Verify your Apple Developer account is properly set up in Xcode
    - Try using a personal development team for testing
-   - Check that your bundle identifier is unique (e.g., com.yourname.automarket)
+   - Check that your bundle identifier is unique (e.g., com.yourname.Auto Korea Kosova Import)
 
 4. **App Crashing on Launch**:
    - Check the Metro bundler console for JavaScript errors
@@ -113,8 +113,8 @@ If you're encountering difficulties with the native iOS setup, consider using Ex
 ### Custom App Icons and Splash Screens
 
 The app icons and splash screens are located in:
-- `ios/AutoMarket/Images.xcassets/AppIcon.appiconset/`
-- `ios/AutoMarket/Images.xcassets/SplashScreen.imageset/`
+- `ios/Auto Korea Kosova Import/Images.xcassets/AppIcon.appiconset/`
+- `ios/Auto Korea Kosova Import/Images.xcassets/SplashScreen.imageset/`
 
 You can modify these using Xcode's Asset Catalog editor.
 

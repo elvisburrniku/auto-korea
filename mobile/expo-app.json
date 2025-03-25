@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AutoMarket",
-    "slug": "automarket",
+    "name": "Auto Korea Kosova Import",
+    "slug": "autokoreakosova",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,14 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.automarket.app"
+      "bundleIdentifier": "com.autokoreakosova.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.automarket.app"
+      "package": "com.autokoreakosova.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

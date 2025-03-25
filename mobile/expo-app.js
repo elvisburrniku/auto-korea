@@ -6,7 +6,7 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Text style={styles.title}>AutoMarket</Text>
+          <Text style={styles.title}>Auto Korea Kosova Import</Text>
           <Text style={styles.subtitle}>Find your perfect car</Text>
         </View>
         
@@ -42,7 +42,7 @@ export default function App() {
         
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            AutoMarket Mobile App - Demo Version
+            Auto Korea Kosova Import Mobile App - Demo Version
           </Text>
           <Text style={styles.footerSubtext}>
             Created with Expo

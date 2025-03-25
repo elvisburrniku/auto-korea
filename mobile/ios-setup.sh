@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script helps set up the iOS environment for the AutoMarket mobile app
+# This script helps set up the iOS environment for the Auto Korea Kosova Import mobile app
 
 # Check if Xcode is installed
 if ! command -v xcodebuild &> /dev/null
@@ -30,7 +30,7 @@ fi
 # Create iOS project if it doesn't exist
 if [ ! -d "ios" ]; then
     echo "Creating iOS project files..."
-    npx react-native init AutoMarketMobile --template react-native-template-typescript --directory temp-ios
+    npx react-native init Auto Korea Kosova ImportMobile --template react-native-template-typescript --directory temp-ios
     
     echo "Copying iOS files to your project..."
     cp -R temp-ios/ios ./
@@ -51,7 +51,7 @@ cd ..
 
 echo "--------------------------------------------"
 echo "Setup complete! Next steps:"
-echo "1. Open the iOS project in Xcode: open ios/AutoMarketMobile.xcworkspace"
+echo "1. Open the iOS project in Xcode: open ios/Auto Korea Kosova ImportMobile.xcworkspace"
 echo "2. Configure signing with your Apple ID"
 echo "3. Connect your iPhone and run the app"
 echo "--------------------------------------------"

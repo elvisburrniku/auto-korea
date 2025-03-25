@@ -91,7 +91,7 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
       drivetrain: "FWD",
       exteriorColor: "",
       interiorColor: "",
-      sellerName: "AutoMarket Dealership",
+      sellerName: "Auto Korea Kosova Import Dealership",
       sellerPhone: "+1234567890",
       sellerSince: "March 2023",
       images: [],
@@ -139,7 +139,7 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
     data.images = imageUrls;
     // For safety, set seller info if it's empty
     if (!data.sellerName) {
-      data.sellerName = "AutoMarket Dealership";
+      data.sellerName = "Auto Korea Kosova Import Dealership";
     }
     if (!data.sellerPhone) {
       data.sellerPhone = "+1234567890";
@@ -542,7 +542,7 @@ export default function AdminCarForm({ car, onSuccess }: AdminCarFormProps) {
               <FormItem>
                 <FormLabel>Seller Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="AutoMarket Dealership" />
+                  <Input {...field} placeholder="Auto Korea Kosova Import Dealership" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

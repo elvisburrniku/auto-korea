@@ -439,7 +439,7 @@ VIN: ${car.vin || "Not specified"}
 
       // Create detailed email content
       const emailContent = `
-NEW INQUIRY FROM AUTOMARKET WEBSITE
+NEW INQUIRY FROM Auto Korea Kosova Import WEBSITE
 
 Customer Information:
 Name: ${validationResult.data.name}
@@ -453,14 +453,14 @@ ${validationResult.data.message}
 
 ${carDetails}
 
-This message was sent from the AutoMarket website contact form at ${new Date().toLocaleString()}.
+This message was sent from the Auto Korea Kosova Import website contact form at ${new Date().toLocaleString()}.
 `.trim();
 
       try {
         // Send email using Sendinblue/Brevo
         await storage.sendEmail({
           to: "order.autokorea@gmail.com", // Replace with your desired recipient email
-          subject: `AutoMarket Inquiry: ${
+          subject: `Auto Korea Kosova Import Inquiry: ${
             validationResult.data.subject ||
             (validationResult.data.carId
               ? "Car #" + validationResult.data.carId
@@ -712,7 +712,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2022 BMW 320i with Sport Package. Features include sport seats, sport suspension, and BMW M Sport steering wheel. The vehicle comes with a 2.0L turbocharged engine providing excellent performance and fuel efficiency.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
@@ -734,7 +734,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2021 BMW 330i xDrive with Executive Package. All-wheel drive provides excellent traction in all weather conditions. Features include premium sound system, heated seats, and advanced driver assistance systems.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
@@ -756,7 +756,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2020 BMW M340i with M Sport Package. This high-performance variant of the 3 Series features a 3.0L inline-6 turbocharged engine producing 382 horsepower. Includes adaptive M suspension, M Sport differential, and M Sport brakes.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
@@ -778,7 +778,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2022 BMW 430i Coupe with M Sport Package. This elegant two-door coupe features BMWs latest technology and premium finishes. Equipped with a 2.0L TwinPower Turbo engine and 8-speed automatic transmission.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1543465077-db45d34b88a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
@@ -800,7 +800,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2021 BMW X3 xDrive30i with Premium Package. This luxury compact SUV offers the perfect blend of performance and practicality. Features include panoramic sunroof, heated seats, and driver assistance systems.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1622390349663-1cbe2ec9bec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym13JTIweDN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=1000&q=80",
@@ -822,7 +822,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2022 BMW X5 xDrive40i with Executive Package. This luxury midsize SUV offers exceptional comfort and capability. Features include 3.0L TwinPower Turbo inline-6 engine, third-row seating option, and advanced driver assistance systems.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1570356528233-b442cf2de345?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
@@ -844,7 +844,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2022 BMW i4 eDrive40 Gran Coupe. This all-electric sedan offers impressive range and performance. Features include 335 horsepower electric motor, up to 301 miles of range, and BMWs latest iDrive 8 system with curved display.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1655270001527-30d32aafb3bb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
@@ -866,7 +866,7 @@ This message was sent from the AutoMarket website contact form at ${new Date().t
               "2022 BMW iX xDrive50. BMWs flagship electric SUV offers cutting-edge technology and sustainable luxury. Features include dual electric motors producing 516 horsepower, over 300 miles of range, and fast charging capability.",
             sellerName: "Import Motors",
             sellerPhone: "+82-1234-5678",
-            sellerEmail: "import@automarket.com",
+            sellerEmail: "order.autokorea@gmail.com",
             sellerLocation: "Seoul, South Korea",
             images: [
               "https://images.unsplash.com/photo-1656468014942-526429b23cc2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",

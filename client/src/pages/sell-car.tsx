@@ -9,7 +9,7 @@ export default function SellCarPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-4">Sell Your Car</h1>
             <p className="text-neutral-600 max-w-2xl mx-auto">
-              Ready to sell your vehicle? Complete the form below to create a listing on AutoMarket.
+              Ready to sell your vehicle? Complete the form below to create a listing on Auto Korea Kosova Import.
               Potential buyers will be able to contact you via WhatsApp or our inquiry system.
             </p>
           </div>

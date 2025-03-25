@@ -90,7 +90,7 @@ function transformEncarCar(encarCar) {
     description: `Imported from Encar. Trim: ${encarCar.Badge || "N/A"}, Service: ${encarCar.ServiceMark?.join(", ") || "N/A"}, Condition: ${encarCar.Condition?.join(", ") || "N/A"}`,
     sellerName: "Import Motors",
     sellerPhone: "+82-1234-5678",
-    sellerEmail: "import@automarket.com",
+    sellerEmail: "order.autkorea@gmail.com",
     sellerLocation: encarCar.OfficeCityState || "Korea",
     images,
   };

@@ -1,6 +1,6 @@
-# Running AutoMarket Mobile App with Expo Go
+# Running Auto Korea Kosova Import Mobile App with Expo Go
 
-This guide explains how to run the AutoMarket mobile app on your iPhone using Expo Go, which is a much simpler approach than setting up a full development environment.
+This guide explains how to run the Auto Korea Kosova Import mobile app on your iPhone using Expo Go, which is a much simpler approach than setting up a full development environment.
 
 ## What is Expo Go?
 
@@ -30,7 +30,7 @@ Expo Go is a mobile app that allows you to run React Native applications directl
    npm install -g expo-cli
    
    # Create a new Expo project in a separate folder
-   expo init AutoMarketExpo
+   expo init Auto Korea Kosova ImportExpo
    
    # Choose a blank template when prompted
    ```
@@ -39,7 +39,7 @@ Expo Go is a mobile app that allows you to run React Native applications directl
    
    ```bash
    # Navigate to the new Expo project
-   cd AutoMarketExpo
+   cd Auto Korea Kosova ImportExpo
    
    # Create necessary directories
    mkdir -p src/api src/components src/screens src/navigation src/utils

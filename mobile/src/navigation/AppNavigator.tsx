@@ -37,7 +37,7 @@ export function AppNavigator() {
         <Stack.Screen 
           name="Home" 
           component={HomeScreen} 
-          options={{ title: 'AutoMarket' }}
+          options={{ title: 'Auto Korea Kosova Import' }}
         />
         <Stack.Screen 
           name="CarDetail" 
@@ -82,7 +82,7 @@ export function AppNavigator() {
         <Stack.Screen 
           name="About" 
           component={AboutScreen} 
-          options={{ title: 'About AutoMarket' }}
+          options={{ title: 'About Auto Korea Kosova Import' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

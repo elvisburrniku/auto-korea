@@ -1,6 +1,6 @@
-# AutoMarket Mobile Application
+# Auto Korea Kosova Import Mobile Application
 
-This directory contains the AutoMarket mobile application built with React Native. The mobile app provides similar functionality to the web version with a native mobile experience.
+This directory contains the Auto Korea Kosova Import mobile application built with React Native. The mobile app provides similar functionality to the web version with a native mobile experience.
 
 ## Project Structure
 

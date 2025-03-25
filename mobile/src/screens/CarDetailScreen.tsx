@@ -79,9 +79,9 @@ const CarDetailScreen: React.FC<CarDetailScreenProps> = ({ navigation, route }) 
     
     try {
       await Share.share({
-        message: `Check out this ${car.year} ${car.make} ${car.model} for ${formatEurPrice(car.price)} on AutoMarket!`,
+        message: `Check out this ${car.year} ${car.make} ${car.model} for ${formatEurPrice(car.price)} on Auto Korea Kosova Import!`,
         // In a real app, we would include a deep link URL here
-        // url: `https://automarket.com/cars/${car.id}`
+        // url: `https://autokoreakosova.com/cars/${car.id}`
       });
     } catch (error) {
       console.error('Error sharing car:', error);
@@ -94,7 +94,7 @@ const CarDetailScreen: React.FC<CarDetailScreenProps> = ({ navigation, route }) 
     // Example WhatsApp integration (would use real number in production)
     const phoneNumber = '+123456789';
     const message = encodeURIComponent(
-      `Hi, I'm interested in the ${car.year} ${car.make} ${car.model} (${formatEurPrice(car.price)}) listed on AutoMarket.`
+      `Hi, I'm interested in the ${car.year} ${car.make} ${car.model} (${formatEurPrice(car.price)}) listed on Auto Korea Kosova Import.`
     );
     
     Linking.openURL(`whatsapp://send?phone=${phoneNumber}&text=${message}`)

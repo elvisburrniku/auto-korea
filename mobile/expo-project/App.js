@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 
 // Define API URL - development server URL (replace with your actual URL when deploying)
-const API_URL = 'https://automarket.relay.run';
+const API_URL = 'https://autokoreakosova.relay.run';
 
 // Car component to display in the list
 const CarItem = ({ car, onPress }) => {
@@ -111,7 +111,7 @@ function HomeScreen({ navigation }) {
         renderItem={() => (
           <View>
             <View style={styles.header}>
-              <Text style={styles.title}>AutoMarket</Text>
+              <Text style={styles.title}>Auto Korea Kosova Import</Text>
             </View>
             
             <View style={styles.section}>

@@ -4,7 +4,7 @@ import CarComparison from '@/components/car-comparison';
 export default function CompareCarsPage() {
   // Set page title
   React.useEffect(() => {
-    document.title = 'Compare Cars | AutoMarket';
+    document.title = 'Compare Cars | Auto Korea Kosova Import';
   }, []);
   
   return (

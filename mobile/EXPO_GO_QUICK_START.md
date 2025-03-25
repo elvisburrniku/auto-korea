@@ -1,6 +1,6 @@
-# AutoMarket Mobile App - Expo Go Quick Start Guide
+# Auto Korea Kosova Import Mobile App - Expo Go Quick Start Guide
 
-This guide will help you quickly get started testing the AutoMarket mobile app using Expo Go on your iOS or Android device without complicated setup or development environments.
+This guide will help you quickly get started testing the Auto Korea Kosova Import mobile app using Expo Go on your iOS or Android device without complicated setup or development environments.
 
 ## What is Expo Go?
 
@@ -34,13 +34,13 @@ This will start the Expo development server and display a QR code in your termin
 1. Open the Camera app on your iPhone
 2. Point it at the QR code in your terminal
 3. Tap the banner that appears at the top of your screen
-4. The Expo Go app will open and load the AutoMarket app
+4. The Expo Go app will open and load the Auto Korea Kosova Import app
 
 #### For Android:
 1. Open the Expo Go app on your Android device
 2. Tap "Scan QR Code" in the Expo Go app
 3. Scan the QR code displayed in your terminal
-4. The AutoMarket app will load in Expo Go
+4. The Auto Korea Kosova Import app will load in Expo Go
 
 ## Key Features to Test
 

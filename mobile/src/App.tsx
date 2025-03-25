@@ -28,7 +28,7 @@ export default function App() {
       apiClient.setBaseUrl(baseUrl);
     } else {
       // In production, point to the deployed API
-      apiClient.setBaseUrl('https://automarket-api.replit.app/api');
+      apiClient.setBaseUrl('https://autokoreakosova-api.replit.app/api');
     }
   }, []);
 

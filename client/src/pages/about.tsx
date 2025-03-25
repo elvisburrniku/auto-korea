@@ -7,7 +7,7 @@ export default function AboutPage() {
       <div className="bg-primary text-white py-16">
         <Container>
           <div className="max-w-3xl">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">About AutoMarket</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">About Auto Korea Kosova Import</h1>
             <p className="text-xl opacity-90">
               Your trusted platform for discovering quality vehicles with hassle-free dealer communication.
             </p>
@@ -21,12 +21,12 @@ export default function AboutPage() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-neutral-600 mb-4">
-              Founded in 2023, AutoMarket was created with a simple mission: to make finding your perfect car easier, 
+              Founded in 2023, Auto Korea Kosova Import was created with a simple mission: to make finding your perfect car easier, 
               more transparent, and more connected. We noticed that while there were many car marketplaces, 
               few offered seamless communication between buyers and dealerships.
             </p>
             <p className="text-neutral-600 mb-4">
-              That's why we built AutoMarket with integrated WhatsApp communication - allowing instant connection 
+              That's why we built Auto Korea Kosova Import with integrated WhatsApp communication - allowing instant connection 
               with our network of verified dealers. No more waiting for email responses or playing phone tag. Just direct, 
               immediate communication when it matters most.
             </p>
@@ -149,7 +149,7 @@ export default function AboutPage() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-neutral-600 max-w-2xl mx-auto mb-8">
-              Join thousands of satisfied users who have found their perfect car through AutoMarket's curated selection.
+              Join thousands of satisfied users who have found their perfect car through Auto Korea Kosova Import's curated selection.
             </p>
             <div className="flex justify-center">
               <a href="/browse-cars" className="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-md font-medium text-center">
