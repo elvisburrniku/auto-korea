@@ -57,9 +57,9 @@ export default function AdminPage() {
   // Get all cars - declare query even if we're not authenticated yet
   // We'll only use the data if we're authenticated
   const { data: cars, isLoading } = useQuery({
-    queryKey: ['/api/cars'],
+    queryKey: ['/api/cars/no-filter/all'], // if route is no-filter
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/cars');
+      const response = await apiRequest('GET', '/api/cars/no-filter/all');
       const data = await response.json();
       console.log("Cars data:", data);
       return data;
@@ -99,7 +99,7 @@ export default function AdminPage() {
       return id;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/cars'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/cars/no-filter/all'] });
       toast({
         title: "Success",
         description: "Car deleted successfully",
@@ -288,7 +288,7 @@ export default function AdminPage() {
                         onSuccess={() => {
                           setSelectedCar(null);
                           setIsAddingCar(false);
-                          queryClient.invalidateQueries({ queryKey: ['/api/cars'] });
+                          queryClient.invalidateQueries({ queryKey: ['/api/cars/no-filter/all'] });
                         }}
                       />
                     ) : (

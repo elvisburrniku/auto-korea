@@ -292,7 +292,7 @@ function BrowseCarsScreen({ navigation }) {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/cars`);
+        const response = await fetch(`${API_URL}/api/cars/no-filter/all`);
         const data = await response.json();
         setCars(data.cars || []);
         setLoading(false);

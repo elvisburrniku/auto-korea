@@ -19,10 +19,10 @@ export default function ARComparisonPage() {
   const { toast } = useToast();
   
   const { data: cars, isLoading, error } = useQuery({
-    queryKey: ['/api/cars'],
+    queryKey: ['/api/cars/no-filter/all'],
     queryFn: async () => {
       console.log('Fetching cars for AR comparison...');
-      const response = await fetch('/api/cars');
+      const response = await fetch('/api/cars/no-filter/all');
       if (!response.ok) {
         throw new Error('Failed to fetch cars');
       }
@@ -38,7 +38,7 @@ export default function ARComparisonPage() {
     const carId = searchParams.get('carId');
     
     if (carId && cars) {
-      const car = cars.find(c => c.id === parseInt(carId));
+      const car = cars.cars.find(c => c.id === parseInt(carId));
       if (car) {
         setSelectedCar(car);
         setDefaultTab("advanced");

@@ -31,6 +31,10 @@ export class PostgresStorage implements IStorage {
     return user;
   }
 
+  async getNoFilterAllCars(): Promise<Car[]> {
+    return await db.select().from(cars);
+  }
+
   // CARS
   async getAllCars({
     offset = 0,

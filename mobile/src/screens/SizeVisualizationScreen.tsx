@@ -56,7 +56,7 @@ const SizeVisualizationScreen: React.FC<SizeVisualizationScreenProps> = ({ navig
         
         // If a car ID was passed in params, select that car
         if (route.params?.carId) {
-          const car = allCars.find(c => c.id === route.params.carId);
+          const car = allCars.cars.find(c => c.id === route.params.carId);
           if (car) {
             setSelectedCar(car);
           }

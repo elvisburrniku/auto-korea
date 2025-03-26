@@ -51,7 +51,7 @@ export default function CarComparison() {
   
   // Merr të gjitha makinat për zgjedhje
   const { data: allCars = [], isLoading } = useQuery<Car[]>({
-    queryKey: ['/api/cars'],
+    queryKey: ['/api/cars/no-filter/all'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
   });
 

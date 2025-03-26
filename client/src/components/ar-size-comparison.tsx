@@ -134,7 +134,7 @@ export default function ARSizeComparison() {
     const fetchCars = async () => {
       try {
         console.log('Fetching cars for AR comparison...');
-        const response = await fetch('/api/cars', {
+        const response = await fetch('/api/cars/no-filter/all', {
           method: 'GET',
           credentials: 'include',
         }).then(res => res.json());

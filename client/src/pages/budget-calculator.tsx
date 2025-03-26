@@ -26,7 +26,7 @@ export default function BudgetCalculatorPage() {
 
   // Fetch all cars
   const { data: cars = [] } = useQuery({
-    queryKey: ['/api/cars'],
+    queryKey: ['/api/cars/no-filter/all'],
     queryFn: getQueryFn<Car[]>({ on401: 'returnNull' }),
   });
   

@@ -4,6 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import path from "path";
+import cors from "cors";
 
 // Create memory store
 const MemoryStoreSession = MemoryStore(session);
@@ -83,6 +84,12 @@ app.use((req, res, next) => {
   } else {
     serveStatic(app);
   }
+
+app.use(cors({
+  origin: "http://localhost:3000", // Replace with your frontend origin
+  credentials: true, // 👈 IMPORTANT for sessions to work
+}));
+
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.

@@ -202,6 +202,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get(`${apiPrefix}/cars/no-filter/all`, async (req: Request, res: Response) => {
+    try {
+      const cars = await storage.getNoFilterAllCars();
+      res.json(cars);
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+      res.status(500).json({ message: "Failed to fetch cars" });
+    }
+  });
+
   // Get all cars with sorting and pagination
   app.get(`${apiPrefix}/cars`, async (req: Request, res: Response) => {
     try {

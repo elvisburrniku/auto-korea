@@ -44,7 +44,7 @@ export default function WishlistDetailPage() {
 
         // Now fetch all cars and filter to those in the wishlist
         if (wishlistData.cars && wishlistData.cars.length > 0) {
-          const carsResponse = await apiRequest('GET', '/api/cars');
+          const carsResponse = await apiRequest('GET', '/api/cars/no-filter/all');
           const allCars = await carsResponse.json();
           console.log("All cars:", allCars);
           const wishlistCars = allCars.filter((car: Car) => 
