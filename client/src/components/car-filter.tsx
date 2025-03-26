@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -45,20 +45,27 @@ interface CarFilterProps {
   className?: string;
 }
 
-export default function CarFilterComponent({ 
-  initialFilters, 
+export default function CarFilterComponent({
+  initialFilters,
   onFilterChange,
-  className
+  className,
 }: CarFilterProps) {
   // Get all cars to extract makes and models
-  const { data: allCars } = useQuery<Car[]>({
-    queryKey: ['/api/cars'],
+  const { data: allCars } = useQuery({
+    queryKey: ["/api/cars/meta/types"],
+    queryFn: async () => {
+      const res = await fetch("/api/cars/meta/types");
+      if (!res.ok) throw new Error("Failed to fetch car metadata");
+      return res.json();
+    },
   });
 
   const [, setLocation] = useLocation();
-  const [searchParams, setSearchParams] = useState(new URLSearchParams(window.location.search));
+  const [searchParams, setSearchParams] = useState(
+    new URLSearchParams(window.location.search),
+  );
 
-  const [filters, setFilters] = useState<CarFilter>({
+  const [filters, setFilters] = useState<CarFilter>(() => ({
     make: initialFilters?.make || "",
     model: initialFilters?.model || "",
     minPrice: initialFilters?.minPrice || undefined,
@@ -68,35 +75,35 @@ export default function CarFilterComponent({
     fuelType: initialFilters?.fuelType || "",
     transmission: initialFilters?.transmission || "",
     search: initialFilters?.search || "",
-  });
+  }));
 
   // Extract unique makes and models from data
-  const uniqueMakes = allCars ? Array.from(new Set(allCars.map(car => car.make))).sort() : [];
+  const uniqueMakes = Array.isArray(allCars?.makes) ? allCars.makes.sort() : [];
 
   // Get models for the selected make
-  const availableModels = allCars && filters.make
-    ? Array.from(new Set(allCars.filter(car => car.make === filters.make).map(car => car.model))).sort()
+  const availableModels =
+    filters.make && allCars?.modelsByMake?.[filters.make]
+      ? [...allCars.modelsByMake[filters.make]].sort()
+      : [];
+
+  const availableYears = Array.isArray(allCars?.years)
+    ? [...allCars.years].sort((a, b) => b - a)
     : [];
 
-  // Get available years from the data
-  const availableYears = allCars
-    ? Array.from(new Set(allCars.map(car => car.year))).sort((a, b) => b - a) // Sort descending
-    : [];
-
-  // Unique fuel types and transmissions
-  const fuelTypes = allCars 
-    ? Array.from(new Set(allCars.map(car => car.fuelType))).sort() 
+  const fuelTypes = Array.isArray(allCars?.fuelTypes)
+    ? [...allCars.fuelTypes].sort()
     : ["Benzinë", "Dizell", "Elektrik", "Hybrid"];
 
-  const transmissions = allCars 
-    ? Array.from(new Set(allCars.map(car => car.transmission))).sort() 
+  const transmissions = Array.isArray(allCars?.transmissions)
+    ? [...allCars.transmissions].sort()
     : ["Automatik", "Manual"];
 
   // Selected price range for display
   const selectedPriceRange = (() => {
     if (filters.minPrice !== undefined && filters.maxPrice !== undefined) {
       const range = PRICE_RANGES.find(
-        range => range.min === filters.minPrice && range.max === filters.maxPrice
+        (range) =>
+          range.min === filters.minPrice && range.max === filters.maxPrice,
       );
       return range?.label || `$${filters.minPrice} - $${filters.maxPrice}`;
     }
@@ -107,7 +114,8 @@ export default function CarFilterComponent({
   const selectedYearRange = (() => {
     if (filters.minYear !== undefined && filters.maxYear !== undefined) {
       const range = YEAR_RANGES.find(
-        range => range.min === filters.minYear && range.max === filters.maxYear
+        (range) =>
+          range.min === filters.minYear && range.max === filters.maxYear,
       );
       return range?.label || `${filters.minYear} - ${filters.maxYear}`;
     } else if (filters.minYear !== undefined) {
@@ -117,27 +125,6 @@ export default function CarFilterComponent({
     }
     return "Çdo vit";
   })();
-
-  // Update URL when filters change
-  useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange(filters);
-    }
-
-    const params = new URLSearchParams();
-
-    if (filters.make) params.set('make', filters.make);
-    if (filters.model) params.set('model', filters.model);
-    if (filters.minPrice !== undefined) params.set('minPrice', filters.minPrice.toString());
-    if (filters.maxPrice !== undefined) params.set('maxPrice', filters.maxPrice.toString());
-    if (filters.minYear !== undefined) params.set('minYear', filters.minYear.toString());
-    if (filters.maxYear !== undefined) params.set('maxYear', filters.maxYear.toString());
-    if (filters.fuelType) params.set('fuelType', filters.fuelType);
-    if (filters.transmission) params.set('transmission', filters.transmission);
-    if (filters.search) params.set('search', filters.search);
-
-    setSearchParams(params);
-  }, [filters, onFilterChange]);
 
   // Apply filters
   const applyFilters = () => {
@@ -161,24 +148,26 @@ export default function CarFilterComponent({
       transmission: "",
       search: "",
     };
-    
+
     // Set the filters to empty
     setFilters(emptyFilters);
-    
+
     // Notify parent component through callback
     if (onFilterChange) {
       onFilterChange(emptyFilters);
     }
-    
+
     // For safety, also clear the URL parameters and navigate
-    window.location.href = '/browse-cars';
+    window.location.href = "/browse-cars";
   };
 
   return (
     <div className={className}>
-      <Accordion type="single" defaultValue="filters" collapsible className="w-full">
+      <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="filters">
-          <AccordionTrigger className="text-lg font-medium">Filtro veturat</AccordionTrigger>
+          <AccordionTrigger className="text-lg font-medium">
+            Filtro veturat
+          </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-6">
               {/* Search */}
@@ -188,7 +177,9 @@ export default function CarFilterComponent({
                   id="search"
                   placeholder="Kërko sipas fjalës kyçe..."
                   value={filters.search || ""}
-                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, search: e.target.value })
+                  }
                   className="mt-1"
                 />
               </div>
@@ -199,7 +190,13 @@ export default function CarFilterComponent({
                   <Label htmlFor="make">Marka</Label>
                   <Select
                     value={filters.make || "any"}
-                    onValueChange={(value) => setFilters({ ...filters, make: value === "any" ? "" : value, model: "" })}
+                    onValueChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        make: value === "any" ? "" : value,
+                        model: "",
+                      })
+                    }
                   >
                     <SelectTrigger id="make" className="mt-1">
                       <SelectValue placeholder="Çdo markë" />
@@ -219,11 +216,22 @@ export default function CarFilterComponent({
                   <Label htmlFor="model">Modeli</Label>
                   <Select
                     value={filters.model || "any"}
-                    onValueChange={(value) => setFilters({ ...filters, model: value === "any" ? "" : value })}
+                    onValueChange={(value) =>
+                      setFilters({
+                        ...filters,
+                        model: value === "any" ? "" : value,
+                      })
+                    }
                     disabled={!filters.make}
                   >
                     <SelectTrigger id="model" className="mt-1">
-                      <SelectValue placeholder={filters.make ? "Selekto Model" : "Slektoni marken fillimishtë"} />
+                      <SelectValue
+                        placeholder={
+                          filters.make
+                            ? "Selekto Model"
+                            : "Slektoni marken fillimishtë"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="any">Çdo Model</SelectItem>
@@ -244,12 +252,12 @@ export default function CarFilterComponent({
                   <Select
                     value={selectedPriceRange}
                     onValueChange={(value) => {
-                      const range = PRICE_RANGES.find(r => r.label === value);
+                      const range = PRICE_RANGES.find((r) => r.label === value);
                       if (range) {
-                        setFilters({ 
-                          ...filters, 
+                        setFilters({
+                          ...filters,
                           minPrice: range.min,
-                          maxPrice: range.max !== null ? range.max : undefined
+                          maxPrice: range.max !== null ? range.max : undefined,
                         });
                       }
                     }}
@@ -279,9 +287,11 @@ export default function CarFilterComponent({
                       ...filters,
                       minYear: value === "any" ? undefined : parseInt(value),
                       // If min year is greater than max year, reset max year
-                      ...(filters.maxYear !== undefined && value !== "any" && parseInt(value) > filters.maxYear 
-                          ? { maxYear: undefined } 
-                          : {})
+                      ...(filters.maxYear !== undefined &&
+                      value !== "any" &&
+                      parseInt(value) > filters.maxYear
+                        ? { maxYear: undefined }
+                        : {}),
                     });
                   }}
                 >
@@ -309,9 +319,11 @@ export default function CarFilterComponent({
                       ...filters,
                       maxYear: value === "any" ? undefined : parseInt(value),
                       // If max year is less than min year, reset min year
-                      ...(filters.minYear !== undefined && value !== "any" && parseInt(value) < filters.minYear 
-                          ? { minYear: undefined } 
-                          : {})
+                      ...(filters.minYear !== undefined &&
+                      value !== "any" &&
+                      parseInt(value) < filters.minYear
+                        ? { minYear: undefined }
+                        : {}),
                     });
                   }}
                 >
@@ -334,7 +346,12 @@ export default function CarFilterComponent({
                 <Label htmlFor="fuelType">Lloji i karburantit</Label>
                 <Select
                   value={filters.fuelType || "any"}
-                  onValueChange={(value) => setFilters({ ...filters, fuelType: value === "any" ? "" : value })}
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      fuelType: value === "any" ? "" : value,
+                    })
+                  }
                 >
                   <SelectTrigger id="fuelType" className="mt-1">
                     <SelectValue placeholder="Çdo lloj i karburantit" />
@@ -355,7 +372,12 @@ export default function CarFilterComponent({
                 <Label htmlFor="transmission">Transmisioni</Label>
                 <Select
                   value={filters.transmission || "any"}
-                  onValueChange={(value) => setFilters({ ...filters, transmission: value === "any" ? "" : value })}
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      transmission: value === "any" ? "" : value,
+                    })
+                  }
                 >
                   <SelectTrigger id="transmission" className="mt-1">
                     <SelectValue placeholder="Çdo Transmision" />
@@ -376,7 +398,11 @@ export default function CarFilterComponent({
                 <Button onClick={applyFilters} className="flex-1">
                   Apliko filtrat
                 </Button>
-                <Button variant="outline" onClick={resetFilters} className="flex-1">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="flex-1"
+                >
                   Rivendos filtrat
                 </Button>
               </div>

@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error during registration:", error);
         res.status(500).json({ message: "Registration failed" });
       }
-    }
+    },
   );
 
   // Login route
@@ -141,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(
         "User found:",
         user ? "Yes" : "No",
-        user ? `Admin: ${user.isAdmin}` : ""
+        user ? `Admin: ${user.isAdmin}` : "",
       );
 
       if (!user || user.password !== password) {
@@ -202,16 +202,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all cars
+  // Get all cars with sorting and pagination
   app.get(`${apiPrefix}/cars`, async (req: Request, res: Response) => {
     try {
-      const cars = await storage.getAllCars();
-      res.json(cars);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 12;
+      const sort = (req.query.sort as string) || "newest";
+      const order = (req.query.order as string) || "desc";
+
+      const offset = (page - 1) * limit;
+
+      let orderBy = "";
+      switch (sort) {
+        case "price":
+          orderBy = "price";
+          break;
+        case "newest":
+          orderBy = "created_at";
+          break;
+        default:
+          orderBy = "created_at";
+      }
+
+      // Parse filters from query
+      const filters = {
+        make: req.query.make as string,
+        model: req.query.model as string,
+        minPrice: req.query.minPrice ? parseInt(req.query.minPrice as string) : undefined,
+        maxPrice: req.query.maxPrice ? parseInt(req.query.maxPrice as string) : undefined,
+        minYear: req.query.minYear ? parseInt(req.query.minYear as string) : undefined,
+        maxYear: req.query.maxYear ? parseInt(req.query.maxYear as string) : undefined,
+        fuelType: req.query.fuelType as string,
+        transmission: req.query.transmission as string,
+        search: req.query.search as string,
+      };
+
+      const [cars, total] = await Promise.all([
+        storage.getAllCars({ offset, limit, orderBy, order, filters }),
+        storage.getTotalCars({ filters }),
+      ]);
+
+      res.json({
+        cars,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      });
     } catch (error) {
       console.error("Error fetching cars:", error);
       res.status(500).json({ message: "Failed to fetch cars" });
     }
   });
+
+  app.get(
+    `${apiPrefix}/cars/meta/types`,
+    async (req: Request, res: Response) => {
+      try {
+        const metadata = await storage.getCarMetadata();
+        console.log("Metadata:", metadata);
+        res.json(metadata);
+      } catch (error) {
+        console.error("Error fetching car metadata:", error);
+        res.status(500).json({ message: "Failed to fetch car metadata" });
+      }
+    },
+  );
 
   // Filter cars - Moving this route before the :id route is crucial
   app.get(`${apiPrefix}/cars/filter`, async (req: Request, res: Response) => {
@@ -273,7 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching featured cars:", error);
         res.status(500).json({ message: "Failed to fetch featured cars" });
       }
-    }
+    },
   );
 
   // Get recent cars - Moving this route before the :id route as well
@@ -288,7 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching recent cars:", error);
         res.status(500).json({ message: "Failed to fetch recent cars" });
       }
-    }
+    },
   );
 
   // Get a specific car by ID - This should come after all specific /cars/* routes
@@ -329,7 +387,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error fetching similar cars:", error);
         res.status(500).json({ message: "Failed to fetch similar cars" });
       }
-    }
+    },
   );
 
   // Create a new car listing - Admin only
@@ -351,7 +409,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error creating car:", error);
         res.status(500).json({ message: "Failed to create car listing" });
       }
-    }
+    },
   );
 
   // Update a car listing - Admin only
@@ -376,7 +434,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error updating car:", error);
         res.status(500).json({ message: "Failed to update car listing" });
       }
-    }
+    },
   );
 
   // Delete a car listing - Admin only
@@ -400,7 +458,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error deleting car:", error);
         res.status(500).json({ message: "Failed to delete car listing" });
       }
-    }
+    },
   );
 
   // Submit contact message
@@ -414,7 +472,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const newMessage = await storage.createContactMessage(
-        validationResult.data
+        validationResult.data,
       );
 
       // Get car details if this inquiry is about a specific car
@@ -497,7 +555,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error fetching contact messages:", error);
         res.status(500).json({ message: "Failed to fetch contact messages" });
       }
-    }
+    },
   );
 
   // Get all contact messages - Admin only
@@ -512,7 +570,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error fetching all contact messages:", error);
         res.status(500).json({ message: "Failed to fetch contact messages" });
       }
-    }
+    },
   );
 
   // Wishlist routes
@@ -557,7 +615,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error fetching user wishlists:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    }
+    },
   );
 
   app.get(`${apiPrefix}/wishlists/:id`, async (req: Request, res: Response) => {
@@ -596,7 +654,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error fetching shared wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    }
+    },
   );
 
   app.patch(
@@ -622,7 +680,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error updating wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    }
+    },
   );
 
   app.delete(
@@ -645,7 +703,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("Error deleting wishlist:", error);
         res.status(500).json({ message: "Internal server error" });
       }
-    }
+    },
   );
 
   // Debug endpoint to view database state (admin only)
@@ -686,7 +744,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         console.error("File upload error:", error);
         res.status(500).json({ message: "File upload failed" });
       }
-    }
+    },
   );
 
   // Import routes for car data
@@ -898,7 +956,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
           message: `Import failed: ${error.message}`,
         });
       }
-    }
+    },
   );
 
   // Encar.com import route
@@ -922,7 +980,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
 
         const getExchangeRate = async (
           from: string,
-          to: string
+          to: string,
         ): Promise<number> => {
           try {
             const { default: axios } = await import("axios");
@@ -1062,8 +1120,8 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             스포츠카: "Sports car",
             대형차: "Large car",
             SUV: "SUV",
-            준중형차: "Compact car"
-          }
+            준중형차: "Compact car",
+          },
         };
 
         const translate = (value: string, map: Record<string, string>) => {
@@ -1091,16 +1149,16 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         for (const car of rawCars) {
           try {
             const carDetailRes = await axios.get(
-              `https://api.encar.com/v1/readside/vehicle/${car.Id}`
+              `https://api.encar.com/v1/readside/vehicle/${car.Id}`,
             );
             const carDetail = carDetailRes.data;
-        
+
             // 🚫 Skip if the car is webReserved
             if (carDetail?.manage?.webReserved) {
               console.log(`🚫 Skipping reserved car: ${car.Id}`);
               continue;
             }
-        
+
             const phoneNumbers = [
               "+38345255388",
               "+38345432999",
@@ -1108,37 +1166,37 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             ];
             const randomPhone =
               phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
-        
+
             const translatedConditions = (car.Condition || []).map((c) =>
-              translate(c, TRANSLATIONS.condition)
+              translate(c, TRANSLATIONS.condition),
             );
             const translatedServices = (car.ServiceMark || []).map((s) => s);
             const translatedManufacturer = translate(
               car.Manufacturer,
-              TRANSLATIONS.manufacturer
+              TRANSLATIONS.manufacturer,
             );
             const translatedModel = translate(
               car.Model,
-              TRANSLATIONS.modelGroup
+              TRANSLATIONS.modelGroup,
             );
             const translatedFuel = translate(
               carDetail.spec?.fuelName,
-              TRANSLATIONS.fuelType
+              TRANSLATIONS.fuelType,
             );
             const translatedTranssmision = translate(
               carDetail.spec?.transmissionName,
-              TRANSLATIONS.transmission
+              TRANSLATIONS.transmission,
             );
             const translatedCarColor = translate(
               carDetail.spec?.colorName,
-              TRANSLATIONS.color
+              TRANSLATIONS.color,
             );
 
             const translatedType = translate(
               carDetail.spec?.bodyName,
-              TRANSLATIONS.type
+              TRANSLATIONS.type,
             );
-        
+
             const displacement = carDetail.spec?.displacement || null;
             const transmission = translatedTranssmision || "Unknown";
             const fuelType = translatedFuel || "Other";
@@ -1151,20 +1209,20 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             const vehiclePhotos = carDetail.photos || [];
             const images = vehiclePhotos.map(
               (photo) =>
-                `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`
+                `http://ci.encar.com${photo.path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=http://ci.encar.com/wt_mark/w_mark_04.png&wtmkg=SouthEast&wtmkw=70&wtmkh=30`,
             );
-        
+
             const description = `Imported from Encar.\n\nTrim: ${
               car.Badge || "N/A"
             }\nCondition: ${translatedConditions.join(
-              ", "
+              ", ",
             )}\nService: ${translatedServices.join(", ")}\n\n${extraDescription}`;
-        
+
             const year = parseInt(car.FormYear);
             const mileage = parseInt(car.Mileage);
             let basePrice = Math.round(car.Price * 10000 * exchangeRate);
             let finalPrice = basePrice;
-        
+
             if (basePrice < 12000) {
               finalPrice += 3050;
             } else if (basePrice >= 12000 && basePrice < 24000) {
@@ -1174,7 +1232,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             } else if (basePrice >= 40000) {
               finalPrice += 5050;
             }
-        
+
             const transformedCar = {
               car_id: car.Id,
               full_name:
@@ -1243,7 +1301,6 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
               subscriberCount: carDetail?.manage?.subscribeCount || 0,
             };
 
-
             // const transformedCar = {
             //   car_id: car.Id,
             //   make: translatedManufacturer || car.Manufacturer || "Unknown",
@@ -1266,7 +1323,6 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             //   isFeatured: Math.random() > 0.7,
             // };
 
-        
             // const transformedCar = {
             //   car_id: car.Id,
             //   make: translatedManufacturer || car.Manufacturer || "Unknown",
@@ -1292,15 +1348,14 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             const savedCar = await storage.createCar(transformedCar);
             importedCars.push(savedCar);
             console.log(
-              `✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`
+              `✅ Imported: ${transformedCar.year} ${transformedCar.make} ${transformedCar.model}`,
             );
-        
+
             await new Promise((resolve) => setTimeout(resolve, 500));
           } catch (err) {
             console.error(`❌ Failed to import car: ${car.Badge}`, err);
           }
         }
-        
 
         if (importedCars.length > 0) {
           return res.status(200).json({
@@ -1318,7 +1373,7 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
           message: `Import failed: ${error.message}`,
         });
       }
-    }
+    },
   );
 
   const httpServer = createServer(app);

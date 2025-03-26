@@ -47,7 +47,7 @@ export function eurToUsd(eur: number): number {
  */
 export function formatEurPrice(price: number): string {
   const eurPrice = price;
-  return `€${eurPrice.toLocaleString('de-DE', { 
+  return `€${eurPrice.toLocaleString('en-US', { 
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   })}`;

@@ -48,11 +48,11 @@ export function eurToUsd(eur: number): number {
  * @returns Formatted price string with Euro symbol
  */
 export function formatEurPrice(price: number): string {
-  return new Intl.NumberFormat('de-DE', { 
+  return new Intl.NumberFormat('en-US', { 
     style: 'currency', 
     currency: 'EUR',
     maximumFractionDigits: 0
-  }).format(price);
+  }).format(price).replace(/\./g, ',');
 }
 
 /**

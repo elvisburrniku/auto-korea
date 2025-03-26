@@ -1,13 +1,8 @@
 // PostgresStorage.ts
 import { eq } from "drizzle-orm";
 import { db } from "../shared/db";
-import { and, eq, gte, lte, like, ilike } from "drizzle-orm"; // or your ORM's functions
-import {
-  users,
-  cars,
-  contactMessages,
-  wishlists,
-} from "@shared/schema";
+import { and, eq, gte, lte, like, ilike, asc, desc, sql } from "drizzle-orm"; // or your ORM's functions
+import { users, cars, contactMessages, wishlists } from "@shared/schema";
 import {
   Car,
   InsertCar,
@@ -29,13 +24,164 @@ export class PostgresStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user;
   }
 
   // CARS
-  async getAllCars(): Promise<Car[]> {
-    return await db.select().from(cars);
+  async getAllCars({
+    offset = 0,
+    limit = 12,
+    orderBy = "createdAt",
+    order = "desc",
+    filters = {},
+  }: {
+    offset?: number;
+    limit?: number;
+    orderBy?: string;
+    order?: string;
+    filters?: CarFilter;
+  }): Promise<Car[]> {
+    let orderColumn;
+
+    switch (orderBy) {
+      case "price":
+        orderColumn = cars.price;
+        break;
+      case "createdAt":
+        orderColumn = cars.createdAt;
+        break;
+      case "year":
+        orderColumn = cars.year;
+        break;
+      default:
+        orderColumn = cars.createdAt;
+    }
+
+    // Build dynamic filter conditions
+    const conditions: any[] = [];
+
+    if (filters.make) {
+      conditions.push(eq(cars.make, filters.make));
+    }
+
+    if (filters.model) {
+      conditions.push(eq(cars.model, filters.model));
+    }
+
+    if (filters.minPrice) {
+      conditions.push(gte(cars.price, filters.minPrice));
+    }
+
+    if (filters.maxPrice) {
+      conditions.push(lte(cars.price, filters.maxPrice));
+    }
+
+    if (filters.minYear) {
+      conditions.push(gte(cars.year, filters.minYear));
+    }
+
+    if (filters.maxYear) {
+      conditions.push(lte(cars.year, filters.maxYear));
+    }
+
+    if (filters.fuelType) {
+      conditions.push(eq(cars.fuelType, filters.fuelType));
+    }
+
+    if (filters.transmission) {
+      conditions.push(eq(cars.transmission, filters.transmission));
+    }
+
+    if (filters.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(ilike(cars.full_name, searchTerm)); // or use `cars.title`, `cars.description` etc.
+    }
+
+    // Build query
+    let query = db
+      .select()
+      .from(cars)
+      .orderBy(order === "desc" ? desc(orderColumn) : asc(orderColumn))
+      .offset(offset)
+      .limit(limit);
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    return await query;
+  }
+
+  async getTotalCars({
+    filters = {},
+  }: {
+    filters?: CarFilter;
+  }): Promise<number> {
+    console.log(filters);
+    const conditions: any[] = [];
+
+    if (filters.make) conditions.push(eq(cars.make, filters.make));
+    if (filters.model) conditions.push(eq(cars.model, filters.model));
+    if (filters.minPrice) conditions.push(gte(cars.price, filters.minPrice));
+    if (filters.maxPrice) conditions.push(lte(cars.price, filters.maxPrice));
+    if (filters.minYear) conditions.push(gte(cars.year, filters.minYear));
+    if (filters.maxYear) conditions.push(lte(cars.year, filters.maxYear));
+    if (filters.fuelType) conditions.push(eq(cars.fuelType, filters.fuelType));
+    if (filters.transmission)
+      conditions.push(eq(cars.transmission, filters.transmission));
+    if (filters.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(ilike(cars.full_name, searchTerm)); // make sure full_name is indexed
+    }
+
+    // 🚀 Efficient COUNT query
+    const query = db
+      .select({ count: sql<number>`count(*)` })
+      .from(cars)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .limit(1); // limit is useless here but harmless
+
+    const result = await query;
+    return Number(result[0].count);
+  }
+
+  async getCarMetadata() {
+    const allCars = await db.select().from(cars);
+
+    const unique = <T extends keyof Car>(key: T): string[] =>
+      Array.from(new Set(allCars.map((car) => car[key])))
+        .filter(Boolean)
+        .sort();
+
+    const uniqueYears = Array.from(new Set(allCars.map((car) => car.year)))
+      .filter((y): y is number => typeof y === "number")
+      .sort((a, b) => b - a);
+
+    const modelsByMake: Record<string, string[]> = {};
+    for (const car of allCars) {
+      if (!car.make || !car.model) continue;
+      if (!modelsByMake[car.make]) modelsByMake[car.make] = [];
+      if (!modelsByMake[car.make].includes(car.model)) {
+        modelsByMake[car.make].push(car.model);
+      }
+    }
+
+    // Sort models within each make
+    for (const make in modelsByMake) {
+      modelsByMake[make].sort();
+    }
+
+    return {
+      makes: unique("make"),
+      fuelTypes: unique("fuelType"),
+      transmissions: unique("transmission"),
+      years: uniqueYears,
+      modelsByMake,
+    };
   }
 
   async getCarById(id: number): Promise<Car | undefined> {
@@ -45,20 +191,31 @@ export class PostgresStorage implements IStorage {
 
   async createCar(car: InsertCar): Promise<Car | null> {
     // Check if car already exists
-    const existingCar = await db.select().from(cars).where(eq(cars.car_id, car.car_id)).limit(1);
-    
+    const existingCar = await db
+      .select()
+      .from(cars)
+      .where(eq(cars.car_id, car.car_id))
+      .limit(1);
+
     if (existingCar.length > 0) {
       // Car already exists, return it or return null based on your preference
       return existingCar[0]; // or return null;
     }
-  
+
     // Insert new car
     const [newCar] = await db.insert(cars).values(car).returning();
     return newCar;
   }
 
-  async updateCar(id: number, car: Partial<InsertCar>): Promise<Car | undefined> {
-    const [updatedCar] = await db.update(cars).set(car).where(eq(cars.id, id)).returning();
+  async updateCar(
+    id: number,
+    car: Partial<InsertCar>,
+  ): Promise<Car | undefined> {
+    const [updatedCar] = await db
+      .update(cars)
+      .set(car)
+      .where(eq(cars.id, id))
+      .returning();
     return updatedCar;
   }
 
@@ -68,7 +225,11 @@ export class PostgresStorage implements IStorage {
   }
 
   async getFeaturedCars(limit: number = 3): Promise<Car[]> {
-    return await db.select().from(cars).where(eq(cars.isFeatured, true)).limit(limit);
+    return await db
+      .select()
+      .from(cars)
+      .where(eq(cars.isFeatured, true))
+      .limit(limit);
   }
 
   async getRecentCars(limit: number = 4): Promise<Car[]> {
@@ -77,49 +238,49 @@ export class PostgresStorage implements IStorage {
 
   async filterCars(filter: CarFilter): Promise<Car[]> {
     let conditions: any[] = [];
-  
+
     if (filter.make) {
       conditions.push(eq(cars.make, filter.make));
     }
-  
+
     if (filter.model) {
       conditions.push(eq(cars.model, filter.model));
     }
-  
+
     if (filter.minPrice) {
       conditions.push(gte(cars.price, filter.minPrice));
     }
-  
+
     if (filter.maxPrice) {
       conditions.push(lte(cars.price, filter.maxPrice));
     }
-  
+
     if (filter.minYear) {
       conditions.push(gte(cars.year, filter.minYear));
     }
-  
+
     if (filter.maxYear) {
       conditions.push(lte(cars.year, filter.maxYear));
     }
-  
+
     if (filter.fuelType) {
       conditions.push(eq(cars.fuelType, filter.fuelType));
     }
-  
+
     if (filter.transmission) {
       conditions.push(eq(cars.transmission, filter.transmission));
     }
-  
+
     if (filter.search) {
       const searchTerm = `%${filter.search}%`;
       conditions.push(ilike(cars.full_name, searchTerm));
     }
-  
+
     let query = db.select().from(cars);
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
-  
+
     return await query;
   }
 
@@ -150,13 +311,21 @@ export class PostgresStorage implements IStorage {
   }
 
   // CONTACT MESSAGES
-  async createContactMessage(message: InsertContactMessage): Promise<ContactMessage> {
-    const [newMessage] = await db.insert(contactMessages).values(message).returning();
+  async createContactMessage(
+    message: InsertContactMessage,
+  ): Promise<ContactMessage> {
+    const [newMessage] = await db
+      .insert(contactMessages)
+      .values(message)
+      .returning();
     return newMessage;
   }
 
   async getContactMessagesForCar(carId: number): Promise<ContactMessage[]> {
-    return await db.select().from(contactMessages).where(eq(contactMessages.carId, carId));
+    return await db
+      .select()
+      .from(contactMessages)
+      .where(eq(contactMessages.carId, carId));
   }
 
   async getAllContactMessages(): Promise<ContactMessage[]> {
@@ -165,26 +334,45 @@ export class PostgresStorage implements IStorage {
 
   // WISHLISTS
   async createWishlist(wishlist: InsertWishlist): Promise<Wishlist> {
-    const [newWishlist] = await db.insert(wishlists).values(wishlist).returning();
+    const [newWishlist] = await db
+      .insert(wishlists)
+      .values(wishlist)
+      .returning();
     return newWishlist;
   }
 
   async getWishlistById(id: number): Promise<Wishlist | undefined> {
-    const [wishlist] = await db.select().from(wishlists).where(eq(wishlists.id, id));
+    const [wishlist] = await db
+      .select()
+      .from(wishlists)
+      .where(eq(wishlists.id, id));
     return wishlist;
   }
 
   async getWishlistByShareId(shareId: string): Promise<Wishlist | undefined> {
-    const [wishlist] = await db.select().from(wishlists).where(eq(wishlists.shareId, shareId));
+    const [wishlist] = await db
+      .select()
+      .from(wishlists)
+      .where(eq(wishlists.shareId, shareId));
     return wishlist;
   }
 
   async getUserWishlists(userId: string): Promise<Wishlist[]> {
-    return await db.select().from(wishlists).where(eq(wishlists.userId, userId));
+    return await db
+      .select()
+      .from(wishlists)
+      .where(eq(wishlists.userId, userId));
   }
 
-  async updateWishlist(id: number, wishlist: Partial<InsertWishlist>): Promise<Wishlist | undefined> {
-    const [updatedWishlist] = await db.update(wishlists).set(wishlist).where(eq(wishlists.id, id)).returning();
+  async updateWishlist(
+    id: number,
+    wishlist: Partial<InsertWishlist>,
+  ): Promise<Wishlist | undefined> {
+    const [updatedWishlist] = await db
+      .update(wishlists)
+      .set(wishlist)
+      .where(eq(wishlists.id, id))
+      .returning();
     return updatedWishlist;
   }
 
