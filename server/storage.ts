@@ -233,11 +233,12 @@ export class PostgresStorage implements IStorage {
       .select()
       .from(cars)
       .where(eq(cars.isFeatured, true))
+      .orderBy(sql`RANDOM()`)
       .limit(limit);
   }
 
   async getRecentCars(limit: number = 4): Promise<Car[]> {
-    return await db.select().from(cars).orderBy(cars.createdAt).limit(limit);
+      return await db.select().from(cars).orderBy(sql`RANDOM()`).limit(limit);
   }
 
   async filterCars(filter: CarFilter): Promise<Car[]> {
