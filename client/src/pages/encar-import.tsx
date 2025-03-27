@@ -154,6 +154,7 @@ export default function EncarImportPage() {
             <div className="grid gap-4">
               <div className="space-y-2">
                 <Label htmlFor="search-url">Encar.com Search URL</Label>
+                <Label htmlFor="">Cars: 벤츠 - Mercedes Benz, BMW, 아우디 - Audi, 포르쉐 - Porsche, 랜드로버 - Land Rover, 폭스바겐 - Volkswagen, 람보르기니 - Lamborghini, 마이바흐 - Maybach, 볼보 - Volvo, 도요타 - Toyota</Label>
                 <Input 
                   id="search-url" 
                   type="text" 
