@@ -33,7 +33,7 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
     return `${litersPer100Km} l/100km`;
   };
 
-  const whatsappMessage = `Jam i interesuar për të krahasuar këto mjete: ${car.full_name} me çmim ${formatEurPrice(car.price)}. Ju lutem më jepni më shumë informacion.`;
+  const whatsappMessage = `Jam i interesuar për këtë veturë: ${car.full_name} me çmim ${formatEurPrice(car.price)}. Ju lutem më jepni më shumë informacion.`;
 
   if (size === "small") {
     return (

@@ -14,6 +14,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { error } from "console";
 
 // Middleware to check if the user is authenticated
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
@@ -1164,9 +1165,23 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             const carDetail = carDetailRes.data;
 
             // 🚫 Skip if the car is webReserved
-            if (carDetail?.manage?.webReserved) {
+            if (car?.SalesStatus == "CONTRACT") {
               console.log(`🚫 Skipping reserved car: ${car.Id}`);
+              try{
+                console.log(`🚫 Deleting reserved car: ${car.Id}`);
+                await storage.deleteCar(car.Id);
+              } catch(error) {
+                console.log(`🚫 Car does not exists on our db: ${car.Id}`);
+              }
               continue;
+            } else if(car?.SellType == "리스") {
+              console.log(`🚫 Skipping lease car: ${car.Id}`);
+              try{
+                console.log(`🚫 Deleting lease car: ${car.Id}`);
+                await storage.deleteCar(car.Id);
+              } catch(error) {
+                console.log(`🚫 Car does not exists on our db: ${car.Id}`);
+              }
             }
 
             const phoneNumbers = [

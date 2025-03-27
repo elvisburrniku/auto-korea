@@ -228,6 +228,11 @@ export class PostgresStorage implements IStorage {
     return result.rowCount > 0;
   }
 
+  async deleteEncarCar(id: number): Promise<boolean> {
+    const result = await db.delete(cars).where(eq(cars.car_id, id));
+    return result.rowCount > 0;
+  }
+
   async getFeaturedCars(limit: number = 3): Promise<Car[]> {
     return await db
       .select()

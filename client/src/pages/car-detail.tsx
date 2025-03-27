@@ -191,7 +191,7 @@ export default function CarDetailPage() {
 
   // Get the current URL to include in the WhatsApp message
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const whatsappMessage = `Jam i interesuar për të krahasuar këto mjete: ${car.full_name} me çmim ${formatEurPrice(car.price)} ${currentUrl}. Ju lutem më jepni më shumë informacion.`;
+  const whatsappMessage = `Jam i interesuar për këtë veturë: ${car.full_name} me çmim ${formatEurPrice(car.price)} ${currentUrl}. Ju lutem më jepni më shumë informacion.`;
 
   return (
     <Container className="py-12">
