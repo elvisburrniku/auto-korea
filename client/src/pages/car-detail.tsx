@@ -246,10 +246,6 @@ export default function CarDetailPage() {
                     <span className="text-neutral-500">Ngjyra e jashtme</span>
                     <span className="font-medium">{car.exteriorColor}</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span className="text-neutral-500">Ngjyra e brendshme</span>
-                    <span className="font-medium">{car.interiorColor}</span>
-                  </li>
                 </ul>
               </div>
 
@@ -299,10 +295,10 @@ export default function CarDetailPage() {
                 </div>
               )}
 
-              {car.description && (
+              {false && car?.description && (
                 <div className="bg-neutral-50 p-4 rounded-lg">
                   <h4 className="font-medium text-neutral-500 mb-1">Pëshkrimi</h4>
-                  <p className="text-neutral-700">{car.description}</p>
+                  <p className="text-neutral-700">{car?.description}</p>
                 </div>
               )}
             </div>

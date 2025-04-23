@@ -219,23 +219,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 12;
       const sort = (req.query.sort as string) || "newest";
-      const order = (req.query.order as string) || "desc";
-
+  
       const offset = (page - 1) * limit;
-
-      let orderBy = "";
+  
+      // 👇 Determine orderBy and order dynamically
+      let orderBy: string;
+      let order: "asc" | "desc";
+  
       switch (sort) {
-        case "price":
+        case "price_asc":
           orderBy = "price";
+          order = "asc";
           break;
+        case "price_desc":
+          orderBy = "price";
+          order = "desc";
+          break;
+        case "km_asc":
+          orderBy = "kilometers";
+          order = "asc";
+          break;
+        case "km_desc":
+          orderBy = "kilometers";
+          order = "desc";
+          break;
+        case "relevant":
         case "newest":
-          orderBy = "created_at";
-          break;
         default:
           orderBy = "created_at";
+          order = "desc";
+          break;
       }
-
-      // Parse filters from query
+  
+      // 👇 Parse filters from query
       const filters = {
         make: req.query.make as string,
         model: req.query.model as string,
