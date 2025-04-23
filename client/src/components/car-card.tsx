@@ -33,7 +33,7 @@ export default function CarCard({ car, featured = false, size = "medium" }: CarC
     return `${litersPer100Km} l/100km`;
   };
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href+`car/(${car.id})` : '';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href+`car/${car.id}` : '';
   const whatsappMessage = `Jam i interesuar për këtë veturë: ${car.full_name} me çmim ${formatEurPrice(car.price)} ${currentUrl}. Ju lutem më jepni më shumë informacion.`;
 
   if (size === "small") {
