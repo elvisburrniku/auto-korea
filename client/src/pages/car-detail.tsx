@@ -401,6 +401,19 @@ export default function CarDetailPage() {
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
+
+              <a target="_blank" href={`https://www.encar.com/md/sl/mdsl_regcar.do?method=inspectionViewNew&carid=${car.car_id}`}>
+                <Button variant="outline" className="w-full flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <path d="M21 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path>
+                    <path d="m6 9 6-3 6 3"></path>
+                    <path d="m6 12 6 3 6-3"></path>
+                    <path d="m6 15 6 3 6-3"></path>
+                  </svg>
+                  Shiko raportin
+                  <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
+                </Button>
+              </a>
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-200">
