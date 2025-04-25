@@ -257,6 +257,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         model: req.query.model as string,
         minPrice: req.query.minPrice ? parseInt(req.query.minPrice as string) : undefined,
         maxPrice: req.query.maxPrice ? parseInt(req.query.maxPrice as string) : undefined,
+        minKm: req.query.minKm ? parseInt(req.query.minKm as string) : undefined,
+        maxKm: req.query.maxKm ? parseInt(req.query.maxKm as string) : undefined,
         minYear: req.query.minYear ? parseInt(req.query.minYear as string) : undefined,
         maxYear: req.query.maxYear ? parseInt(req.query.maxYear as string) : undefined,
         fuelType: req.query.fuelType as string,

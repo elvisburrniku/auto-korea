@@ -55,6 +55,9 @@ export class PostgresStorage implements IStorage {
       case "price":
         orderColumn = cars.price;
         break;
+      case "kilometers":
+        orderColumn = cars.mileage;
+          break;
       case "createdAt":
         orderColumn = cars.createdAt;
         break;
@@ -82,6 +85,14 @@ export class PostgresStorage implements IStorage {
 
     if (filters.maxPrice) {
       conditions.push(lte(cars.price, filters.maxPrice));
+    }
+
+    if (filters.minKm) {
+      conditions.push(gte(cars.mileage, filters.minKm));
+    }
+
+    if (filters.maxKm) {
+      conditions.push(lte(cars.mileage, filters.maxKm));
     }
 
     if (filters.minYear) {

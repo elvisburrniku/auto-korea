@@ -120,6 +120,8 @@
     model: z.string().optional(),
     minPrice: z.number().optional(),
     maxPrice: z.number().optional(),
+    minKm: z.number().optional(),
+    maxKm: z.number().optional(),
     minYear: z.number().optional(),
     maxYear: z.number().optional(),
     fuelType: z.string().optional(),

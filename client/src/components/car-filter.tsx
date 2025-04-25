@@ -39,6 +39,12 @@ const YEAR_RANGES = [
   { min: null, max: 1999, label: "1999 & Më e vjetër" },
 ];
 
+const MIN_PRICE = 0;
+const MAX_PRICE = 100000;
+
+const MIN_KM = 0;
+const MAX_KM = 400000;
+
 interface CarFilterProps {
   initialFilters?: Partial<CarFilter>;
   onFilterChange?: (filters: CarFilter) => void;
@@ -70,6 +76,8 @@ export default function CarFilterComponent({
     model: initialFilters?.model || "",
     minPrice: initialFilters?.minPrice || undefined,
     maxPrice: initialFilters?.maxPrice || undefined,
+    minKm: initialFilters?.minKm || undefined,
+    maxKm: initialFilters?.maxKm || undefined,
     minYear: initialFilters?.minYear || undefined,
     maxYear: initialFilters?.maxYear || undefined,
     fuelType: initialFilters?.fuelType || "",
@@ -245,37 +253,71 @@ export default function CarFilterComponent({
                 </div>
               </div>
 
-              {/* Price Range */}
+              {/* Price Range Slider */}
               <div>
-                <Label>Çmimi: {selectedPriceRange}</Label>
-                <div className="mt-1">
-                  <Select
-                    value={selectedPriceRange}
-                    onValueChange={(value) => {
-                      const range = PRICE_RANGES.find((r) => r.label === value);
-                      if (range) {
-                        setFilters({
-                          ...filters,
-                          minPrice: range.min,
-                          maxPrice: range.max !== null ? range.max : undefined,
-                        });
-                      }
+                <Label>
+                  Çmimi:{" "}
+                  {filters.minPrice === undefined && filters.maxPrice === undefined
+                    ? "Çdo çmim"
+                    : `€${filters.minPrice?.toLocaleString()} - €${filters.maxPrice?.toLocaleString()}`}
+                </Label>
+                <div className="mt-2">
+                  <Slider
+                    min={MIN_PRICE}
+                    max={MAX_PRICE}
+                    step={500}
+                    defaultValue={[
+                      filters.minPrice ?? MIN_PRICE,
+                      filters.maxPrice ?? MAX_PRICE,
+                    ]}
+                    onValueChange={([min, max]) => {
+                      setFilters({
+                        ...filters,
+                        minPrice: min,
+                        maxPrice: max,
+                      });
                     }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Çdo çmim" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Çdo çmim">Çdo çmim</SelectItem>
-                      {PRICE_RANGES.map((range) => (
-                        <SelectItem key={range.label} value={range.label}>
-                          {range.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                    <span>€{MIN_PRICE.toLocaleString()}</span>
+                    <span>€{MAX_PRICE.toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
+
+
+              {/* Kilometers Range Slider */}
+              <div>
+                <Label>
+                  Kilometra:{" "}
+                  {filters.minKm === undefined && filters.maxKm === undefined
+                    ? "Çdo kilometra"
+                    : `${filters.minKm?.toLocaleString()}km - ${filters.maxKm?.toLocaleString()}km`}
+                </Label>
+                <div className="mt-2">
+                  <Slider
+                    min={MIN_KM}
+                    max={MAX_KM}
+                    step={500}
+                    defaultValue={[
+                      filters.minKm ?? MIN_KM,
+                      filters.maxKm ?? MAX_KM,
+                    ]}
+                    onValueChange={([min, max]) => {
+                      setFilters({
+                        ...filters,
+                        minKm: min,
+                        maxKm: max,
+                      });
+                    }}
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                    <span>{MIN_KM.toLocaleString()} km</span>
+                    <span>{MAX_KM.toLocaleString()} km</span>
+                  </div>
+                </div>
+              </div>
+
 
               {/* Min Year */}
               <div>

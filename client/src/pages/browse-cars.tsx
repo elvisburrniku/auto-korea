@@ -38,6 +38,12 @@ export default function BrowseCarsPage() {
       maxPrice: searchParams.get("maxPrice")
         ? parseInt(searchParams.get("maxPrice")!)
         : undefined,
+      minKm: searchParams.get("minKm")
+        ? parseInt(searchParams.get("minKm")!)
+        : undefined,
+      maxKm: searchParams.get("maxKm")
+        ? parseInt(searchParams.get("maxKm")!)
+        : undefined,
       minYear: searchParams.get("minYear")
         ? parseInt(searchParams.get("minYear")!)
         : undefined,
@@ -61,6 +67,10 @@ export default function BrowseCarsPage() {
       params.set("minPrice", filters.minPrice.toString());
     if (filters.maxPrice !== undefined)
       params.set("maxPrice", filters.maxPrice.toString());
+    if (filters.maxKm !== undefined)
+      params.set("maxKm", filters.maxKm.toString());
+    if (filters.minKm !== undefined)
+      params.set("minKm", filters.minKm.toString());
     if (filters.minYear !== undefined)
       params.set("minYear", filters.minYear.toString());
     if (filters.maxYear !== undefined)
@@ -177,6 +187,10 @@ export default function BrowseCarsPage() {
         params.set("minPrice", newFilters.minPrice.toString());
       if (newFilters.maxPrice !== undefined)
         params.set("maxPrice", newFilters.maxPrice.toString());
+      if (newFilters.minKm !== undefined)
+        params.set("minKm", newFilters.minKm.toString());
+      if (newFilters.maxKm !== undefined)
+        params.set("maxKm", newFilters.maxKm.toString());
       if (newFilters.minYear !== undefined)
         params.set("minYear", newFilters.minYear.toString());
       if (newFilters.maxYear !== undefined)
@@ -220,9 +234,9 @@ export default function BrowseCarsPage() {
         `$${initialFilters.minPrice.toLocaleString()}-$${initialFilters.maxPrice.toLocaleString()}`,
       );
     } else if (initialFilters.minPrice) {
-      parts.push(`$${initialFilters.minPrice.toLocaleString()}+`);
+      parts.push(`${initialFilters.minPrice.toLocaleString()}€+`);
     } else if (initialFilters.maxPrice) {
-      parts.push(`Under $${initialFilters.maxPrice.toLocaleString()}`);
+      parts.push(`Under ${initialFilters.maxPrice.toLocaleString()}€`);
     }
 
     // Add fuel type and transmission if present
