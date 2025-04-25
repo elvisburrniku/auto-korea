@@ -118,8 +118,6 @@ export default function BrowseCarsPage() {
       filters.set("sort", sort);
       filters.set("limit", "12");
 
-      console.log(filters.toString());
-
       const response = await fetch(`/api/cars?${filters.toString()}`);
       const data = await response.json();
 
@@ -280,6 +278,16 @@ export default function BrowseCarsPage() {
                 </h2>
                 <p className="text-sm text-neutral-500">{getFilterSummary()}</p>
               </div>
+            </div>
+
+            <div className="mb-6 flex justify-end">
+              <select value={sort} onChange={(e) => setSort(e.target.value)} className="p-2 rounded border border-neutral-300 text-sm">
+                <option value="relevant">Të rëndësishme</option>
+                <option value="price_asc">Çmimi më i ulët</option>
+                <option value="price_desc">Çmimi më i lartë</option>
+                <option value="km_asc">Kilometra më pak</option>
+                <option value="km_desc">Kilometra më shumë</option>
+              </select>
             </div>
 
             {/* Results Grid */}
