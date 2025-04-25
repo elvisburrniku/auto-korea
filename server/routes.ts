@@ -1267,11 +1267,15 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
             if (basePrice < 12000) {
               finalPrice += 3050;
             } else if (basePrice >= 12000 && basePrice < 24000) {
+              finalPrice += 3250;
+            } else if (basePrice >= 12000 && basePrice < 18000) {
               finalPrice += 3550;
             } else if (basePrice >= 24000 && basePrice < 40000) {
               finalPrice += 4050;
-            } else if (basePrice >= 40000) {
+            } else if (basePrice >= 40000 && basePrice < 70000) {
               finalPrice += 5050;
+            } else if (basePrice >= 70000) {
+              finalPrice += 7050;
             }
 
             const transformedCar = {
