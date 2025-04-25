@@ -154,39 +154,49 @@ export class PostgresStorage implements IStorage {
   }
 
   async getCarMetadata() {
-    const allCars = await db.select().from(cars);
-
-    const unique = <T extends keyof Car>(key: T): string[] =>
-      Array.from(new Set(allCars.map((car) => car[key])))
-        .filter(Boolean)
-        .sort();
-
-    const uniqueYears = Array.from(new Set(allCars.map((car) => car.year)))
-      .filter((y): y is number => typeof y === "number")
-      .sort((a, b) => b - a);
-
+    const [makes, fuelTypes, transmissions, years, modelMakePairs] = await Promise.all([
+      db.select({ make: cars.make }).from(cars).where(sql`${cars.make} IS NOT NULL`).groupBy(cars.make),
+      db.select({ fuelType: cars.fuelType }).from(cars).where(sql`${cars.fuelType} IS NOT NULL`).groupBy(cars.fuelType),
+      db
+        .select({ transmission: cars.transmission })
+        .from(cars)
+        .where(sql`${cars.transmission} IS NOT NULL`)
+        .groupBy(cars.transmission),
+      db.select({ year: cars.year }).from(cars).where(sql`${cars.year} IS NOT NULL`).groupBy(cars.year),
+      db
+        .select({ make: cars.make, model: cars.model })
+        .from(cars)
+        .where(sql`${cars.make} IS NOT NULL AND ${cars.model} IS NOT NULL`)
+        .groupBy(cars.make, cars.model),
+    ]);
+  
     const modelsByMake: Record<string, string[]> = {};
-    for (const car of allCars) {
-      if (!car.make || !car.model) continue;
-      if (!modelsByMake[car.make]) modelsByMake[car.make] = [];
-      if (!modelsByMake[car.make].includes(car.model)) {
-        modelsByMake[car.make].push(car.model);
+  
+    for (const { make, model } of modelMakePairs) {
+      if (!modelsByMake[make]) {
+        modelsByMake[make] = [];
+      }
+      if (!modelsByMake[make].includes(model)) {
+        modelsByMake[make].push(model);
       }
     }
-
-    // Sort models within each make
+  
     for (const make in modelsByMake) {
       modelsByMake[make].sort();
     }
-
+  
     return {
-      makes: unique("make"),
-      fuelTypes: unique("fuelType"),
-      transmissions: unique("transmission"),
-      years: uniqueYears,
+      makes: makes.map((m) => m.make).sort(),
+      fuelTypes: fuelTypes.map((f) => f.fuelType).sort(),
+      transmissions: transmissions.map((t) => t.transmission).sort(),
+      years: years
+        .map((y) => y.year)
+        .filter((y): y is number => typeof y === 'number')
+        .sort((a, b) => b - a),
       modelsByMake,
     };
   }
+  
 
   async getCarById(id: number): Promise<Car | undefined> {
     const [car] = await db.select().from(cars).where(eq(cars.id, id));
