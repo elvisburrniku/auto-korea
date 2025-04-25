@@ -380,20 +380,6 @@ export default function CarDetailPage() {
                 </Button>
               </Link>
 
-              {isAuthenticated && user?.isAdmin ? (
-                <a target="_blank" href={`https://fem.encar.com/cars/detail/${car.car_id}`}>
-                  <Button variant="outline" className="w-full flex items-center mt-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                      <path d="M21 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path>
-                      <path d="m6 9 6-3 6 3"></path>
-                      <path d="m6 12 6 3 6-3"></path>
-                      <path d="m6 15 6 3 6-3"></path>
-                    </svg>
-                    Shiko në Encar
-                    <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
-                  </Button>
-                </a>
-              ) : ''}
               <Link href={`/budget-calculator?carId=${car.id}`}>
                 <Button variant="outline" className="w-full flex items-center mt-2">
                   <Calculator className="h-5 w-5 mr-2" />
@@ -401,6 +387,32 @@ export default function CarDetailPage() {
                   <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
                 </Button>
               </Link>
+
+              <a target="_blank" href={`https://fem.encar.com/cars/detail/${car.car_id}`}>
+                <Button variant="outline" className="w-full flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <path d="M21 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path>
+                    <path d="m6 9 6-3 6 3"></path>
+                    <path d="m6 12 6 3 6-3"></path>
+                    <path d="m6 15 6 3 6-3"></path>
+                  </svg>
+                  Shiko veturën në Encar
+                  <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
+                </Button>
+              </a>
+
+              <a target="_blank" href={`https://fem.encar.com/cars/report/accident/${car.car_id}`}>
+                <Button variant="outline" className="w-full flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <path d="M21 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"></path>
+                    <path d="m6 9 6-3 6 3"></path>
+                    <path d="m6 12 6 3 6-3"></path>
+                    <path d="m6 15 6 3 6-3"></path>
+                  </svg>
+                  Shiko raportin e sigurimit
+                  <Badge variant="secondary" className="ml-2 text-xs">New</Badge>
+                </Button>
+              </a>
 
               <a target="_blank" href={`https://www.encar.com/md/sl/mdsl_regcar.do?method=inspectionViewNew&carid=${car.car_id}`}>
                 <Button variant="outline" className="w-full flex items-center mt-2">
