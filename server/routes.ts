@@ -1159,10 +1159,22 @@ This message was sent from the Auto Korea Kosova Import website contact form at 
         };
 
         const response = await axios.get(url, {
-          headers: {
-            "User-Agent": "Mozilla/5.0",
-          },
-        });
+            headers: {
+              "Accept": "application/json, text/plain, */*",
+              "Accept-Encoding": "gzip, deflate, br, zstd",
+              "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8,sq;q=0.7,de;q=0.6",
+              "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+              "Origin": "https://car.encar.com",
+              "Referer": "https://car.encar.com/",
+              "DNT": "1",
+              "Sec-Fetch-Site": "same-site",
+              "Sec-Fetch-Mode": "cors",
+              "Sec-Fetch-Dest": "empty",
+              "Sec-CH-UA": '"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"',
+              "Sec-CH-UA-Mobile": "?0",
+              "Sec-CH-UA-Platform": '"macOS"',
+            }
+          });
 
         const data = response.data;
         if (!data || !Array.isArray(data.SearchResults)) {
