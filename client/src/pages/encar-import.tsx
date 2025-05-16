@@ -153,8 +153,18 @@ export default function EncarImportPage() {
           <div className="space-y-4">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="search-url">Encar.com Search URL</Label>
-                <Label htmlFor="">Cars: 벤츠 - Mercedes Benz, BMW, 아우디 - Audi, 포르쉐 - Porsche, 랜드로버 - Land Rover, 폭스바겐 - Volkswagen, 람보르기니 - Lamborghini, 마이바흐 - Maybach, 볼보 - Volvo, 도요타 - Toyota</Label>
+                <Label htmlFor="search-url">Encar.com Search URL</Label> <br></br>
+                <label>BMW: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.BMW.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>Audi: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%EC%95%84%EC%9A%B0%EB%94%94.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>BENZ: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%EB%B2%A4%EC%B8%A0.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>VW: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%ED%8F%AD%EC%8A%A4%EB%B0%94%EA%B2%90.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>LAND ROVER: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%EB%9E%9C%EB%93%9C%EB%A1%9C%EB%B2%84.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>VOLVO: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%EB%B3%BC%EB%B3%B4.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>PUGEOT: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%ED%91%B8%EC%A1%B0.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>PUGEOT: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.N._.Manufacturer.%ED%91%B8%EC%A1%B0.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>HYUNDAI: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.(C.CarType.Y._.Manufacturer.%ED%98%84%EB%8C%80.)_.Mileage.range(..150000)._.Price.range(500..1500).)&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort</label> <br></br><br></br>
+                <label>KIA: https://api.encar.com/search/car/list/mobile?count=true&q=(And.Hidden.N._.Year.range(201500..)._.Mileage.range(..150000)._.Price.range(500..1500)._.(C.CarType.Y._.Manufacturer.%EA%B8%B0%EC%95%84.))&sr=%7CMobilePriceAsc%7C0%7C1000&inav=%7CMetadata%7CSort&cursor=</label> <br></br><br></br>
+                <Label htmlFor="">Cars: 벤츠 - Mercedes Benz, BMW, 아우디 - Audi, 포르쉐 - Porsche, 랜드로버 - Land Rover, 폭스바겐 - Volkswagen, 람보르기니 - Lamborghini, 마이바흐 - Maybach, 볼보 - Volvo, 도요타 - Toyota</Label> <br></br><br></br>
                 <Input 
                   id="search-url" 
                   type="text" 

@@ -73,8 +73,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-medium">Adresa</h3>
                   <p className="text-neutral-600">
-                    Rruga Besim Rexhepi, Ferizaj, 70000 <br />
-                    Rruga Xhevat Demaku, Drenas, 13000
+                    Rruga Bejte Rexhepi, Drenas, 13000
                   </p>
                 </div>
               </div>

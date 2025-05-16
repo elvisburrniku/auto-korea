@@ -87,8 +87,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li className="flex items-start">
                 <MapPin className="mt-1 mr-2 h-4 w-4" />
-                <span>Rruga Besim Rexhepi, Ferizaj, 70000</span>
-                <span>Rruga Xhevat Demaku, Drenas, 13000</span>
+                <span>Rruga Bejete Rexhepi, Drenas, 13000</span>
               </li>
               <li className="flex items-center">
                 <Phone className="mr-2 h-4 w-4" />
